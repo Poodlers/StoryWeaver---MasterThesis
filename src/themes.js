@@ -34,4 +34,24 @@ const myTheme = createTheme({
     }
 })
 
-export {myTheme, primaryColor, secondaryColor, tertiaryColor, textColor, backgroundColor}
+const leftNodeHandleStyle = {
+    left: '-5px',
+    width: '12px',
+    height: '12px',
+    backgroundColor: primaryColor,
+    borderColor: tertiaryColor,
+    borderWidth: 1.5,
+    borderStyle: 'solid'
+}
+
+const rightNodeHandleStyle = {
+    right: '-5px',
+    width: '12px',
+    height: '12px',
+    backgroundColor: primaryColor,
+    borderColor: tertiaryColor,
+    borderWidth: 1.5,
+    borderStyle: 'solid'
+}
+
+export {myTheme, primaryColor, secondaryColor, tertiaryColor, textColor, backgroundColor, leftNodeHandleStyle, rightNodeHandleStyle}
