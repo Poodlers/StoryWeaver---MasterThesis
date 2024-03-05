@@ -8,12 +8,14 @@ const initialNodes = [
     {
       id: '1',
       position: { x: 0, y: 0 },
+  
       data: { question: 'Hello?', answers : ["lol", "lol"] },
       type: 'quizNode'
     },
     {
       id: '2',
       position: { x: 100, y: 100 },
+
       data: { title: 'Hello?', filepath : "https://www.youtube.com/watch?v=_D5nHQTxDl0" },
       type: 'videoNode'
     },
@@ -27,6 +29,7 @@ const initialNodes = [
     {
       id: '4',
       position: { x: 300, y: 100 },
+     
       data: { name: 'Hello?', filepath : './assets/spongebob.glb' },
       type: 'ThreeDNode'
     },

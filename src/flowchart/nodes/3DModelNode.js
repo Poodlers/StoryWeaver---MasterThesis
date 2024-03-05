@@ -4,7 +4,6 @@ import { leftNodeHandleStyle, rightNodeHandleStyle, primaryColor, secondaryColor
 import { Suspense, useState } from 'react';
 import { Canvas } from 'react-three-fiber';
 import { useGLTF } from '@react-three/drei';
-import { OrbitControls } from '@react-three/drei/core';
 
 
 function Model(props) {
@@ -13,6 +12,7 @@ function Model(props) {
 }
 
 export default function ThreeDModelNode(props) {
+  const setInspectorProps = props.setInspectorProps;
   const [name, setName] = useState(props.data?.name ?? "");
   const [filepath, setFilePath] = useState(props.data?.filepath ?? "");
   return (
@@ -24,7 +24,9 @@ export default function ThreeDModelNode(props) {
           borderColor: tertiaryColor,
           width: '70%',
           borderWidth: 2,
-          borderStyle: 'solid'}} >
+          borderStyle: 'solid'}}
+        
+          >
 
         <Typography variant="h6" sx={{ px: 2, fontSize: 15, color: textColor, fontWeight: 400 }}>
           Modelo 3D
@@ -83,7 +85,7 @@ export default function ThreeDModelNode(props) {
 
 
         }}>
-          <Canvas style={{width: '150px', height: '100px'}} dpr={[1,2]} camera={{ position: [2, 3, 10], fov: 75, rotation: [0,0,0] }}>
+          <Canvas style={{width: '150px', height: '100px'}} dpr={[1,2]} camera={{ position: [2, 2, 10], fov: 75, rotation: [0,0,0] }}>
             <ambientLight intensity={1.5} />
             <Suspense fallback={null}>
               <Model filepath={filepath} />

@@ -11,3 +11,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.react-flow__controls-button{
+  background-color: #A9B388 !important; 
+  border: 1px solid #B99470 !important;
+  padding: 10px !important;
+  transition: background-color 0.3s;
+}
+
+.react-flow__controls-button svg{
+  fill: #5F6F52;
+}

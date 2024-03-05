@@ -5,15 +5,8 @@ import { useState } from 'react';
 import ReactPlayer from 'react-player';
  
 
-export type VideoData = {
-    title?: string;
-    filepath?: string;
-    
-  };
 
-
-
-export default function VideoNode(props: NodeProps<VideoData>) { 
+export default function VideoNode(props) { 
   const [title, setTitle] = useState(props.data?.title ?? "");
   const [filepath, setFilePath] = useState(props.data?.filepath ?? "" );
   return (
