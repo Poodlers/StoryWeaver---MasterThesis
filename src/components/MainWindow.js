@@ -3,35 +3,43 @@ import Box from '@mui/material/Box';
 import Flow from '../flowchart/Flow';
 import { Typography } from '@mui/material';
 import { primaryColor, secondaryColor, tertiaryColor, textColor } from '../themes';
+import { NodeType } from '../models/NodeTypes';
+import { ImageProps, QuizProps, ThreeDModelProps, VideoProps } from '../flowchart/nodes/nodeProps';
+
+const generateInspectorProps = (props) => {
+  return props.fields.reduce((obj, field) => ({...obj, [field.name]: field.initialValue}), {})
+
+}
 
 const initialNodes = [
     {
       id: '1',
       position: { x: 0, y: 0 },
-  
+      values : generateInspectorProps(QuizProps),
       data: { question: 'Hello?', answers : ["lol", "lol"] },
-      type: 'quizNode'
+      type: NodeType.quizNode
     },
     {
       id: '2',
       position: { x: 100, y: 100 },
-
+      values : generateInspectorProps(VideoProps),
       data: { title: 'Hello?', filepath : "https://www.youtube.com/watch?v=_D5nHQTxDl0" },
-      type: 'videoNode'
+      type: NodeType.videoNode
     },
     {
       id: '3',
       position: { x: 200, y: 100 },
+      values : generateInspectorProps(ImageProps),
       data: { title: 'Hello?', filepath : './assets/dimeu_boyfreind.jpg' },
-      type: 'imageNode'
+      type: NodeType.imageNode
     },
 
     {
       id: '4',
       position: { x: 300, y: 100 },
-     
+      values : generateInspectorProps(ThreeDModelProps),
       data: { name: 'Hello?', filepath : './assets/spongebob.glb' },
-      type: 'ThreeDNode'
+      type: NodeType.threeDModelNode
     },
 
   ];

@@ -1,50 +1,54 @@
+import { InputFieldType } from "../../models/InputFieldTypes";
+
 const ThreeDModelProps = {
     nodeType: '3DModelNode',
-    fields: [ {type: 'textField', label: 'Modelo:', initialValue: 'Modelo 3D'},
-            {type: '3DCoord', label: 'Posição:', initialValue: [0,0,0]},
-            {type: '3DCoord', label: 'Escala:', initialValue: [1,1,1]},
-            {type: '3DCoord', label: 'Rotação:', initialValue: [0,0,0]},
-            {type: 'checkbox', label: 'Auto-play animações', initialValue: false},
-            {type: 'select-location', label: 'Modo de acionamento:', options: ['GPS Coords', 'QR-Code'], initialValue: 'Click'},
-            {type: 'multichoice-check', label: 'Animações:', options: ['Animation1', 'Animation2'], initialValue: [0,0]}
+    fields: [ {type: InputFieldType.textField, label: 'Modelo:', initialValue: 'Modelo 3D', name: 'model'},
+            {type: InputFieldType.threeDCoord, label: 'Posição:', initialValue: {x: 0, y: 0, z:0}, name: 'position'},
+            {type: InputFieldType.threeDCoord, label: 'Escala:', initialValue: {x: 0, y: 0, z:0}, name: 'scale'},
+            {type: InputFieldType.threeDCoord, label: 'Rotação:', initialValue: {x: 0, y: 0, z:0}, name: 'rotation'},
+            {type: InputFieldType.checkbox, label: 'Auto-play animações', initialValue: false, name: 'autoplay'},
+            {type: InputFieldType.select_location, label: 'Modo de acionamento:', options: ['GPS Coords', 'QR-Code'], initialValue: 'Click', name: 'trigger_mode'},
+            {type: InputFieldType.multichoice_check, label: 'Animações:', options: ['Animation1', 'Animation2'], initialValue: [0,0], name: 'animations'}
         ] 
   };
 
 
 const QuizProps = {
     nodeType: 'Quiz Node',
-    fields: [ {type: 'textField', label: 'Modelo:', initialValue: 'Modelo 3D'},
-            {type: '3DCoord', label: 'Posição:', initialValue: [0,0,0]},
-            {type: '3DCoord', label: 'Escala:', initialValue: [1,1,1]},
-            {type: '3DCoord', label: 'Rotação:', initialValue: [0,0,0]},
-            {type: 'checkbox', label: 'Auto-play animações', initialValue: false},
-            {type: 'select-location', label: 'Modo de acionamento:', options: ['GPS Coords', 'QR-Code'], initialValue: 'Click'},
-            {type: 'multichoice-check', label: 'Animações:', options: ['Animation1', 'Animation2'], initialValue: [0,0]}
-        ] 
-  };
+    fields: [ {type: InputFieldType.textField, label: 'Modelo:', initialValue: 'Modelo 3D', name: 'model'},
+    {type: InputFieldType.threeDCoord, label: 'Posição:', initialValue: {x: 0, y: 0, z:0}, name: 'position'},
+    {type: InputFieldType.threeDCoord, label: 'Escala:', initialValue: {x: 0, y: 0, z:0}, name: 'scale'},
+    {type: InputFieldType.threeDCoord, label: 'Rotação:', initialValue: {x: 0, y: 0, z:0}, name: 'rotation'},
+    {type: InputFieldType.checkbox, label: 'Auto-play animações', initialValue: false, name: 'autoplay'},
+    {type: InputFieldType.select_location, label: 'Modo de acionamento:', options: ['GPS Coords', 'QR-Code'], initialValue: 'Click', name: 'trigger_mode'},
+    {type: InputFieldType.multichoice_check, label: 'Animações:', options: ['Animation1', 'Animation2'], initialValue: [0,0], name: 'animations'}
+] 
+  }; 
+  
 
   const VideoProps = {
     nodeType: 'Video Node',
-    fields: [ {type: 'textField', label: 'Modelo:', initialValue: 'Modelo 3D'},
-            {type: '3DCoord', label: 'Posição:', initialValue: [0,0,0]},
-            {type: '3DCoord', label: 'Escala:', initialValue: [1,1,1]},
-            {type: '3DCoord', label: 'Rotação:', initialValue: [0,0,0]},
-            {type: 'checkbox', label: 'Auto-play animações', initialValue: false},
-            {type: 'select-location', label: 'Modo de acionamento:', options: ['GPS Coords', 'QR-Code'], initialValue: 'Click'},
-            {type: 'multichoice-check', label: 'Animações:', options: ['Animation1', 'Animation2'], initialValue: [0,0]}
-        ] 
+    fields: [ {type: InputFieldType.textField, label: 'Modelo:', initialValue: 'Modelo 3D', name: 'model'},
+    {type: InputFieldType.threeDCoord, label: 'Posição:', initialValue: {x: 1, y: 1, z:0}, name: 'position'},
+    {type: InputFieldType.threeDCoord, label: 'Escala:', initialValue: {x: 0, y: 0, z:0}, name: 'scale'},
+    {type: InputFieldType.threeDCoord, label: 'Rotação:', initialValue: {x: 0, y: 0, z:0}, name: 'rotation'},
+    {type: InputFieldType.checkbox, label: 'Auto-play animações', initialValue: false, name: 'autoplay'},
+    {type: InputFieldType.select_location, label: 'Modo de acionamento:', options: ['GPS Coords', 'QR-Code'], initialValue: 'Click', name: 'trigger_mode'},
+    {type: InputFieldType.multichoice_check, label: 'Animações:', options: ['Animation1', 'Animation2'], initialValue: [0,0], name: 'animations'}
+] 
   };
+  
 
   const ImageProps = {
     nodeType: 'Image Node',
-    fields: [ {type: 'textField', label: 'Modelo:', initialValue: 'Modelo 3D'},
-            {type: '3DCoord', label: 'Posição:', initialValue: [0,0,0]},
-            {type: '3DCoord', label: 'Escala:', initialValue: [1,1,1]},
-            {type: '3DCoord', label: 'Rotação:', initialValue: [0,0,0]},
-            {type: 'checkbox', label: 'Auto-play animações', initialValue: false},
-            {type: 'select-location', label: 'Modo de acionamento:', options: ['GPS Coords', 'QR-Code'], initialValue: 'Click'},
-            {type: 'multichoice-check', label: 'Animações:', options: ['Animation1', 'Animation2'], initialValue: [0,0]}
-        ] 
+    fields: [ {type: InputFieldType.textField, label: 'Modelo:', initialValue: 'Modelo 3D', name: 'model'},
+    {type: InputFieldType.threeDCoord, label: 'Posição:', initialValue: {x: 0, y: 0, z:0}, name: 'position'},
+    {type: InputFieldType.threeDCoord, label: 'Escala:', initialValue: {x: 0, y: 0, z:0}, name: 'scale'},
+    {type: InputFieldType.threeDCoord, label: 'Rotação:', initialValue: {x: 0, y: 0, z:0}, name: 'rotation'},
+    {type: InputFieldType.checkbox, label: 'Auto-play animações', initialValue: false, name: 'autoplay'},
+    {type: InputFieldType.select_location, label: 'Modo de acionamento:', options: ['GPS Coords', 'QR-Code'], initialValue: 'Click', name: 'trigger_mode'},
+    {type: InputFieldType.multichoice_check, label: 'Animações:', options: ['Animation1', 'Animation2'], initialValue: [0,0], name: 'animations'}
+] 
   };
 
 

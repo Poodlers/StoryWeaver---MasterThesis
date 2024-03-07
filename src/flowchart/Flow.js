@@ -9,27 +9,34 @@ import ThreeDModelNode from './nodes/3DModelNode';
 import { secondaryColor, textColor } from '../themes';
 import Inspector from './Inspector';
 import { ImageProps, QuizProps, ThreeDModelProps, VideoProps } from './nodes/nodeProps';
+import { NodeType } from '../models/NodeTypes';
 
 const nodeColor = (node) => {
   switch (node.type) {
-    case 'quizNode':
+    case NodeType.quizNode:
       return '#6ede87';
-    case 'videoNode':
+    case NodeType.videoNode:
       return '#6865A5';
-    case 'imageNode':
+    case NodeType.imageNode:
       return '#ff0072';
-    case 'ThreeDNode':
+    case NodeType.threeDModelNode:
       return '#ff0072';
     default:
       return '#ff0072';
   }
 };
 
-function Flow(props) {
 
-const [inspectorProps, setInspectorProps] = useState({});
+
+function Flow(props) {
+const [selectedNode, setSelectedNode] = useState(undefined);
+const [inspectorData, setInspectorData] = useState({});
+const [inspectorProps, setInspectorProps] = useState(undefined);
 const {nodes, edges, setNodes, setEdges} = props;
-const nodeTypes = useMemo(() => ({ quizNode: QuizNode, videoNode: VideoNode, imageNode: ImageNode, ThreeDNode: ThreeDModelNode}), []);
+const nodeTypes = useMemo(() => ({ quizNode: QuizNode,
+   videoNode: VideoNode,
+    imageNode: ImageNode, 
+    threeDModelNode: ThreeDModelNode}), []);
 
 const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -47,24 +54,65 @@ const onEdgesChange = useCallback(
 return (
     <div style={{display:'flex', flexDirection: 'row',  height: '85vh', width: '100vw', margin: '0 auto'}}>
       <ReactFlow 
-      onNodeClick={(event, node) => {
       
-         switch (node.type) {
-          case 'quizNode':
-            setInspectorProps(QuizProps)
-            break;
-          case 'videoNode':
-            setInspectorProps(VideoProps)
-            break;
-          case 'imageNode':
-            setInspectorProps(ImageProps)
-            break;
-          case 'ThreeDNode':
-            setInspectorProps(ThreeDModelProps)
-            break;
-        
+      onPaneClick={(event) => {
+         setInspectorProps(undefined);
+         if (selectedNode != undefined) {
+          // the node is changing, save the current inspector data
+           selectedNode.values = inspectorData;
+           console.log("Saving node: ", selectedNode.id, " with data: ", selectedNode.values);
+           let newNodes = [...nodes];
+           for (let i = 0; i < nodes.length; i++) {
+             if (nodes[i].id == selectedNode.id) {
+               newNodes[i].values = selectedNode.values;
+               setNodes(newNodes);
+               break;
+             }
+           }
 
-  }
+        }
+      }
+      }
+      onNodeClick={(event, node) => {
+        
+         if (selectedNode != undefined && node.id != selectedNode.id) {
+           // the node is changing, save the current inspector data
+            selectedNode.values = inspectorData;
+            console.log("Saving node: ", selectedNode.id, " with data: ", selectedNode.values);
+            let newNodes = [...nodes];
+            for (let i = 0; i < nodes.length; i++) {
+              if (nodes[i].id == selectedNode.id) {
+                newNodes[i].values = selectedNode.values;
+                setNodes(newNodes);
+                break;
+              }
+            }
+
+         }
+           
+         setSelectedNode(node);
+         let inspecProps = undefined;
+         switch (node.type) {
+          case NodeType.quizNode:
+            inspecProps = QuizProps  
+            break;
+          case NodeType.videoNode:
+            inspecProps = VideoProps
+            break;
+          case NodeType.imageNode:
+            inspecProps = ImageProps
+            break;
+          case NodeType.threeDModelNode:
+            inspecProps = ThreeDModelProps
+            break;
+          default:
+            return;
+         }
+
+        const dataProps = node.values;
+        setInspectorData(dataProps)
+        setInspectorProps(inspecProps)
+        
       }
       }
        nodeTypes={nodeTypes}
@@ -91,7 +139,7 @@ return (
         },
       }}/>
       </ReactFlow>
-      <Inspector data={inspectorProps}></Inspector>
+      <Inspector value={inspectorData} setValue={setInspectorData} data={inspectorProps} ></Inspector>
 
     </div>
   );
