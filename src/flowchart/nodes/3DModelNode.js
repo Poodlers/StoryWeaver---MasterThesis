@@ -8,13 +8,12 @@ import { useGLTF } from '@react-three/drei';
 
 function Model(props) {
   const { scene } = useGLTF(props.filepath);
- return <primitive object={scene} />;
+ return props.filepath.endsWith('.glb') ? <primitive object={scene} /> : null;
 }
 
 export default function ThreeDModelNode(props) {
-  const setInspectorProps = props.setInspectorProps;
-  const [name, setName] = useState(props.data?.name ?? "");
-  const [filepath, setFilePath] = useState(props.data?.filepath ?? "");
+  const name = props.data?.name ?? "";
+  const filepath = props.data?.filepath ?? "";
   return (
     <>
       <Handle type="target" position={Position.Left} style={leftNodeHandleStyle} />

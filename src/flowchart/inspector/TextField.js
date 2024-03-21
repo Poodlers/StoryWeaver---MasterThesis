@@ -17,10 +17,12 @@ function TextFieldInspector(props) {
         </Typography>
         <TextField 
         inputProps={{style: {borderRadius:0, color: 'black', height: 40, padding: 0, margin: 0,
-          borderColor: 'transparent', borderWidth: 0,  backgroundColor: "#ffffff",}}}
+          borderColor: 'transparent', borderWidth: 0,  backgroundColor: "#ffffff", 
+          borderRadius: 10,
+        }}}
         sx={{ flexGrow: 1, py:0, px:2, color: textColor, mx:'10px', borderRadius:0,
           '.MuiInputBase-root': {
-            borderRadius: 0,
+            borderRadius: 2,
             backgroundColor: "#ffffff",
           },
       }}

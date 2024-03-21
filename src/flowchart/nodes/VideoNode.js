@@ -1,14 +1,13 @@
 import { Box, Typography } from '@mui/material';
 import { Handle, NodeProps, Position } from 'reactflow';
 import { leftNodeHandleStyle, rightNodeHandleStyle, primaryColor, secondaryColor, tertiaryColor, textColor } from '../../themes';
-import { useState } from 'react';
 import ReactPlayer from 'react-player';
  
 
 
 export default function VideoNode(props) { 
-  const [title, setTitle] = useState(props.data?.title ?? "");
-  const [filepath, setFilePath] = useState(props.data?.filepath ?? "" );
+  const title = props.data?.title ?? "";
+  const filepath  = props.data?.filepath ?? "";
   return (
     <>
       <Handle type="target" position={Position.Left} style={leftNodeHandleStyle} />

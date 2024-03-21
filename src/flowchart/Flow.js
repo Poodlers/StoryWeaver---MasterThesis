@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import ReactFlow, { Controls, Background, applyEdgeChanges, applyNodeChanges,addEdge, MiniMap, BackgroundVariant } from 'reactflow';
+import ReactFlow, { Controls, Background, applyEdgeChanges, applyNodeChanges,addEdge, MiniMap, BackgroundVariant, updateEdge } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { useCallback } from 'react';
 import QuizNode from './nodes/QuizNode';
@@ -38,10 +38,15 @@ const nodeTypes = useMemo(() => ({ quizNode: QuizNode,
     imageNode: ImageNode, 
     threeDModelNode: ThreeDModelNode}), []);
 
-const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [],
+  const onConnect = useCallback((params) => setEdges((els) => addEdge(params, els)), []);
+
+// gets called after end of edge gets dragged to another source or target
+    
+const onEdgeUpdate = useCallback(
+      (oldEdge, newConnection) => setEdges((els) => updateEdge(oldEdge, newConnection, els)),
+      []
   );
+
 
 const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -51,6 +56,40 @@ const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [],
   );
+
+const handleDelete = (idToDelete) => {
+  let newNodes = [...nodes];
+  let newEdges = [...edges];
+  let indexToDelete = -1;
+  for (let i = 0; i < newNodes.length; i++) {
+    if (newNodes[i].id == idToDelete) {
+      indexToDelete = i;
+      break;
+    }
+  }
+  if (indexToDelete != -1) {
+    newNodes.splice(indexToDelete, 1);
+  }
+  newEdges = newEdges.filter(edge => edge.source != idToDelete && edge.target != idToDelete);
+  setNodes(newNodes);
+  setEdges(newEdges);
+  setInspectorProps(undefined);
+  setInspectorData({});
+  setSelectedNode(undefined);
+
+  };
+
+  const handleNodeDataChange = (id, data) => {
+    let newNodes = [...nodes];
+    for (let i = 0; i < newNodes.length; i++) {
+      if (newNodes[i].id == id) {
+        newNodes[i].data = data;
+        setNodes(newNodes);
+        break;
+      }
+    }
+  }
+
 return (
     <div style={{display:'flex', flexDirection: 'row',  height: '85vh', width: '100vw', margin: '0 auto'}}>
       <ReactFlow 
@@ -59,12 +98,12 @@ return (
          setInspectorProps(undefined);
          if (selectedNode != undefined) {
           // the node is changing, save the current inspector data
-           selectedNode.values = inspectorData;
-           console.log("Saving node: ", selectedNode.id, " with data: ", selectedNode.values);
+           selectedNode.data = inspectorData;
+           console.log("Saving node: ", selectedNode.id, " with data: ", selectedNode.data);
            let newNodes = [...nodes];
            for (let i = 0; i < nodes.length; i++) {
              if (nodes[i].id == selectedNode.id) {
-               newNodes[i].values = selectedNode.values;
+               newNodes[i].data = selectedNode.data;
                setNodes(newNodes);
                break;
              }
@@ -73,16 +112,17 @@ return (
         }
       }
       }
+      onEdgeUpdate={onEdgeUpdate}
       onNodeClick={(event, node) => {
         
          if (selectedNode != undefined && node.id != selectedNode.id) {
            // the node is changing, save the current inspector data
-            selectedNode.values = inspectorData;
-            console.log("Saving node: ", selectedNode.id, " with data: ", selectedNode.values);
+            selectedNode.data = inspectorData;
+            console.log("Saving node: ", selectedNode.id, " with data: ", selectedNode.data);
             let newNodes = [...nodes];
             for (let i = 0; i < nodes.length; i++) {
               if (nodes[i].id == selectedNode.id) {
-                newNodes[i].values = selectedNode.values;
+                newNodes[i].data = selectedNode.data;
                 setNodes(newNodes);
                 break;
               }
@@ -109,7 +149,7 @@ return (
             return;
          }
 
-        const dataProps = node.values;
+        const dataProps = node.data;
         setInspectorData(dataProps)
         setInspectorProps(inspecProps)
         
@@ -139,7 +179,9 @@ return (
         },
       }}/>
       </ReactFlow>
-      <Inspector value={inspectorData} setValue={setInspectorData} data={inspectorProps} ></Inspector>
+      <Inspector value={inspectorData} nodeId={selectedNode ? selectedNode.id : undefined} 
+      handleNodeDataChange={handleNodeDataChange}
+      handleDelete={handleDelete} setValue={setInspectorData} data={inspectorProps} ></Inspector>
 
     </div>
   );

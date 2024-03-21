@@ -23,10 +23,12 @@ function ThreeDCoordField(props) {
             </Typography>
                  <TextField 
             inputProps={{style: {borderRadius:0, color: 'black', height: 40, padding: 0, margin: 0,
-            borderColor: 'transparent', borderWidth: 0,  backgroundColor: "#ffffff",}}}
+            borderColor: 'transparent', borderWidth: 0,  backgroundColor: "#ffffff", 
+        
+            borderRadius: 10, }}}
             sx={{ color: textColor, mr:'10px', borderRadius:0, maxWidth: '50px',
             '.MuiInputBase-root': {
-                borderRadius: 0,
+                borderRadius: 2,
                 backgroundColor: "#ffffff",
             },
         }}
@@ -43,10 +45,12 @@ function ThreeDCoordField(props) {
             </Typography>
             <TextField 
                     inputProps={{style: {borderRadius:0, color: 'black', height: 40, padding: 0, margin: 0,
-                    borderColor: 'transparent', borderWidth: 0,  backgroundColor: "#ffffff",}}}
+                    borderColor: 'transparent', borderWidth: 0,  backgroundColor: "#ffffff",
+                    borderRadius: 10,
+                }}}
                     sx={{ py:0, px:0, color: textColor, mr:'10px', borderRadius:0, maxWidth: '50px',
                     '.MuiInputBase-root': {
-                        borderRadius: 0,
+                        borderRadius: 2,
                         backgroundColor: "#ffffff",
                     },
                 }}
@@ -64,10 +68,10 @@ function ThreeDCoordField(props) {
            
             <TextField 
                 inputProps={{style: {borderRadius:0, color: 'black', height: 40, padding: 0, margin: 0,
-                borderColor: 'transparent', borderWidth: 0,  backgroundColor: "#ffffff",}}}
+                borderColor: 'transparent', borderWidth: 0,  backgroundColor: "#ffffff", borderRadius: 10,}}}
                 sx={{ py:0, px:0, color: textColor, mr:'10px', borderRadius:0, maxWidth: '50px',
                 '.MuiInputBase-root': {
-                    borderRadius: 0,
+                    borderRadius: 2,
                     backgroundColor: "#ffffff",
                 },
             }}

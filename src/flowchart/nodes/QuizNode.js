@@ -1,12 +1,11 @@
 import { Box, Typography } from '@mui/material';
 import { Handle, Position } from 'reactflow';
 import { leftNodeHandleStyle, rightNodeHandleStyle, primaryColor, secondaryColor, tertiaryColor, textColor } from '../../themes';
-import { useState } from 'react';
  
 
 export default function QuizNode(props) { 
-  const [question, setQuestion] = useState(props.data?.question ?? "");
-  const [answers, setAnswers] = useState(props.data?.answers ?? []);
+  const  question = props.data?.question ?? '';
+  const answers  = props.data?.answers ?? ['Empty'];
   return (
     <>
       <Handle type="target" position={Position.Left} style={leftNodeHandleStyle} />
@@ -80,10 +79,10 @@ export default function QuizNode(props) {
         }}>
             {answers.map((answer, index) => ( 
               <div key={index}>
-                <Typography  variant="h6" sx = {{px: 3, py: 0.2, fontSize: 12, color: textColor, fontWeight: 200}}>
-                    {answer}
+                <Typography  variant="h6" sx = {{px: 3, py: 0.6, fontSize: 12, color: textColor, fontWeight: 200,}}>
+                    {answer == '' ? 'Empty': answer}
                 </Typography>
-                <Handle type="source" position={Position.Right} style={{marginTop: 25 * index + 45, 
+                <Handle type="source" position={Position.Right} style={{marginTop: 15 * index + 20, 
                     ...rightNodeHandleStyle}} id={index.toString()} />
                 </div>
             ))}

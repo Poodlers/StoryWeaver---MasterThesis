@@ -15,30 +15,26 @@ const initialNodes = [
     {
       id: '1',
       position: { x: 0, y: 0 },
-      values : generateInspectorProps(QuizProps),
-      data: { question: 'Hello?', answers : ["lol", "lol"] },
+      data: generateInspectorProps(QuizProps),
       type: NodeType.quizNode
     },
     {
       id: '2',
       position: { x: 100, y: 100 },
-      values : generateInspectorProps(VideoProps),
-      data: { title: 'Hello?', filepath : "https://www.youtube.com/watch?v=_D5nHQTxDl0" },
+      data:  generateInspectorProps(VideoProps),
       type: NodeType.videoNode
     },
     {
       id: '3',
       position: { x: 200, y: 100 },
-      values : generateInspectorProps(ImageProps),
-      data: { title: 'Hello?', filepath : './assets/dimeu_boyfreind.jpg' },
+      data: generateInspectorProps(ImageProps),
       type: NodeType.imageNode
     },
 
     {
       id: '4',
       position: { x: 300, y: 100 },
-      values : generateInspectorProps(ThreeDModelProps),
-      data: { name: 'Hello?', filepath : './assets/spongebob.glb' },
+      data:  generateInspectorProps(ThreeDModelProps),
       type: NodeType.threeDModelNode
     },
 
@@ -80,7 +76,9 @@ export default function MainWindow(props) {
             </Box>
         </Box>
 
-        {displayedWindow === 'Flowchart' ? <Flow key={'flowchart'} nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges}> </Flow>  : <div>Not implemented yet</div>}
+        {displayedWindow === 'Flowchart' ? <Flow key={'flowchart'} 
+        nodes={nodes} edges={edges} setNodes={setNodes} 
+        setEdges={setEdges}> </Flow>  : <div>Not implemented yet</div>}
       </Box>
   );
 }
