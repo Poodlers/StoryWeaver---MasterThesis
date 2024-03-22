@@ -1,3 +1,4 @@
+import { AddCircle, RemoveCircle } from '@mui/icons-material';
 import { Icon, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
@@ -44,7 +45,7 @@ function TextFieldExpandable(props) {
                         handleFieldChange(props.data.name, [...value.slice(0, index), ...value.slice(index+1)]);
                     }
                     }>
-                        remove_circle
+                        <RemoveCircle> </RemoveCircle>
                     </Icon>
                 </Box>
                         
@@ -56,7 +57,7 @@ function TextFieldExpandable(props) {
             handleFieldChange(props.data.name, [...value, '']);
         }
         }>
-            add_circle
+            <AddCircle> </AddCircle>
         </Icon>
 
         </Box>

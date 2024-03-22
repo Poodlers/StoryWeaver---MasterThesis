@@ -10,17 +10,18 @@ function TextFieldInspector(props) {
   const handleFieldChange = props.onChange;
 
   return (
-      <Box sx={{display: 'flex', flexDirection: 'row', alignItems:'center', justifyContent:'center', ...style}}>
+      <Box sx={{display: 'flex', flexDirection: 'row', alignItems:'center', justifyContent:'space-between', ...style, width:'100%'}}>
         
-        <Typography variant="h7" component="div" sx={{ flexGrow: 1, py:1, px:2, color: textColor, m:0}}>
+        <Typography variant="h7" component="div" sx={{ py:1, px:2, color: textColor, m:0,
+           textAlign:'start'}}>
             {label}
         </Typography>
         <TextField 
         inputProps={{style: {borderRadius:0, color: 'black', height: 40, padding: 0, margin: 0,
           borderColor: 'transparent', borderWidth: 0,  backgroundColor: "#ffffff", 
-          borderRadius: 10,
+          borderRadius: 10, textAlign: 'start',
         }}}
-        sx={{ flexGrow: 1, py:0, px:2, color: textColor, mx:'10px', borderRadius:0,
+        sx={{ flexGrow: 1, py:0, px:1, color: textColor, mx:'10px', borderRadius:0,
           '.MuiInputBase-root': {
             borderRadius: 2,
             backgroundColor: "#ffffff",

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { InputFieldType } from '../models/InputFieldTypes';
 import { primaryColor, secondaryColor, tertiaryColor, textColor } from '../themes';
 import CheckboxField from './inspector/Checkbox';
+import FileSelectField from './inspector/FileSelect';
 import MultipleChoiceCheckboxField from './inspector/MultipleChoiceCheck';
 import SelectLocationField from './inspector/SelectLocation';
 import TextFieldInspector from './inspector/TextField';
@@ -25,6 +26,7 @@ function Inspector(props) {
   return props.data !== undefined ? 
         <Box sx={{width: '32vw',  backgroundColor: secondaryColor,  overflowY: 'scroll', 
         'scrollbarWidth': 'thin', 'scrollbarColor': `${primaryColor} ${secondaryColor}`,
+        resize: 'horizontal', overflowX: 'hidden', 
 
         }}>
           <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',}}>
@@ -56,16 +58,19 @@ function Inspector(props) {
                     return <MultipleChoiceCheckboxField key={index} id={index} onChange={handleFieldChange} value={values[field.name]} data={field} style={{mt: 2}} ></MultipleChoiceCheckboxField>
                   case InputFieldType.textFieldExpandable:
                     return <TextFieldExpandable key={index} id={index} onChange={handleFieldChange} value={values[field.name]} data={field} style={{mt: 2}} ></TextFieldExpandable>
-                
+                  case InputFieldType.file_select:
+                    return <FileSelectField key={index} id={index} onChange={handleFieldChange} value={values[field.name]} data={field} style={{mt: 2}} ></FileSelectField>
                   }
                 
               })
               }
               <Box  
               onClick={() => handleDelete(nodeId)}
-              sx={{display: 'flex', flexDirection: 'column', alignItems:'center', justifyContent:'center', mt: 2}}>
+              sx={{display: 'flex', flexDirection: 'column', alignItems:'center', justifyContent:'center', mt: 2,
+                cursor: 'pointer'
+              }}>
                 <Icon fontSize='inherit' sx={{color: tertiaryColor, mt: 2, fontSize: '50px !important'}}>
-                  delete
+                  <DeleteOutline fontSize='inherit'></DeleteOutline>
                 </Icon>
                 <Typography variant="h6" component="div" sx={{color: tertiaryColor, mt: 0, fontWeight: 'bolder'}}>
                   Apagar

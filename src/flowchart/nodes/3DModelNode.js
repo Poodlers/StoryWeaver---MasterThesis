@@ -8,12 +8,13 @@ import { useGLTF } from '@react-three/drei';
 
 function Model(props) {
   const { scene } = useGLTF(props.filepath);
- return props.filepath.endsWith('.glb') ? <primitive object={scene} /> : null;
+ return  <primitive object={scene} />;
 }
 
 export default function ThreeDModelNode(props) {
   const name = props.data?.name ?? "";
-  const filepath = props.data?.filepath ?? "";
+  
+  const filepath = props.data?.file.blob ?? "";
   return (
     <>
       <Handle type="target" position={Position.Left} style={leftNodeHandleStyle} />
@@ -21,13 +22,13 @@ export default function ThreeDModelNode(props) {
       <Box sx= {{
           backgroundColor: primaryColor,
           borderColor: tertiaryColor,
-          width: '70%',
+          
           borderWidth: 2,
           borderStyle: 'solid'}}
         
           >
 
-        <Typography variant="h6" sx={{ px: 2, fontSize: 15, color: textColor, fontWeight: 400 }}>
+        <Typography variant="h6" sx={{ px: 2, fontSize: 15, color: textColor, fontWeight: 400, textAlign:'center'}}>
           Modelo 3D
         </Typography>
       </Box>
@@ -84,6 +85,11 @@ export default function ThreeDModelNode(props) {
 
 
         }}>
+
+          {filepath == "" ? <Typography variant="h6" sx={{ px: 3, py: 1, fontSize: 12, color: textColor, fontWeight: 200 }} >
+            Nenhum modelo 3D selecionado
+          </Typography> :
+
           <Canvas style={{width: '150px', height: '100px'}} dpr={[1,2]} camera={{ position: [2, 2, 10], fov: 75, rotation: [0,0,0] }}>
             <ambientLight intensity={1.5} />
             <Suspense fallback={null}>
@@ -91,6 +97,7 @@ export default function ThreeDModelNode(props) {
             </Suspense>
            
           </Canvas>
+}
 
         </Box>
 

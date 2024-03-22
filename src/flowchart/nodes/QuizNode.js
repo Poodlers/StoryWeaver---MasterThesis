@@ -12,13 +12,11 @@ export default function QuizNode(props) {
       <Box sx={{ 
             backgroundColor: primaryColor,
             borderColor: tertiaryColor,
-            display: 'flex',
-            width: '50%',
             justifyContent: 'start',
             borderWidth: 2,
             borderStyle: 'solid',
       }}>
-        <Typography variant="h6" sx = {{px: 2, fontSize: 15, color: textColor, fontWeight: 400}}>
+        <Typography variant="h6" sx = {{px: 2, fontSize: 15, color: textColor, fontWeight: 400, textAlign:'center'}}>
           Quiz
         </Typography>
       </Box>
@@ -41,8 +39,8 @@ export default function QuizNode(props) {
             backgroundColor: primaryColor,
         
         }}>
-          <Typography variant="h6" sx = {{px: 3, fontSize: 15, color: textColor, fontWeight: 400}}>
-            Quiz
+          <Typography variant="h6" sx = {{px: 3, fontSize: 15, color: textColor, fontWeight: 400, textAlign:'center'}}>
+            Pergunta
           </Typography>
           
         </Box>
@@ -82,7 +80,7 @@ export default function QuizNode(props) {
                 <Typography  variant="h6" sx = {{px: 3, py: 0.6, fontSize: 12, color: textColor, fontWeight: 200,}}>
                     {answer == '' ? 'Empty': answer}
                 </Typography>
-                <Handle type="source" position={Position.Right} style={{marginTop: 15 * index + 20, 
+                <Handle type="source" position={Position.Right} style={{marginTop: 30 * index +  (1/answers.length) * 110 + 'px' , 
                     ...rightNodeHandleStyle}} id={index.toString()} />
                 </div>
             ))}

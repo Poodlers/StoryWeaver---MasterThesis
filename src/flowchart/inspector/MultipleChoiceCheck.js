@@ -26,6 +26,7 @@ function MultipleChoiceCheckboxField(props) {
                 Object.keys(value).map((key, index) => {
                     
                     return <FormControlLabel
+                    key={index}
                     control={
                         <Checkbox 
                         TouchRippleProps={{style: {color: 'transparent'}}}
