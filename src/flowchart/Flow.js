@@ -5,11 +5,15 @@ import { useCallback } from 'react';
 import QuizNode from './nodes/QuizNode';
 import VideoNode from './nodes/VideoNode';
 import ImageNode from './nodes/ImageNode';
+import AudioNode from './nodes/AudioNode';
 import ThreeDModelNode from './nodes/3DModelNode';
 import { secondaryColor, textColor } from '../themes';
 import Inspector from './Inspector';
-import { ImageProps, QuizProps, ThreeDModelProps, VideoProps } from './nodes/nodeProps';
+import { AudioProps, CharacterProps, ImageProps, PathProps, QuizProps, TextProps, ThreeDModelProps, VideoProps } from './nodes/nodeProps';
 import { NodeType } from '../models/NodeTypes';
+import CharacterNode from './nodes/CharacterNode';
+import TextNode from './nodes/TextNode';
+import PathNode from './nodes/PathNode';
 
 const nodeColor = (node) => {
   switch (node.type) {
@@ -20,6 +24,12 @@ const nodeColor = (node) => {
     case NodeType.imageNode:
       return '#ff0072';
     case NodeType.threeDModelNode:
+      return '#ff0072';
+    case NodeType.characterNode:
+      return '#ff0072';
+    case NodeType.pathNode:
+      return '#ff0072';
+    case NodeType.textNode:
       return '#ff0072';
     default:
       return '#ff0072';
@@ -32,11 +42,17 @@ function Flow(props) {
 const [selectedNode, setSelectedNode] = useState(undefined);
 const [inspectorData, setInspectorData] = useState({});
 const [inspectorProps, setInspectorProps] = useState(undefined);
+const [pannable, setPannable] = useState(true);
 const {nodes, edges, setNodes, setEdges} = props;
 const nodeTypes = useMemo(() => ({ quizNode: QuizNode,
    videoNode: VideoNode,
     imageNode: ImageNode, 
-    threeDModelNode: ThreeDModelNode}), []);
+    threeDModelNode: ThreeDModelNode,
+    characterNode: CharacterNode,
+    textNode: TextNode,
+    pathNode: PathNode,
+    audioNode: AudioNode
+  }), []);
 
   const onConnect = useCallback((params) => setEdges((els) => addEdge(params, els)), []);
 
@@ -93,8 +109,19 @@ const handleDelete = (idToDelete) => {
 return (
     <div style={{display:'flex', flexDirection: 'row',  height: '85vh', width: '100vw', margin: '0 auto'}}>
       <ReactFlow 
-      
+    
+      onMouseMove={(event) => {
+        if (event.target.closest('.audio-player-container')) {
+          setPannable(false);
+        }
+        else{
+          setPannable(true);
+        }
+      }}
+      panOnDrag={pannable}
+      nodesDraggable={pannable}
       onPaneClick={(event) => {
+       
          setInspectorProps(undefined);
          if (selectedNode != undefined) {
           // the node is changing, save the current inspector data
@@ -114,7 +141,9 @@ return (
       }
       onEdgeUpdate={onEdgeUpdate}
       onNodeClick={(event, node) => {
-        
+         if(node.type != NodeType.audioNode) {
+          setPannable(true);
+         }
          if (selectedNode != undefined && node.id != selectedNode.id) {
            // the node is changing, save the current inspector data
             selectedNode.data = inspectorData;
@@ -144,6 +173,18 @@ return (
             break;
           case NodeType.threeDModelNode:
             inspecProps = ThreeDModelProps
+            break;
+          case NodeType.characterNode:
+            inspecProps = CharacterProps
+            break;
+          case NodeType.pathNode:
+            inspecProps = PathProps
+            break;
+          case NodeType.textNode:
+            inspecProps = TextProps
+            break;
+          case NodeType.audioNode:
+            inspecProps = AudioProps
             break;
           default:
             return;

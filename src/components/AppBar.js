@@ -6,11 +6,14 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { AddCircleOutline } from '@mui/icons-material';
+import { Icon } from '@mui/material';
+import AddNodePopup from '../flowchart/menu/AddNodePopup';
 
 export default function TopAppBar(props) {
-
+  const currentWindow = props.currentWindow;
   const projectTitle = props.projectTitle;
+  const addNode = props.addNode;
+  const [open, setOpen] = React.useState(false);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -26,12 +29,27 @@ export default function TopAppBar(props) {
           </IconButton>
 
           <IconButton
-          size='large'
-        
-          color='inherit'
-          sx={{ mr: 2 }}>
-            <AddCircleOutline></AddCircleOutline>
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2, fontSize: '30px !important'}}
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <Icon>add</Icon>
           </IconButton>
+          {
+            currentWindow === 'Flowchart' ?
+            <AddNodePopup open={open} onClose={(nodeType, nodeProps)=>{
+              setOpen(false);
+              if(nodeType) addNode(nodeType, nodeProps);
+
+            }}></AddNodePopup>
+            : null
+          }
+         
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {projectTitle}
           </Typography>

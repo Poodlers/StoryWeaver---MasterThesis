@@ -1,5 +1,6 @@
 import { FileTypesInput } from "../../models/FileTypesInput";
 import { InputFieldType } from "../../models/InputFieldTypes";
+import { NodeType } from "../../models/NodeTypes";
 
 const ThreeDModelProps = {
     nodeType: '3DModelNode',
@@ -60,5 +61,51 @@ const QuizProps = {
   ]
   };
 
+const AudioProps = {
+  nodeType: 'Audio Node',
+  fields: [ {type: InputFieldType.textField, label: 'Nome:', initialValue: 'Nome do audio', name: 'name'},
+  {type: InputFieldType.file_select, label: 'Ficheiro:', initialValue: {inputType: 'url',
+        filename: '',
+        blob: null
+      }, 
+      name: 'file',
+        acceptedType : FileTypesInput.Audio,
+      },
+] 
+};
 
-export {ThreeDModelProps, QuizProps, VideoProps, ImageProps};
+const TextProps = {
+  nodeType: 'Text Node',
+  fields: [ {type: InputFieldType.textField, label: 'Texto:', initialValue: 'Texto', name: 'text'},
+  {type: InputFieldType.threeDCoord, label: 'Posição:', initialValue: {x: 0, y: 0, z:0}, name: 'position'},
+
+] 
+};
+
+const PathProps = {
+  nodeType: 'Path Node',
+  fields: [ {type: InputFieldType.textField, label: 'Nome:', initialValue: 'Nome do caminho', name: 'name'},
+  {type: InputFieldType.select_location, label: 'Início:', options: ['GPS Coords', 'QR-Code'], initialValue: {trigger_mode: 'GPS Coords',
+  map: 'Map 1', place: 'place', qr_code: 'qr_code'
+}, name: 'start'},
+  {type: InputFieldType.select_location, label: 'Destino:', options: ['GPS Coords', 'QR-Code'], initialValue: {trigger_mode: 'GPS Coords',
+  map: 'Map 1', place: 'place', qr_code: 'qr_code'}
+, name: 'destination'},
+] 
+};
+
+const CharacterProps = {
+  nodeType: 'Character Node',
+  fields: [ {type: InputFieldType.textField, label: 'Nome:', initialValue: 'Nome do personagem', name: 'name'},
+  {type: InputFieldType.file_select, label: 'Character Sprite:', initialValue: {inputType: 'url',
+        filename: '',
+        blob: null
+      }, 
+      name: 'file',
+        acceptedType : FileTypesInput.Image,
+      },
+] 
+};
+
+
+export {ThreeDModelProps, QuizProps, VideoProps, ImageProps, AudioProps, TextProps, PathProps, CharacterProps};

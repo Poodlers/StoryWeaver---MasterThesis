@@ -5,6 +5,7 @@ import { Typography } from '@mui/material';
 import { primaryColor, secondaryColor, tertiaryColor, textColor } from '../themes';
 import { NodeType } from '../models/NodeTypes';
 import { ImageProps, QuizProps, ThreeDModelProps, VideoProps } from '../flowchart/nodes/nodeProps';
+import TopAppBar from './AppBar';
 
 const generateInspectorProps = (props) => {
   return props.fields.reduce((obj, field) => ({...obj, [field.name]: field.initialValue}), {})
@@ -48,7 +49,19 @@ export default function MainWindow(props) {
   const [displayedWindow, changeDisplayedWindow] = React.useState('Flowchart');
   const [nodes, setNodes] = React.useState(initialNodes);
   const [edges, setEdges] = React.useState(initialEdges);
+
+  const addNode = (nodeType, nodeProps) => {
+    const newNode = {
+      id: (nodes.length + 1).toString(),
+      position: { x: 0, y: 0 },
+      data: generateInspectorProps(nodeProps),
+      type: nodeType
+    }
+    setNodes([...nodes, newNode]);
+  }
   return (
+    <>
+    <TopAppBar projectTitle={'Exemplo'} currentWindow={displayedWindow} addNode={addNode} ></TopAppBar>
     <Box sx={{ flexGrow: 1 }}>
          <Box sx={{ display:"flex",flexDirection:'row', p:0, alignItems: 'center', justifyContent: 'left', backgroundColor: primaryColor}}>
         {
@@ -80,5 +93,7 @@ export default function MainWindow(props) {
         nodes={nodes} edges={edges} setNodes={setNodes} 
         setEdges={setEdges}> </Flow>  : <div>Not implemented yet</div>}
       </Box>
+      
+      </>
   );
 }

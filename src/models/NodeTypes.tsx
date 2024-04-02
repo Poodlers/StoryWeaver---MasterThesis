@@ -8,4 +8,5 @@ export enum NodeType {
     pathNode = "pathNode",
     userInteractionNode = "userInteractionNode",
     threeDModelNode = "threeDModelNode",
+    
 }

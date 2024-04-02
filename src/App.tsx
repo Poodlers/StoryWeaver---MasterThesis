@@ -17,7 +17,6 @@ function App() {
     <div className="App">
 
     <ThemeProvider theme={theme}>
-    <TopAppBar projectTitle={'Exemplo'}></TopAppBar>
       <StyledEngineProvider injectFirst>
       <MainWindow></MainWindow>
       </StyledEngineProvider>

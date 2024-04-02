@@ -40,7 +40,7 @@ function SelectLocationField(props) {
         
         <Box sx = {{backgroundColor: primaryColor, width: '100%', mt: 2}}>
             <Typography variant="h7" component="div" sx={{ py:1, px:2, color: textColor, m:0}}>
-                Localização:
+               {label} - Localização:
             </Typography>
         </Box>
 

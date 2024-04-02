@@ -93,6 +93,7 @@ function FileSelectField(props) {
               
                   handleFieldChange(props.data.name, 
                     {blob: urlObj, filename: file.name, inputType: 'file'} );
+                    
                   
               }}
               value={value.inputType == 'file' ? value.filename : ''}
