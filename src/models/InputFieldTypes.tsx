@@ -1,6 +1,7 @@
 export enum InputFieldType {
     textField,
     textFieldExpandable,
+    textFieldMultiline,
     threeDCoord,
     checkbox,
     select_location,

@@ -7,7 +7,9 @@ import { leftNodeHandleStyle, rightNodeHandleStyle, primaryColor, secondaryColor
 export default function PathNode(props) { 
   const  pathName = props.data?.name ?? '';
   const start  = props.data?.start ?? '';
+  const placeStart = maps.find(map => map.name == start.map).places.find(place => place.name == start.place )
   const end = props.data?.destination ?? '';
+  const placeEnd = maps.find(map => map.name == end.map).places.find(place => place.name == end.place );
   return (
     <>
       <Handle type="target" position={Position.Left} style={leftNodeHandleStyle} />
@@ -77,11 +79,14 @@ export default function PathNode(props) {
         }}>
             <>
                {
+                
                 start.trigger_mode === "GPS Coords" ?
                 <Box sx={{color: 'black', display: 'flex',  py:2,
                 flexDirection: 'row', alignItems:'center', justifyContent:'center'}}>
                     <Icon sx={{fontSize: 20, color: textColor, mr: 1}}>{
-                    maps.find(map => map.name == start.map).places.find(place => place.name == start.place ).icon }</Icon>    
+                      placeStart ? placeStart.icon : 'place'
+                    
+                    }</Icon>    
                     <Typography variant="h6" sx = {{px: 1, fontSize: 15, color: textColor, fontWeight: 400, textAlign:'center'}}>
                             {start.place}
                     </Typography>
@@ -124,7 +129,8 @@ export default function PathNode(props) {
                 <Box sx={{color: 'black', display: 'flex', py:2,
                 flexDirection: 'row', alignItems:'center', justifyContent:'center'}}>
                 <Icon sx={{fontSize: 20, color: textColor, mr: 1}}>{
-                maps.find(map => map.name == end.map).places.find(place => place.name == end.place ).icon }</Icon>   
+                      placeEnd ? placeEnd.icon : 'place'
+              }</Icon>   
                 <Typography variant="h6" sx = {{px: 1, fontSize: 15, color: textColor, fontWeight: 400, textAlign:'center'}}>
                         {end.place}
                 </Typography>
