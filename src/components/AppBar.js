@@ -34,6 +34,7 @@ export default function TopAppBar(props) {
 
   const handleLoad = props.handleLoad;
 
+  const handleNewProject = props.handleNewProject;
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -72,6 +73,15 @@ export default function TopAppBar(props) {
               },
             }}
           >
+            <MenuItem
+              onClick={() => {
+                handleNewProject();
+                handleClose();
+              }}
+            >
+              Novo
+            </MenuItem>
+
             <MenuItem
               onClick={() => {
                 handleSave();
@@ -115,6 +125,7 @@ export default function TopAppBar(props) {
           <TextField
             aria-autocomplete="off"
             autoComplete="off"
+            fullWidth
             sx={{
               m: "0 auto",
               textAlign: "center",
@@ -131,6 +142,13 @@ export default function TopAppBar(props) {
             }}
             InputProps={{
               disableUnderline: true,
+              sx: {
+                "& .MuiInput-input": {
+                  textAlign: "center !important",
+                  color: textColor,
+                  fontSize: "17px",
+                },
+              },
             }}
             id="standard-basic"
             variant="standard"

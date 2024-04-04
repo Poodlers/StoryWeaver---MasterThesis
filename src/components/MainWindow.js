@@ -16,6 +16,7 @@ import {
   VideoProps,
 } from "../flowchart/nodes/nodeProps";
 import TopAppBar from "./AppBar";
+import MapWindow from "../map/MapWindow";
 
 const generateInspectorProps = (props) => {
   return props.fields.reduce(
@@ -88,6 +89,15 @@ export default function MainWindow(props) {
     };
   };
 
+  const handleNewProject = () => {
+    setNodes(defaultNodes);
+    setEdges([]);
+    setProjectTitle("Adicone um título ao projeto");
+    localStorage.setItem("edges", JSON.stringify([]));
+    localStorage.setItem("nodes", JSON.stringify(defaultNodes));
+    localStorage.setItem("projectTitle", "Adicone um título ao projeto");
+  };
+
   const handleSave = () => {
     //write NODES and EDGES to file
     const file = new Blob(
@@ -131,6 +141,7 @@ export default function MainWindow(props) {
         addNode={addNode}
         handleSave={handleSave}
         handleLoad={handleLoad}
+        handleNewProject={handleNewProject}
       ></TopAppBar>
       <Box sx={{ flexGrow: 1 }}>
         <Box
@@ -213,7 +224,7 @@ export default function MainWindow(props) {
             {" "}
           </Flow>
         ) : (
-          <div>Not implemented yet</div>
+          <MapWindow />
         )}
       </Box>
     </>
