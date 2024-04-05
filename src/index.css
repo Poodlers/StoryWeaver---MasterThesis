@@ -22,3 +22,8 @@ code {
 .react-flow__controls-button svg{
   fill: #5F6F52;
 }
+
+.leaflet-container {
+  width: 100vh;
+  height: 100vh;
+}

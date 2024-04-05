@@ -18,6 +18,7 @@ import {
 import { Button } from "@mui/base";
 import maps from "../data/maps";
 import { DeleteOutline } from "@mui/icons-material";
+import MapDisplay from "./MapDisplay";
 
 export default function MapWindow(props) {
   const [mapsState, setMaps] = React.useState(maps);
@@ -198,11 +199,12 @@ export default function MapWindow(props) {
             {selectedMap.description}
           </Typography>
           <Box>
-            <img
-              src={selectedMap.image}
-              alt={selectedMap.name}
-              style={{ width: "80%", height: "auto" }}
-            ></img>
+            <MapDisplay
+              imgPath="./assets/video_node.png"
+              width={500}
+              height={500}
+              center={[0, 0]}
+            ></MapDisplay>
           </Box>
         </Box>
       ) : (
