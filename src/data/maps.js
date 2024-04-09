@@ -3,6 +3,9 @@ let defaultMaps = [
     id: 1,
     name: "Map 1",
     description: "This is the first map",
+    image: "/images/map1.jpg",
+    mapSize: { width: 1000, height: 500 },
+    anchors: [],
     places: [
       {
         id: 1,
@@ -36,6 +39,7 @@ let defaultMaps = [
   },
 ];
 
-let maps = JSON.parse(localStorage.getItem("maps")) || defaultMaps;
+const mapsStorage = localStorage.getItem("maps");
 
+let maps = mapsStorage != null ? JSON.parse(mapsStorage) : defaultMaps;
 export default maps;

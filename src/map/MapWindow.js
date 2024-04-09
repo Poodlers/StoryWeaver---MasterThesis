@@ -8,6 +8,7 @@ import {
   textColor,
 } from "../themes";
 import {
+  Alert,
   ButtonBase,
   Icon,
   IconButton,
@@ -15,13 +16,14 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import { Button } from "@mui/base";
 import maps from "../data/maps";
 import { DeleteOutline } from "@mui/icons-material";
 import MapDisplay from "./MapDisplay";
 
 export default function MapWindow(props) {
   const [mapsState, setMaps] = React.useState(maps);
+  const [displayAlert, setDisplayAlert] = React.useState(false);
+  const [alertText, setAlertText] = React.useState("");
   const [selectedMap, setSelectedMap] = React.useState(
     maps.length > 0 ? maps[0] : null
   );
@@ -36,36 +38,37 @@ export default function MapWindow(props) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const data = e.target.result;
-        //create a blob from the file
-        const blob = new Blob([new Uint8Array(data)], {
-          type: "image/png",
-        });
-        //create a URL for the blob
-        const url = URL.createObjectURL(blob);
 
-        const newMap = {
-          id: maps.length + 1,
-          name: "Map Name",
-          image: url,
-          description: "This is your map's description",
-          places: [
-            {
-              id: 1,
-              name: "Casa de Banho",
-              description: "This is a bathroom",
-              icon: "bathroom",
-              coords: { x: 0, y: 0 },
-              realCoords: { lat: 0, long: 0 },
-            },
-          ],
+        //get height and width of the image
+        const img = new Image();
+        img.src = data;
+        img.onload = () => {
+          const newMap = {
+            id: maps.length + 1,
+            name: "Novo mapa",
+            image: data,
+            mapSize: { width: img.width, height: img.height },
+            description: "This is your map's description",
+            anchors: [],
+            places: [
+              {
+                id: 1,
+                name: "Casa de Banho",
+                description: "This is a bathroom",
+                icon: "bathroom",
+                coords: { x: 0, y: 0 },
+                realCoords: { lat: 0, long: 0 },
+              },
+            ],
+          };
+          setMaps([...mapsState, newMap]);
+          maps.push(newMap);
+          setSelectedMap(maps[maps.length - 1]);
+
+          localStorage.setItem("maps", JSON.stringify(maps));
         };
-        setMaps([...mapsState, , newMap]);
-        maps.push(newMap);
-        setSelectedMap(maps[maps.length - 1]);
-
-        localStorage.setItem("maps", JSON.stringify(maps));
       };
-      reader.readAsArrayBuffer(file);
+      reader.readAsDataURL(file);
     };
   };
 
@@ -194,18 +197,50 @@ export default function MapWindow(props) {
                 <DeleteOutline fontSize="inherit"></DeleteOutline>
               </Icon>
             </Box>
+            {selectedMap.anchors.length < 2 ? (
+              <>
+                <Typography
+                  variant="h7"
+                  component="div"
+                  sx={{
+                    py: 1,
+                    px: 2,
+                    color: secondaryColor,
+                    m: 0,
+                    fontSize: "20px",
+                    textAlign: "center",
+                  }}
+                >
+                  Selecione pelo menos dois pontos (de preferência em cantos
+                  opostos) e preencha as coordenadas de latitude e longitude.
+                </Typography>
+
+                <ButtonBase
+                  variant="contained"
+                  onClick={() => {
+                    if (selectedMap.anchors.length < 2) {
+                      setDisplayAlert(true);
+                      setAlertText("Selecione pelo menos dois pontos.");
+                    }
+                  }}
+                  sx={{
+                    backgroundColor: tertiaryColor,
+                    color: textColor,
+                    fontSize: "20px",
+                    p: 2,
+                    borderRadius: 3,
+                    m: 2,
+                  }}
+                >
+                  Continuar
+                </ButtonBase>
+              </>
+            ) : null}
           </Box>
-          <Typography variant="h7" component="div" sx={{ m: 0, p: 0 }}>
-            {selectedMap.description}
-          </Typography>
-          <Box>
-            <MapDisplay
-              imgPath="./assets/video_node.png"
-              width={500}
-              height={500}
-              center={[0, 0]}
-            ></MapDisplay>
-          </Box>
+
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <MapDisplay center={[0, 0]} map={selectedMap}></MapDisplay>
+          </div>
         </Box>
       ) : (
         <Box
@@ -247,7 +282,7 @@ export default function MapWindow(props) {
               color: secondaryColor,
               m: 0,
               fontSize: "20px",
-              textAlign: "center",
+              textAlign: "start",
             }}
           >
             Parece que ainda não adicionou o mapa da exposição. Clique no ícone
@@ -255,6 +290,35 @@ export default function MapWindow(props) {
           </Typography>
         </Box>
       )}
+
+      <Alert
+        sx={{
+          display: displayAlert ? "flex" : "none",
+          backgroundColor: primaryColor,
+          color: textColor,
+          position: "fixed",
+          width: "90%",
+          bottom: "3%",
+          left: "5%",
+          m: 2,
+          p: 0.3,
+          borderRadius: 3,
+          fontSize: "15px",
+          ".MuiAlert-icon": {
+            color: textColor,
+          },
+          ".MuiAlert-action": {
+            color: textColor,
+            fontSize: "20px",
+            mr: 1,
+          },
+        }}
+        onClose={() => {
+          setDisplayAlert(false);
+        }}
+      >
+        {alertText}
+      </Alert>
     </Box>
   );
 }

@@ -24,6 +24,21 @@ code {
 }
 
 .leaflet-container {
-  width: 100vh;
-  height: 100vh;
+  background-color: #FEFAE0 !important;
+  width: 1280px;
+  height: 720px;
+}
+
+.request-popup .leaflet-popup-content-wrapper {
+  border-radius: 0px;
+  background-color: #5F6F52;
+}
+
+.leaflet-popup-tip{
+  background-color: #5F6F52 !important;
+}
+
+.leaflet-popup-close-button{
+  color: #FEFAE0 !important;
+  font-size: 25px !important;
 }
