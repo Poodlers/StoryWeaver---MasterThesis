@@ -19,6 +19,7 @@ import {
 import maps from "../data/maps";
 import { DeleteOutline } from "@mui/icons-material";
 import MapDisplay from "./MapDisplay";
+import MapDisplayRawLeaflet from "./MapDisplayRawLeaflet";
 
 export default function MapWindow(props) {
   const [mapsState, setMaps] = React.useState(maps);
@@ -239,7 +240,7 @@ export default function MapWindow(props) {
           </Box>
 
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <MapDisplay center={[0, 0]} map={selectedMap}></MapDisplay>
+            <MapDisplayRawLeaflet map={selectedMap} />
           </div>
         </Box>
       ) : (
