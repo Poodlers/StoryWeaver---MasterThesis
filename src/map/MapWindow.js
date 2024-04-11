@@ -18,7 +18,6 @@ import {
 } from "@mui/material";
 import maps from "../data/maps";
 import { DeleteOutline } from "@mui/icons-material";
-import MapDisplay from "./MapDisplay";
 import MapDisplayRawLeaflet from "./MapDisplayRawLeaflet";
 
 export default function MapWindow(props) {
@@ -28,6 +27,7 @@ export default function MapWindow(props) {
   const [selectedMap, setSelectedMap] = React.useState(
     maps.length > 0 ? maps[0] : null
   );
+
   const addNewMap = () => {
     //open the file system and select a png
     const fileInput = document.createElement("input");
@@ -45,8 +45,8 @@ export default function MapWindow(props) {
         img.src = data;
         img.onload = () => {
           const newMap = {
-            id: maps.length + 1,
-            name: "Novo mapa",
+            id: mapsState.length,
+            name: "Mapa" + mapsState.length,
             image: data,
             mapSize: { width: img.width, height: img.height },
             description: "This is your map's description",
@@ -62,11 +62,10 @@ export default function MapWindow(props) {
               },
             ],
           };
-          setMaps([...mapsState, newMap]);
-          maps.push(newMap);
-          setSelectedMap(maps[maps.length - 1]);
-
-          localStorage.setItem("maps", JSON.stringify(maps));
+          const newMaps = [newMap, ...mapsState];
+          localStorage.setItem("maps", JSON.stringify(newMaps));
+          setSelectedMap(newMap);
+          setMaps(newMaps);
         };
       };
       reader.readAsDataURL(file);
@@ -83,7 +82,7 @@ export default function MapWindow(props) {
         backgroundColor: textColor,
       }}
     >
-      {mapsState.length > 0 && selectedMap ? (
+      {mapsState.length > 0 && selectedMap != null ? (
         <Box
           sx={{
             wdith: "100%",
@@ -125,7 +124,7 @@ export default function MapWindow(props) {
                 setSelectedMap(e.target.value);
               }}
             >
-              {maps.map((map) => {
+              {mapsState.map((map) => {
                 return (
                   <MenuItem
                     sx={{
@@ -180,10 +179,14 @@ export default function MapWindow(props) {
               }}
               onClick={() => {
                 //remove the selected map
-                const newMaps = maps.filter((map) => map.id !== selectedMap.id);
-                maps.splice(maps.indexOf(selectedMap), 1);
+                const newMaps = mapsState.filter(
+                  (map) => map.id !== selectedMap.id
+                );
+
                 setMaps(newMaps);
-                setSelectedMap(newMaps.length > 0 ? newMaps[0] : null);
+                setSelectedMap(
+                  newMaps.length > 0 ? newMaps[newMaps.length - 1] : null
+                );
                 localStorage.setItem("maps", JSON.stringify(newMaps));
               }}
             >
@@ -198,49 +201,68 @@ export default function MapWindow(props) {
                 <DeleteOutline fontSize="inherit"></DeleteOutline>
               </Icon>
             </Box>
-            {selectedMap.anchors.length < 2 ? (
-              <>
-                <Typography
-                  variant="h7"
-                  component="div"
-                  sx={{
-                    py: 1,
-                    px: 2,
-                    color: secondaryColor,
-                    m: 0,
-                    fontSize: "20px",
-                    textAlign: "center",
-                  }}
-                >
-                  Selecione pelo menos dois pontos (de preferência em cantos
-                  opostos) e preencha as coordenadas de latitude e longitude.
-                </Typography>
+            {selectedMap != null && selectedMap.anchors.length < 3 ? (
+              <Typography
+                variant="h7"
+                component="div"
+                sx={{
+                  py: 1,
+                  px: 2,
+                  color: secondaryColor,
+                  m: 0,
+                  fontSize: "20px",
+                  textAlign: "center",
+                }}
+              >
+                Selecione pelo menos dois pontos (de preferência em cantos
+                opostos) e preencha as coordenadas de latitude e longitude.
+              </Typography>
+            ) : (
+              <Typography
+                variant="h7"
+                component="div"
+                sx={{
+                  py: 1,
+                  flexGrow: 1,
+                  px: 2,
+                  color: secondaryColor,
+                  m: 0,
+                  fontSize: "20px",
+                  textAlign: "center",
+                }}
+              >
+                Verifique que os pontos contêm as coordenadas corretas e
+                pressione em 'Continuar'.
+              </Typography>
+            )}
 
-                <ButtonBase
-                  variant="contained"
-                  onClick={() => {
-                    if (selectedMap.anchors.length < 2) {
-                      setDisplayAlert(true);
-                      setAlertText("Selecione pelo menos dois pontos.");
-                    }
-                  }}
-                  sx={{
-                    backgroundColor: tertiaryColor,
-                    color: textColor,
-                    fontSize: "20px",
-                    p: 2,
-                    borderRadius: 3,
-                    m: 2,
-                  }}
-                >
-                  Continuar
-                </ButtonBase>
-              </>
-            ) : null}
+            <ButtonBase
+              variant="contained"
+              onClick={() => {
+                if (selectedMap.anchors.length < 2) {
+                  setDisplayAlert(true);
+                  setAlertText("Selecione pelo menos dois pontos.");
+                }
+              }}
+              sx={{
+                backgroundColor: tertiaryColor,
+                color: textColor,
+                fontSize: "20px",
+                p: 2,
+                borderRadius: 3,
+                m: 2,
+              }}
+            >
+              Continuar
+            </ButtonBase>
           </Box>
 
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <MapDisplayRawLeaflet map={selectedMap} />
+            <MapDisplayRawLeaflet
+              map={selectedMap}
+              maps={mapsState}
+              setMapsState={setMaps}
+            />
           </div>
         </Box>
       ) : (

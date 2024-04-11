@@ -29,9 +29,15 @@ code {
   height: 720px;
 }
 
+
 .request-popup .leaflet-popup-content-wrapper {
   border-radius: 0px;
-  background-color: #5F6F52;
+  background-color: #5F6F52 !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: #5F6F52 !important;
+  color: #FEFAE0 !important;
 }
 
 .leaflet-popup-tip{
