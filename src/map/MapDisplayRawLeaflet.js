@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
-import { iconAnchor } from "./MarkerIcon";
+import { iconAnchor, MarkerTypeToIcon } from "./MarkerIcon";
 import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
 import PopupAnchor from "./PopupDefault";
+import { MarkerTypes } from "../models/MarkerTypes";
 
 export default function MapDisplayRawLeaflet(props) {
   const zoom = props.zoom;
@@ -20,9 +21,9 @@ export default function MapDisplayRawLeaflet(props) {
 
   const anchors = mapInfo.anchors;
 
-  const addMarker = (latlng, map, anchorId) => {
+  const addMarker = (latlng, map, anchorId, anchorType) => {
     const anchor = L.marker(latlng, {
-      icon: iconAnchor,
+      icon: MarkerTypeToIcon[anchorType] || iconAnchor,
       draggable: true,
     }).addTo(map);
 
@@ -42,6 +43,24 @@ export default function MapDisplayRawLeaflet(props) {
       });
       return div.innerHTML;
     });
+
+    anchor.on("dragend", (e) => {
+      const newAnchors = mapInfo.anchors.map((anchor) => {
+        if (anchor.anchorId == anchorId) {
+          anchor.imgCoords = e.target.getLatLng();
+          //TODO: recompute coords according to the anchors position
+          anchor.coords = { lat: 0, lng: 0 };
+        }
+        return anchor;
+      });
+
+      const newMaps = maps.filter((map) => map.id != mapInfo.id);
+      mapInfo.anchors = newAnchors;
+      newMaps.push(mapInfo);
+      setMaps(newMaps);
+      localStorage.setItem("maps", JSON.stringify(newMaps));
+    });
+
     return anchor;
   };
 
@@ -53,13 +72,16 @@ export default function MapDisplayRawLeaflet(props) {
     });
 
     anchors.forEach((anchor) => {
-      addMarker(anchor.imgCoords, map, anchor.anchorId);
+      addMarker(anchor.imgCoords, map, anchor.anchorId, anchor.anchorType);
     });
 
     map.on("click", (e) => {
+      if (mapInfo.progressionState == "anchors-selected") return;
+
       const anchorId = mapInfo.anchors.length + 1;
       mapInfo.anchors.push({
         anchorId: anchorId,
+        anchorType: MarkerTypes.anchor,
         coords: { lat: 0, lng: 0 },
         imgCoords: e.latlng,
       });
@@ -68,7 +90,7 @@ export default function MapDisplayRawLeaflet(props) {
       newMaps.push(mapInfo);
       setMaps(newMaps);
       localStorage.setItem("maps", JSON.stringify(newMaps));
-      addMarker(e.latlng, map, anchorId).openPopup();
+      addMarker(e.latlng, map, anchorId, MarkerTypes.anchor).openPopup();
     });
     var image = L.imageOverlay(mapInfo.image, bounds).addTo(map);
 

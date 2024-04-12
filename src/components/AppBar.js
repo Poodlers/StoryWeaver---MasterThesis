@@ -9,6 +9,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Icon, Menu, MenuItem, TextField } from "@mui/material";
 import AddNodePopup from "../flowchart/menu/AddNodePopup";
 import { primaryColor, secondaryColor, textColor } from "../themes";
+import AddLocationsPopup from "../flowchart/menu/AddLocationsPopup";
 
 export default function TopAppBar(props) {
   const currentWindow = props.currentWindow;
@@ -18,6 +19,7 @@ export default function TopAppBar(props) {
     localStorage.setItem("projectTitle", projectTitle);
   };
   const addNode = props.addNode;
+  const addLocation = props.addLocation;
 
   const [openAddNode, setOpenAddNode] = React.useState(false);
 
@@ -110,7 +112,11 @@ export default function TopAppBar(props) {
               setOpenAddNode(true);
             }}
           >
-            <Icon>add</Icon>
+            <img
+              src="./assets/add_symbol.png"
+              alt="Add"
+              style={{ width: "50px", height: "50px" }}
+            />
           </IconButton>
           {currentWindow === "Flowchart" ? (
             <AddNodePopup
@@ -120,7 +126,17 @@ export default function TopAppBar(props) {
                 if (nodeType) addNode(nodeType, nodeProps);
               }}
             ></AddNodePopup>
-          ) : null}
+          ) : (
+            <AddLocationsPopup
+              open={openAddNode}
+              onClose={(markerType) => {
+                setOpenAddNode(false);
+                if (markerType) addLocation(markerType);
+              }}
+            >
+              {" "}
+            </AddLocationsPopup>
+          )}
 
           <TextField
             aria-autocomplete="off"

@@ -16,17 +16,16 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import maps from "../data/maps";
 import { DeleteOutline } from "@mui/icons-material";
 import MapDisplayRawLeaflet from "./MapDisplayRawLeaflet";
 
 export default function MapWindow(props) {
-  const [mapsState, setMaps] = React.useState(maps);
+  const mapsState = props.mapState;
+  const setMaps = props.setMaps;
   const [displayAlert, setDisplayAlert] = React.useState(false);
   const [alertText, setAlertText] = React.useState("");
-  const [selectedMap, setSelectedMap] = React.useState(
-    maps.length > 0 ? maps[0] : null
-  );
+  const selectedMap = props.selectedMap;
+  const setSelectedMap = props.setSelectedMap;
 
   const addNewMap = () => {
     //open the file system and select a png
@@ -47,6 +46,7 @@ export default function MapWindow(props) {
           const newMap = {
             id: mapsState.length,
             name: "Mapa" + mapsState.length,
+            progressionState: "not-started",
             image: data,
             mapSize: { width: img.width, height: img.height },
             description: "This is your map's description",
@@ -201,7 +201,7 @@ export default function MapWindow(props) {
                 <DeleteOutline fontSize="inherit"></DeleteOutline>
               </Icon>
             </Box>
-            {selectedMap != null && selectedMap.anchors.length < 3 ? (
+            {selectedMap != null && selectedMap.anchors.length < 2 ? (
               <Typography
                 variant="h7"
                 component="div"
@@ -242,6 +242,15 @@ export default function MapWindow(props) {
                 if (selectedMap.anchors.length < 2) {
                   setDisplayAlert(true);
                   setAlertText("Selecione pelo menos dois pontos.");
+                } else {
+                  selectedMap.progressionState = "anchors-selected";
+                  const newMaps = mapsState.filter(
+                    (map) => map.id !== selectedMap.id
+                  );
+                  newMaps.push(selectedMap);
+                  setMaps(newMaps);
+                  setSelectedMap(selectedMap);
+                  localStorage.setItem("maps", JSON.stringify(newMaps));
                 }
               }}
               sx={{
@@ -318,6 +327,7 @@ export default function MapWindow(props) {
         sx={{
           display: displayAlert ? "flex" : "none",
           backgroundColor: primaryColor,
+          zIndex: 1000,
           color: textColor,
           position: "fixed",
           width: "90%",

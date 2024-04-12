@@ -32,12 +32,12 @@ export default function PopupAnchor(props) {
     localStorage.setItem("maps", JSON.stringify(newMaps));
   };
   const fillCurrentPosition = () => {
+    const latitude = document.getElementById("latitude-coords-" + anchorId);
+    const longitude = document.getElementById("longitude-coords-" + anchorId);
+    latitude.value = "Carregando...";
+    longitude.value = "Carregando...";
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const latitude = document.getElementById("latitude-coords-" + anchorId);
-        const longitude = document.getElementById(
-          "longitude-coords-" + anchorId
-        );
         latitude.value = position.coords.latitude;
         longitude.value = position.coords.longitude;
         mapInfo.anchors.find((anchor) => anchor.anchorId == anchorId).coords = {
@@ -51,6 +51,8 @@ export default function PopupAnchor(props) {
       },
       (error) => {
         console.log(error);
+        latitude.value = "Erro";
+        longitude.value = "Erro";
       }
     );
   };
@@ -59,7 +61,48 @@ export default function PopupAnchor(props) {
     marker.on("dragend", (e) => {});
   }, [marker]);
 
+  const getFullURL = async (link) => {
+    const latitude = document.getElementById("latitude-coords-" + anchorId);
+    const longitude = document.getElementById("longitude-coords-" + anchorId);
+    const url = "https://unshorten.me/api/v2/unshorten?url=" + link;
+    const headers = {
+      Authorization: "Token  1e9a66d860fa3c643620dcf12e3cd156a2061385",
+    };
+    fetch(url, {
+      headers: headers,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        const unshortenedURL = data.unshortened_url;
+        try {
+          var regex = new RegExp("@(.*),(.*),");
+          var lat_long_match = url.match(regex);
+          var lat = lat_long_match[1];
+          var long = lat_long_match[2];
+          latitude.value = lat;
+          longitude.value = long;
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch((error) => {
+        // Handle any errors that occurred during the request
+        console.error("Error:", error);
+      });
+  };
+
   useEffect(() => {
+    document.addEventListener("input", async (e) => {
+      const link = document.getElementById("link-" + anchorId);
+
+      try {
+        const url = await getFullURL(link.value);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
     document.addEventListener("click", (e) => {
       const deleteButton = document.getElementById("deletebutton" + anchorId);
       const useMyPosition = document.getElementById(
@@ -116,7 +159,10 @@ export default function PopupAnchor(props) {
           </Typography>
           <TextField
             value={link}
-            onChange={(e) => setLink(e.target.value)}
+            id={"link-" + anchorId}
+            onChange={(e) => {
+              setLink(e.target.value);
+            }}
             inputProps={{
               style: {
                 borderRadius: 0,

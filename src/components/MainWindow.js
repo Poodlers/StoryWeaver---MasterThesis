@@ -1,6 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Flow from "../flowchart/Flow";
+import L from "leaflet";
 import { Typography } from "@mui/material";
 import {
   primaryColor,
@@ -17,6 +18,7 @@ import {
 } from "../flowchart/nodes/nodeProps";
 import TopAppBar from "./AppBar";
 import MapWindow from "../map/MapWindow";
+import maps from "../data/maps";
 
 const generateInspectorProps = (props) => {
   return props.fields.reduce(
@@ -60,6 +62,10 @@ const initialEdges = JSON.parse(localStorage.getItem("edges") || "[]");
 
 export default function MainWindow(props) {
   const [windows, setWindows] = React.useState(["Flowchart", "Mapa"]);
+  const [mapsState, setMaps] = React.useState(maps);
+  const [selectedMap, setSelectedMap] = React.useState(
+    maps.length > 0 ? maps[0] : null
+  );
   const [displayedWindow, changeDisplayedWindow] = React.useState("Flowchart");
   const [nodes, setNodes] = React.useState(initialNodes);
   const [edges, setEdges] = React.useState(initialEdges);
@@ -132,6 +138,30 @@ export default function MainWindow(props) {
     setNodes([...nodes, newNode]);
     localStorage.setItem("nodes", JSON.stringify([...nodes, newNode]));
   };
+
+  const addLocation = (markerType) => {
+    const imgCoords = new L.latLng(
+      selectedMap.mapSize.height / 2,
+      selectedMap.mapSize.width / 2
+    );
+
+    //TODO: compute realCoords from imgCoords and anchor position and mapSize
+    const realCoords = { lat: 0, lng: 0 };
+
+    const newAnchor = {
+      anchorId: selectedMap.anchors.length + 1,
+      anchorType: markerType,
+      coords: realCoords,
+      imgCoords: imgCoords,
+    };
+    selectedMap.anchors.push(newAnchor);
+    setSelectedMap(selectedMap);
+    const newMaps = mapsState.filter((map) => map.id != selectedMap.id);
+    newMaps.push(selectedMap);
+    setMaps(newMaps);
+    localStorage.setItem("maps", JSON.stringify(newMaps));
+  };
+
   return (
     <>
       <TopAppBar
@@ -139,6 +169,7 @@ export default function MainWindow(props) {
         setProjectTitle={setProjectTitle}
         currentWindow={displayedWindow}
         addNode={addNode}
+        addLocation={addLocation}
         handleSave={handleSave}
         handleLoad={handleLoad}
         handleNewProject={handleNewProject}
@@ -224,7 +255,12 @@ export default function MainWindow(props) {
             {" "}
           </Flow>
         ) : (
-          <MapWindow />
+          <MapWindow
+            mapState={mapsState}
+            setMaps={setMaps}
+            selectedMap={selectedMap}
+            setSelectedMap={setSelectedMap}
+          />
         )}
       </Box>
     </>
