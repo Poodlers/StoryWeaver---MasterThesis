@@ -8,7 +8,7 @@ import {
   Popup,
   useMapEvents,
 } from "react-leaflet";
-import ClickMarker from "./PopupDefault";
+import ClickMarker from "./PopupAnchor";
 
 export default function MapDisplay(props) {
   const zoom = props.zoom;

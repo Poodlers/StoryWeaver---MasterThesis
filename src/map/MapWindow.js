@@ -270,6 +270,8 @@ export default function MapWindow(props) {
             <MapDisplayRawLeaflet
               map={selectedMap}
               maps={mapsState}
+              setAlertText={setAlertText}
+              setAlertDisplay={setDisplayAlert}
               setMapsState={setMaps}
             />
           </div>

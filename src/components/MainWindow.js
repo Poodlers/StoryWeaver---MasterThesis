@@ -153,6 +153,8 @@ export default function MainWindow(props) {
       anchorType: markerType,
       coords: realCoords,
       imgCoords: imgCoords,
+      name: "Novo Local",
+      description: "Descrição do Local",
     };
     selectedMap.anchors.push(newAnchor);
     setSelectedMap(selectedMap);

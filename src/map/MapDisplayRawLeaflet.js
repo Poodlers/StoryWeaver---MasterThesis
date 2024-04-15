@@ -3,13 +3,17 @@ import L from "leaflet";
 import { iconAnchor, MarkerTypeToIcon } from "./MarkerIcon";
 import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
-import PopupAnchor from "./PopupDefault";
+import PopupAnchor from "./PopupAnchor";
 import { MarkerTypes } from "../models/MarkerTypes";
+import PopupMarker from "./PopupMarker";
 
 export default function MapDisplayRawLeaflet(props) {
   const zoom = props.zoom;
   const center = props.center;
   const mapInfo = props.map;
+  const setAlertText = props.setAlertText;
+  const setAlertDisplay = props.setAlertDisplay;
+
   const maps = props.maps;
   const setMaps = props.setMapsState;
   const width = mapInfo.mapSize.width;
@@ -31,15 +35,31 @@ export default function MapDisplayRawLeaflet(props) {
       const div = document.createElement("div");
       const root = createRoot(div);
       flushSync(() => {
-        root.render(
-          <PopupAnchor
-            anchorId={anchorId}
-            mapInfo={mapInfo}
-            maps={maps}
-            setMaps={setMaps}
-            marker={anchor}
-          />
-        );
+        if (anchorType == MarkerTypes.anchor) {
+          root.render(
+            <PopupAnchor
+              anchorId={anchorId}
+              mapInfo={mapInfo}
+              maps={maps}
+              setMaps={setMaps}
+              marker={anchor}
+              setAlertDisplay={setAlertDisplay}
+              setAlertText={setAlertText}
+            />
+          );
+        } else {
+          root.render(
+            <PopupMarker
+              anchorId={anchorId}
+              mapInfo={mapInfo}
+              maps={maps}
+              setMaps={setMaps}
+              marker={anchor}
+              setAlertDisplay={setAlertDisplay}
+              setAlertText={setAlertText}
+            />
+          );
+        }
       });
       return div.innerHTML;
     });

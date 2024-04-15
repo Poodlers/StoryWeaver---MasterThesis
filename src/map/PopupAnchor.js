@@ -15,13 +15,21 @@ export default function PopupAnchor(props) {
   const maps = props.maps;
   const setMaps = props.setMaps;
   const mapInfo = props.mapInfo;
+  const setAlertDisplay = props.setAlertDisplay;
+  const setAlertText = props.setAlertText;
   const anchorId = props.anchorId;
   const position = mapInfo.anchors.find(
     (anchor) => anchor.anchorId == anchorId
   ).coords;
-  const [link, setLink] = React.useState("");
 
   const deleteMarker = () => {
+    if (mapInfo.anchors.length == 2) {
+      setAlertText(
+        "Não é possível apagar. O mapa deve ter pelo menos 2 âncoras."
+      );
+      setAlertDisplay(true);
+      return;
+    }
     marker.remove();
     mapInfo.anchors = mapInfo.anchors.filter(
       (anchor) => anchor.anchorId != anchorId
@@ -62,6 +70,7 @@ export default function PopupAnchor(props) {
   }, [marker]);
 
   const getFullURL = async (link) => {
+    /* NOT WORKING
     const latitude = document.getElementById("latitude-coords-" + anchorId);
     const longitude = document.getElementById("longitude-coords-" + anchorId);
     const url = "https://unshorten.me/api/v2/unshorten?url=" + link;
@@ -90,19 +99,10 @@ export default function PopupAnchor(props) {
         // Handle any errors that occurred during the request
         console.error("Error:", error);
       });
+      */
   };
 
   useEffect(() => {
-    document.addEventListener("input", async (e) => {
-      const link = document.getElementById("link-" + anchorId);
-
-      try {
-        const url = await getFullURL(link.value);
-      } catch (err) {
-        console.log(err);
-      }
-    });
-
     document.addEventListener("click", (e) => {
       const deleteButton = document.getElementById("deletebutton" + anchorId);
       const useMyPosition = document.getElementById(
@@ -124,6 +124,7 @@ export default function PopupAnchor(props) {
 
     return () => {
       document.onclick = null;
+      document.oninput = null;
     };
   }, []);
 
@@ -158,11 +159,7 @@ export default function PopupAnchor(props) {
             Link:
           </Typography>
           <TextField
-            value={link}
             id={"link-" + anchorId}
-            onChange={(e) => {
-              setLink(e.target.value);
-            }}
             inputProps={{
               style: {
                 borderRadius: 0,
