@@ -21,9 +21,37 @@ export default function PopupAnchor(props) {
   const position = mapInfo.anchors.find(
     (anchor) => anchor.anchorId == anchorId
   ).coords;
+  if (mapInfo.progressionState != "not-started") {
+    marker.options.draggable = false;
+  }
+  const inputEventListener = (e) => {
+    const latitude = document.getElementById("latitude-coords-" + anchorId);
+    const longitude = document.getElementById("longitude-coords-" + anchorId);
+    const anchor = mapInfo.anchors.find(
+      (anchor) => anchor.anchorId == anchorId
+    );
+    const newLat = Number(latitude.value);
+    const newLong = Number(longitude.value);
+    if (isNaN(newLat) || isNaN(newLong)) {
+      setAlertText("Coordenadas inválidas.");
+      setAlertDisplay(true);
+      return;
+    }
+
+    anchor.coords.lat = newLat;
+    anchor.coords.lng = newLong;
+
+    const newMaps = maps.filter((map) => map.id != mapInfo.id);
+    newMaps.push(mapInfo);
+    setMaps(newMaps);
+    localStorage.setItem("maps", JSON.stringify(newMaps));
+  };
 
   const deleteMarker = () => {
-    if (mapInfo.anchors.length == 2) {
+    if (
+      mapInfo.anchors.length == 2 &&
+      mapInfo.progressionState == "anchors-selected"
+    ) {
       setAlertText(
         "Não é possível apagar. O mapa deve ter pelo menos 2 âncoras."
       );
@@ -66,8 +94,10 @@ export default function PopupAnchor(props) {
   };
 
   useEffect(() => {
-    marker.on("dragend", (e) => {});
-  }, [marker]);
+    marker.on("popupclose", (e) => {
+      document.removeEventListener("input", inputEventListener);
+    });
+  });
 
   const getFullURL = async (link) => {
     /* NOT WORKING
@@ -121,6 +151,8 @@ export default function PopupAnchor(props) {
         }
       }
     });
+
+    document.addEventListener("input", inputEventListener);
 
     return () => {
       document.onclick = null;

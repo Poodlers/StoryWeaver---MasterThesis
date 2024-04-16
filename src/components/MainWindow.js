@@ -66,12 +66,19 @@ export default function MainWindow(props) {
   const [selectedMap, setSelectedMap] = React.useState(
     maps.length > 0 ? maps[0] : null
   );
+  const [mountMap, setMountMap] = React.useState(true);
   const [displayedWindow, changeDisplayedWindow] = React.useState("Flowchart");
   const [nodes, setNodes] = React.useState(initialNodes);
   const [edges, setEdges] = React.useState(initialEdges);
   const [projectTitle, setProjectTitle] = React.useState(
     localStorage.getItem("projectTitle") || "Projeto Exemplo"
   );
+
+  React.useEffect(() => {
+    if (!mountMap) {
+      setMountMap(true);
+    }
+  }, [mountMap]);
 
   const handleLoad = () => {
     // read NODES and EDGES from file
@@ -86,10 +93,13 @@ export default function MainWindow(props) {
         const data = JSON.parse(e.target.result);
         setNodes(data.nodes);
         setEdges(data.edges);
+        setMaps(data.maps);
+        setSelectedMap(data.maps.length > 0 ? data.maps[0] : null);
         setProjectTitle(data.projectTitle);
         localStorage.setItem("edges", JSON.stringify(data.edges));
         localStorage.setItem("nodes", JSON.stringify(data.nodes));
         localStorage.setItem("projectTitle", data.projectTitle);
+        localStorage.setItem("maps", JSON.stringify(data.maps));
       };
       reader.readAsText(file);
     };
@@ -98,9 +108,11 @@ export default function MainWindow(props) {
   const handleNewProject = () => {
     setNodes(defaultNodes);
     setEdges([]);
+    setMaps([]);
     setProjectTitle("Adicone um título ao projeto");
     localStorage.setItem("edges", JSON.stringify([]));
     localStorage.setItem("nodes", JSON.stringify(defaultNodes));
+    localStorage.setItem("maps", JSON.stringify([]));
     localStorage.setItem("projectTitle", "Adicone um título ao projeto");
   };
 
@@ -112,6 +124,7 @@ export default function MainWindow(props) {
           projectTitle: projectTitle,
           nodes: nodes,
           edges: edges,
+          maps: mapsState,
         }),
       ],
       {
@@ -135,6 +148,7 @@ export default function MainWindow(props) {
       data: generateInspectorProps(nodeProps),
       type: nodeType,
     };
+
     setNodes([...nodes, newNode]);
     localStorage.setItem("nodes", JSON.stringify([...nodes, newNode]));
   };
@@ -144,10 +158,15 @@ export default function MainWindow(props) {
       selectedMap.mapSize.height / 2,
       selectedMap.mapSize.width / 2
     );
-
+    const anchors = selectedMap.anchors.filter(
+      (anchor) => anchor.anchorType === "anchor"
+    );
     //TODO: compute realCoords from imgCoords and anchor position and mapSize
-    const realCoords = { lat: 0, lng: 0 };
-
+    const realCoords = {
+      lat: imgCoords.lat * selectedMap.scale + anchors[0].coords.lat,
+      lng: imgCoords.lng * selectedMap.scale + anchors[0].coords.lng,
+    };
+    setMountMap(false);
     const newAnchor = {
       anchorId: selectedMap.anchors.length + 1,
       anchorType: markerType,
@@ -209,6 +228,7 @@ export default function MainWindow(props) {
                     borderColor: tertiaryColor,
                     borderWidth: 3,
                     borderStyle: "solid",
+                    cursor: "pointer",
                     m: 0,
                     borderBottomWidth: displayedWindow === window ? 0 : 3,
                   }}
@@ -256,14 +276,16 @@ export default function MainWindow(props) {
           >
             {" "}
           </Flow>
-        ) : (
-          <MapWindow
-            mapState={mapsState}
-            setMaps={setMaps}
-            selectedMap={selectedMap}
-            setSelectedMap={setSelectedMap}
-          />
-        )}
+        ) : displayedWindow == "Mapa" ? (
+          mountMap ? (
+            <MapWindow
+              mapState={mapsState}
+              setMaps={setMaps}
+              selectedMap={selectedMap}
+              setSelectedMap={setSelectedMap}
+            />
+          ) : null
+        ) : null}
       </Box>
     </>
   );

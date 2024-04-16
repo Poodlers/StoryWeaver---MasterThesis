@@ -18,14 +18,46 @@ import {
 } from "@mui/material";
 import { DeleteOutline } from "@mui/icons-material";
 import MapDisplayRawLeaflet from "./MapDisplayRawLeaflet";
+import NameMapPopup from "./NameMapPopup";
 
 export default function MapWindow(props) {
   const mapsState = props.mapState;
   const setMaps = props.setMaps;
   const [displayAlert, setDisplayAlert] = React.useState(false);
   const [alertText, setAlertText] = React.useState("");
+  const [nameMapPopupOpen, setNameMapPopupOpen] = React.useState(false);
   const selectedMap = props.selectedMap;
   const setSelectedMap = props.setSelectedMap;
+
+  const continuarAction = () => {
+    if (selectedMap.anchors.length < 2) {
+      setDisplayAlert(true);
+      setAlertText("Selecione pelo menos dois pontos.");
+    } else if (selectedMap.progressionState != "name-given") {
+      selectedMap.progressionState = "anchors-selected";
+      //use the two anchors to calculate the scale
+      const anchor1 = selectedMap.anchors[0];
+      const anchor2 = selectedMap.anchors[1];
+      const realDistance = Math.sqrt(
+        Math.pow(anchor1.coords.lat - anchor2.coords.lat, 2) +
+          Math.pow(anchor1.coords.lng - anchor2.coords.lng, 2)
+      );
+      console.log("Real distance: ", realDistance);
+      const imgDistance = Math.sqrt(
+        Math.pow(anchor1.imgCoords.lat - anchor2.imgCoords.lat, 2) +
+          Math.pow(anchor1.imgCoords.lng - anchor2.imgCoords.lng, 2)
+      );
+
+      selectedMap.scale = realDistance / imgDistance;
+
+      const newMaps = mapsState.filter((map) => map.id !== selectedMap.id);
+      newMaps.push(selectedMap);
+      setMaps(newMaps);
+      setSelectedMap(selectedMap);
+      localStorage.setItem("maps", JSON.stringify(newMaps));
+      setNameMapPopupOpen(true);
+    }
+  };
 
   const addNewMap = () => {
     //open the file system and select a png
@@ -51,16 +83,6 @@ export default function MapWindow(props) {
             mapSize: { width: img.width, height: img.height },
             description: "This is your map's description",
             anchors: [],
-            places: [
-              {
-                id: 1,
-                name: "Casa de Banho",
-                description: "This is a bathroom",
-                icon: "bathroom",
-                coords: { x: 0, y: 0 },
-                realCoords: { lat: 0, long: 0 },
-              },
-            ],
           };
           const newMaps = [newMap, ...mapsState];
           localStorage.setItem("maps", JSON.stringify(newMaps));
@@ -82,6 +104,24 @@ export default function MapWindow(props) {
         backgroundColor: textColor,
       }}
     >
+      <NameMapPopup
+        open={nameMapPopupOpen}
+        onClose={(name) => {
+          setNameMapPopupOpen(false);
+          if (name != undefined) {
+            selectedMap.progressionState = "name-given";
+            selectedMap.name = name;
+            const newMaps = mapsState.filter(
+              (map) => map.id !== selectedMap.id
+            );
+            newMaps.push(selectedMap);
+            setMaps(newMaps);
+            setSelectedMap(selectedMap);
+            localStorage.setItem("maps", JSON.stringify(newMaps));
+          }
+        }}
+      ></NameMapPopup>
+
       {mapsState.length > 0 && selectedMap != null ? (
         <Box
           sx={{
@@ -201,69 +241,44 @@ export default function MapWindow(props) {
                 <DeleteOutline fontSize="inherit"></DeleteOutline>
               </Icon>
             </Box>
-            {selectedMap != null && selectedMap.anchors.length < 2 ? (
-              <Typography
-                variant="h7"
-                component="div"
-                sx={{
-                  py: 1,
-                  px: 2,
-                  color: secondaryColor,
-                  m: 0,
-                  fontSize: "20px",
-                  textAlign: "center",
-                }}
-              >
-                Selecione pelo menos dois pontos (de preferência em cantos
-                opostos) e preencha as coordenadas de latitude e longitude.
-              </Typography>
-            ) : (
-              <Typography
-                variant="h7"
-                component="div"
-                sx={{
-                  py: 1,
-                  flexGrow: 1,
-                  px: 2,
-                  color: secondaryColor,
-                  m: 0,
-                  fontSize: "20px",
-                  textAlign: "center",
-                }}
-              >
-                Verifique que os pontos contêm as coordenadas corretas e
-                pressione em 'Continuar'.
-              </Typography>
-            )}
-
-            <ButtonBase
-              variant="contained"
-              onClick={() => {
-                if (selectedMap.anchors.length < 2) {
-                  setDisplayAlert(true);
-                  setAlertText("Selecione pelo menos dois pontos.");
-                } else {
-                  selectedMap.progressionState = "anchors-selected";
-                  const newMaps = mapsState.filter(
-                    (map) => map.id !== selectedMap.id
-                  );
-                  newMaps.push(selectedMap);
-                  setMaps(newMaps);
-                  setSelectedMap(selectedMap);
-                  localStorage.setItem("maps", JSON.stringify(newMaps));
-                }
-              }}
+            <Typography
+              variant="h7"
+              component="div"
               sx={{
-                backgroundColor: tertiaryColor,
-                color: textColor,
+                py: 1,
+                px: 2,
+                flexGrow: 1,
+                color: secondaryColor,
+                m: 0,
                 fontSize: "20px",
-                p: 2,
-                borderRadius: 3,
-                m: 2,
+                textAlign: "center",
               }}
             >
-              Continuar
-            </ButtonBase>
+              {selectedMap != null && selectedMap.anchors.length < 2
+                ? "Selecione pelo menos dois pontos (de preferência em cantos opostos) e preencha as coordenadas de latitude e longitude."
+                : selectedMap.progressionState != "name-given"
+                ? "Verifique que os pontos contêm as coordenadas corretas e pressione em 'Continuar'."
+                : "Clique no '+' para adicionar um novo ponto."}
+            </Typography>
+
+            {selectedMap.progressionState == "name-given" ? null : (
+              <ButtonBase
+                variant="contained"
+                onClick={() => {
+                  continuarAction();
+                }}
+                sx={{
+                  backgroundColor: tertiaryColor,
+                  color: textColor,
+                  fontSize: "20px",
+                  p: 2,
+                  borderRadius: 3,
+                  m: 2,
+                }}
+              >
+                Continuar
+              </ButtonBase>
+            )}
           </Box>
 
           <div style={{ display: "flex", justifyContent: "center" }}>

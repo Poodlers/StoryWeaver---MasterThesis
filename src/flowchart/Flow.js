@@ -163,7 +163,7 @@ function Flow(props) {
         display: "flex",
         flexDirection: "row",
         height: "85vh",
-        width: "100vw",
+        width: "100%",
         margin: "0 auto",
       }}
     >

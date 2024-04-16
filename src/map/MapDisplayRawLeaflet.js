@@ -63,24 +63,34 @@ export default function MapDisplayRawLeaflet(props) {
       });
       return div.innerHTML;
     });
-
     anchor.on("dragend", (e) => {
+      const anchors = mapInfo.anchors.filter(
+        (anchor) => anchor.anchorType === "anchor"
+      );
       const newAnchors = mapInfo.anchors.map((anchor) => {
         if (anchor.anchorId == anchorId) {
           anchor.imgCoords = e.target.getLatLng();
-          //TODO: recompute coords according to the anchors position
-          anchor.coords = { lat: 0, lng: 0 };
+          //recalculate realCoords using mapInfo.scale
+          if (anchorType == MarkerTypes.anchor) {
+            anchor.coords = {
+              lat: 0,
+              lng: 0,
+            };
+          } else {
+            anchor.coords = {
+              lat: anchor.imgCoords.lat * mapInfo.scale + anchors[0].coords.lat,
+              lng: anchor.imgCoords.lng * mapInfo.scale + anchors[0].coords.lng,
+            };
+          }
         }
         return anchor;
       });
-
       const newMaps = maps.filter((map) => map.id != mapInfo.id);
       mapInfo.anchors = newAnchors;
       newMaps.push(mapInfo);
       setMaps(newMaps);
       localStorage.setItem("maps", JSON.stringify(newMaps));
     });
-
     return anchor;
   };
 
@@ -96,7 +106,7 @@ export default function MapDisplayRawLeaflet(props) {
     });
 
     map.on("click", (e) => {
-      if (mapInfo.progressionState == "anchors-selected") return;
+      if (mapInfo.progressionState != "not-started") return;
 
       const anchorId = mapInfo.anchors.length + 1;
       mapInfo.anchors.push({

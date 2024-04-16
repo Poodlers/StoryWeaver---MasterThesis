@@ -19,6 +19,32 @@ export default function PopupMarker(props) {
   const setAlertText = props.setAlertText;
   const anchorId = props.anchorId;
 
+  const inputEventListener = (e) => {
+    const name = document.getElementById("marker-name-" + anchorId);
+    const description = document.getElementById("description-" + anchorId);
+    const anchor = mapInfo.anchors.find(
+      (anchor) => anchor.anchorId == anchorId
+    );
+    anchor.name = name.value;
+    anchor.description = description.value;
+    const newMaps = maps.filter((map) => map.id != mapInfo.id);
+    newMaps.push(mapInfo);
+    setMaps(newMaps);
+    localStorage.setItem("maps", JSON.stringify(newMaps));
+  };
+
+  const clickEventListener = (e) => {
+    const deleteButton = document.getElementById("deletebutton" + anchorId);
+
+    if (deleteButton) {
+      if (deleteButton.contains(e.target)) {
+        console.log("deleting anchor", anchorId);
+
+        deleteMarker();
+      }
+    }
+  };
+
   const deleteMarker = () => {
     marker.remove();
     mapInfo.anchors = mapInfo.anchors.filter(
@@ -31,42 +57,15 @@ export default function PopupMarker(props) {
   };
 
   useEffect(() => {
-    marker.on("dragend", (e) => {});
-  }, [marker]);
-
-  const getFullURL = async (link) => {};
+    marker.on("popupclose", (e) => {
+      document.removeEventListener("input", inputEventListener);
+      document.removeEventListener("click", clickEventListener);
+    });
+  });
 
   useEffect(() => {
-    document.addEventListener("input", async (e) => {
-      const name = document.getElementById("name-" + anchorId);
-      const description = document.getElementById("description-" + anchorId);
-      const anchor = mapInfo.anchors.find(
-        (anchor) => anchor.anchorId == anchorId
-      );
-      anchor.name = name.value;
-      anchor.description = description.value;
-      const newMaps = maps.filter((map) => map.id != mapInfo.id);
-      newMaps.push(mapInfo);
-      setMaps(newMaps);
-      localStorage.setItem("maps", JSON.stringify(newMaps));
-    });
-
-    document.addEventListener("click", (e) => {
-      const deleteButton = document.getElementById("deletebutton" + anchorId);
-
-      if (deleteButton) {
-        if (deleteButton.contains(e.target)) {
-          console.log("deleting anchor", anchorId);
-
-          deleteMarker();
-        }
-      }
-    });
-
-    return () => {
-      document.onclick = null;
-      document.oninput = null;
-    };
+    document.addEventListener("input", inputEventListener);
+    document.addEventListener("click", clickEventListener);
   }, []);
 
   return (
@@ -100,7 +99,10 @@ export default function PopupMarker(props) {
             Nome:
           </Typography>
           <TextField
-            id={"name-" + anchorId}
+            value={
+              mapInfo.anchors.find((anchor) => anchor.anchorId == anchorId).name
+            }
+            id={"marker-name-" + anchorId}
             inputProps={{
               style: {
                 borderRadius: 0,
@@ -145,35 +147,21 @@ export default function PopupMarker(props) {
           >
             Descrição:
           </Typography>
-          <TextField
-            aria-multiline="true"
+          <textarea
+            defaultValue={
+              mapInfo.anchors.find((anchor) => anchor.anchorId == anchorId)
+                .description
+            }
             id={"description-" + anchorId}
-            inputProps={{
-              style: {
-                minWidth: "100px",
-                borderRadius: 0,
-                color: "black",
-                height: 100,
-                padding: 0,
-                margin: 0,
-                borderColor: "transparent",
-                borderWidth: 0,
-                backgroundColor: "#ffffff",
-                borderRadius: 10,
-                textAlign: "start",
-              },
-            }}
-            sx={{
+            style={{
               flexGrow: 1,
               py: 0,
               px: 1,
-              color: textColor,
+              color: "black",
+              fontFamily: "Arial",
+              fontWeight: "normal",
               mx: "10px",
               borderRadius: 0,
-              ".MuiInputBase-root": {
-                borderRadius: 2,
-                backgroundColor: "#ffffff",
-              },
             }}
           />
         </Box>
