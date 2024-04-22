@@ -10,6 +10,7 @@ import { Icon, Menu, MenuItem, TextField } from "@mui/material";
 import AddNodePopup from "../flowchart/menu/AddNodePopup";
 import { primaryColor, secondaryColor, textColor } from "../themes";
 import AddLocationsPopup from "../flowchart/menu/AddLocationsPopup";
+import CharactersPopup from "../flowchart/menu/CharactersPopup";
 
 export default function TopAppBar(props) {
   const currentWindow = props.currentWindow;
@@ -22,6 +23,7 @@ export default function TopAppBar(props) {
   const addLocation = props.addLocation;
 
   const [openAddNode, setOpenAddNode] = React.useState(false);
+  const [openCharacterMenu, setOpenCharacterMenu] = React.useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -55,6 +57,13 @@ export default function TopAppBar(props) {
           >
             <MenuIcon />
           </IconButton>
+
+          <CharactersPopup
+            open={openCharacterMenu}
+            onClose={() => {
+              setOpenCharacterMenu(false);
+            }}
+          ></CharactersPopup>
           <Menu
             id="basic-menu"
             anchorEl={anchorEl}
@@ -75,6 +84,14 @@ export default function TopAppBar(props) {
               },
             }}
           >
+            <MenuItem
+              onClick={() => {
+                setOpenCharacterMenu(true);
+                handleClose();
+              }}
+            >
+              Ver Personagens
+            </MenuItem>
             <MenuItem
               onClick={() => {
                 handleNewProject();
@@ -133,9 +150,7 @@ export default function TopAppBar(props) {
                 setOpenAddNode(false);
                 if (markerType) addLocation(markerType);
               }}
-            >
-              {" "}
-            </AddLocationsPopup>
+            ></AddLocationsPopup>
           )}
 
           <TextField

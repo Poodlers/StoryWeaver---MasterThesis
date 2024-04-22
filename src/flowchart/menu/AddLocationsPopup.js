@@ -6,7 +6,6 @@ import { MarkerTypes, possibleMarkers } from "../../models/MarkerTypes";
 import { primaryColor, secondaryColor, textColor } from "../../themes";
 
 export default function AddLocationsPopup(props) {
-  const [anchor, setAnchor] = React.useState(null);
   const open = props.open;
   const onClose = props.onClose;
   return (
