@@ -1,4 +1,5 @@
 export enum NodeType {
+    beginNode = "beginNode",
     quizNode = "quizNode",
     textNode = "textNode",
     videoNode = "videoNode",
@@ -8,5 +9,6 @@ export enum NodeType {
     pathNode = "pathNode",
     userInteractionNode = "userInteractionNode",
     threeDModelNode = "threeDModelNode",
+    endNode = "endNode",
     
 }

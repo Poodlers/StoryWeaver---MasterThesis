@@ -11,6 +11,8 @@ import AddNodePopup from "../flowchart/menu/AddNodePopup";
 import { primaryColor, secondaryColor, textColor } from "../themes";
 import AddLocationsPopup from "../flowchart/menu/AddLocationsPopup";
 import CharactersPopup from "../flowchart/menu/CharactersPopup";
+import { possibleNodes } from "../models/possibleNodes";
+import { possibleDialogueNodes } from "../models/possibleDialogueNodes";
 
 export default function TopAppBar(props) {
   const currentWindow = props.currentWindow;
@@ -20,6 +22,7 @@ export default function TopAppBar(props) {
     localStorage.setItem("projectTitle", projectTitle);
   };
   const addNode = props.addNode;
+  const addDialogueNode = props.addDialogueNode;
   const addLocation = props.addLocation;
 
   const [openAddNode, setOpenAddNode] = React.useState(false);
@@ -57,7 +60,6 @@ export default function TopAppBar(props) {
           >
             <MenuIcon />
           </IconButton>
-
           <CharactersPopup
             open={openCharacterMenu}
             onClose={() => {
@@ -118,7 +120,6 @@ export default function TopAppBar(props) {
               Carregar
             </MenuItem>
           </Menu>
-
           <IconButton
             size="large"
             edge="start"
@@ -138,12 +139,13 @@ export default function TopAppBar(props) {
           {currentWindow === "Flowchart" ? (
             <AddNodePopup
               open={openAddNode}
+              possibleNodes={possibleNodes}
               onClose={(nodeType, nodeProps) => {
                 setOpenAddNode(false);
                 if (nodeType) addNode(nodeType, nodeProps);
               }}
             ></AddNodePopup>
-          ) : (
+          ) : currentWindow === "Mapa" ? (
             <AddLocationsPopup
               open={openAddNode}
               onClose={(markerType) => {
@@ -151,7 +153,16 @@ export default function TopAppBar(props) {
                 if (markerType) addLocation(markerType);
               }}
             ></AddLocationsPopup>
-          )}
+          ) : currentWindow.startsWith("Diálogo") ? (
+            <AddNodePopup
+              open={openAddNode}
+              possibleNodes={possibleDialogueNodes}
+              onClose={(nodeType, nodeProps) => {
+                setOpenAddNode(false);
+                if (nodeType) addDialogueNode(nodeType, nodeProps);
+              }}
+            ></AddNodePopup>
+          ) : null}
 
           <TextField
             aria-autocomplete="off"

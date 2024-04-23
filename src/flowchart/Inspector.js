@@ -11,7 +11,9 @@ import {
 } from "../themes";
 import CheckboxField from "./inspector/Checkbox";
 import FileSelectField from "./inspector/FileSelect";
+import MultipleChoiceField from "./inspector/MultipleChoice";
 import MultipleChoiceCheckboxField from "./inspector/MultipleChoiceCheck";
+import OpenWindowField from "./inspector/OpenWindow";
 import SelectLocationField from "./inspector/SelectLocation";
 import TextFieldInspector from "./inspector/TextField";
 import TextFieldExpandable from "./inspector/TextFieldExpandable";
@@ -26,7 +28,11 @@ function Inspector(props) {
   const handleDelete = props.handleDelete;
   const handleFieldChange = (fieldId, value) => {
     setValues({ ...values, [fieldId]: value });
-    handleNodeDataChange(nodeId, { ...values, [fieldId]: value });
+    handleNodeDataChange(
+      nodeId,
+      { ...values, [fieldId]: value },
+      fieldId === "open" && value === "open"
+    );
   };
 
   return props.data !== undefined ? (
@@ -173,6 +179,28 @@ function Inspector(props) {
                   data={field}
                   style={{ mt: 2 }}
                 ></TextFieldMultiline>
+              );
+            case InputFieldType.open_window:
+              return (
+                <OpenWindowField
+                  key={index}
+                  id={index}
+                  onChange={handleFieldChange}
+                  value={values[field.name]}
+                  data={field}
+                  style={{ mt: 2 }}
+                ></OpenWindowField>
+              );
+            case InputFieldType.multiple_choice:
+              return (
+                <MultipleChoiceField
+                  key={index}
+                  id={index}
+                  onChange={handleFieldChange}
+                  value={values[field.name]}
+                  data={field}
+                  style={{ mt: 2 }}
+                ></MultipleChoiceField>
               );
           }
         })}

@@ -1,12 +1,12 @@
 import { Dialog, Grid, Icon, IconButton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import * as React from "react";
-import { possibleNodes } from "../../models/possibleNodes";
 import { primaryColor, secondaryColor, textColor } from "../../themes";
 
 export default function AddNodePopup(props) {
   const open = props.open;
   const onClose = props.onClose;
+  const possibleNodes = props.possibleNodes;
   return (
     <Dialog
       id="add-node-popup"
@@ -24,6 +24,7 @@ export default function AddNodePopup(props) {
           flexDirection: "column",
           backgroundColor: secondaryColor,
           zIndex: 1,
+          px: 5,
           m: "0 auto",
         }}
       >

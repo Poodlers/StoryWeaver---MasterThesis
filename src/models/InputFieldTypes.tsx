@@ -7,5 +7,7 @@ export enum InputFieldType {
     select_location,
     multichoice_check,
     file_select,
+    open_window,
+    multiple_choice,
 
 }

@@ -1,3 +1,5 @@
+import { narrator } from "../../data/narrator";
+import { DialogNodeType } from "../../models/DialogNodeTypes";
 import { FileTypesInput } from "../../models/FileTypesInput";
 import { InputFieldType } from "../../models/InputFieldTypes";
 import { NodeType } from "../../models/NodeTypes";
@@ -196,21 +198,96 @@ const PathProps = {
   ],
 };
 
+const DialogProps = {
+  nodeType: "Dialog Node",
+  fields: [
+    {
+      type: InputFieldType.multiple_choice,
+      label: "Personagem:",
+      initialValue: narrator,
+      name: "character",
+    },
+    {
+      type: InputFieldType.textFieldMultiline,
+      label: "Texto:",
+      initialValue: "Texto",
+      name: "text",
+    },
+  ],
+};
+
+const DialogChoiceProps = {
+  nodeType: "Dialog Choice Node",
+  fields: [
+    {
+      type: InputFieldType.multiple_choice,
+      label: "Personagem:",
+      initialValue: narrator,
+      name: "character",
+    },
+    {
+      type: InputFieldType.textField,
+      label: "Pergunta:",
+      initialValue: "Texto",
+      name: "prompt",
+    },
+    {
+      type: InputFieldType.textFieldExpandable,
+      label: "Opções:",
+      initialValue: ["Resposta 1", "Resposta 2", "Resposta 3", "Resposta 4"],
+      name: "answers",
+    },
+  ],
+};
+
+const EndDialogProps = {
+  nodeType: "End Dialog Node",
+  fields: [
+    {
+      type: InputFieldType.textField,
+      label: "Identificador:",
+      initialValue: "Texto",
+      name: "id",
+    },
+  ],
+};
+
+const defaultDialogNodes = [
+  {
+    id: "1",
+    position: { x: 0, y: 0 },
+    data: undefined,
+    type: DialogNodeType.beginDialogNode,
+  },
+  {
+    id: "2",
+    position: { x: 100, y: 100 },
+    data: {
+      id: "1",
+    },
+    type: DialogNodeType.endDialogNode,
+  },
+];
+
+const defaultDialogEdges = [];
+
 const CharacterProps = {
   nodeType: "Character Node",
   fields: [
     {
       type: InputFieldType.textField,
       label: "Nome:",
-      initialValue: "Nome do personagem",
+      initialValue: "Nome do Diálogo",
       name: "name",
     },
     {
-      type: InputFieldType.file_select,
-      label: "Character Sprite:",
-      initialValue: { inputType: "url", filename: "", blob: null },
-      name: "file",
-      acceptedType: FileTypesInput.Image,
+      type: InputFieldType.open_window,
+      label: "Abrir Janela de Diálogo",
+      initialValue: {
+        nodes: defaultDialogNodes,
+        edges: defaultDialogEdges,
+      },
+      name: "dialog",
     },
   ],
 };
@@ -224,4 +301,7 @@ export {
   TextProps,
   PathProps,
   CharacterProps,
+  DialogProps,
+  DialogChoiceProps,
+  EndDialogProps,
 };

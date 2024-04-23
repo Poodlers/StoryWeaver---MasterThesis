@@ -252,7 +252,7 @@ export default function CreateCharacterPopup(props) {
               alignItems: "center",
             }}
           >
-            {selectedCharacter ? (
+            {selectedCharacter && selectedCharacter.id != 0 ? (
               <Box
                 sx={{
                   p: 0,
@@ -281,7 +281,7 @@ export default function CreateCharacterPopup(props) {
                 onClose({
                   id: selectedCharacter
                     ? selectedCharacter.id
-                    : characters.length,
+                    : characters.length + 1,
                   name: name,
                   description: description,
                   image: sprite,
