@@ -14,10 +14,10 @@ const ThreeDModelProps = {
       name: "name",
     },
     {
-      type: InputFieldType.file_select,
+      type: InputFieldType.textField,
       label: "Ficheiro:",
-      initialValue: { inputType: "file", filename: "", blob: null },
-      name: "file",
+      initialValue: "",
+      name: "url",
       acceptedType: FileTypesInput.ThreeDModel,
     },
     {

@@ -9,8 +9,10 @@ import {
   tertiaryColor,
   textColor,
 } from "../themes";
+import { ApiDataRepository } from "../api/ApiDataRepository";
 
 export default function DialogChoiceNode(props) {
+  const repo = ApiDataRepository.getInstance();
   const character = props.data?.character ?? undefined;
   const question = props.data?.prompt ?? "";
   const answers = props.data?.answers ?? ["Empty"];
@@ -39,7 +41,13 @@ export default function DialogChoiceNode(props) {
               justifyContent: "end",
             }}
             onError={(e) => {
-              setError(true);
+              if (character.image.inputType == "file") {
+                repo.getFile(character.image.filename).then((blob) => {
+                  e.target.src = URL.createObjectURL(blob);
+                });
+              } else {
+                setError(true);
+              }
             }}
             src={
               error

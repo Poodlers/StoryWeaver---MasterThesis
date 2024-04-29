@@ -4,8 +4,10 @@ import { Box } from "@mui/system";
 import * as React from "react";
 import { primaryColor, secondaryColor, textColor } from "../../themes";
 import CreateCharacterPopup from "./CreateCharacterPopup";
+import { ApiDataRepository } from "../../api/ApiDataRepository";
 
 export default function CharactersPopup(props) {
+  const repo = ApiDataRepository.getInstance();
   const open = props.open;
   const onClose = props.onClose;
   const [openCreateCharacter, setOpenCreateCharacter] = React.useState(false);
@@ -170,6 +172,26 @@ export default function CharactersPopup(props) {
                           ? character.image.blob
                           : character.image.filename
                       }
+                      onError={(e) => {
+                        // if blob is not valid, fetch the image from the server
+                        if (character.image.inputType == "file") {
+                          repo
+                            .getFile(character.image.filename)
+                            .then((blob) => {
+                              const newCharacters = characters.map((c) => {
+                                if (c.id == character.id) {
+                                  c.image.blob = blob;
+                                }
+                                return c;
+                              });
+                              localStorage.setItem(
+                                "characters",
+                                JSON.stringify(newCharacters)
+                              );
+                              e.target.src = URL.createObjectURL(blob);
+                            });
+                        }
+                      }}
                       style={{
                         width: 50,
                         height: 50,

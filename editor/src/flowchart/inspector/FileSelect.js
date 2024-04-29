@@ -10,8 +10,11 @@ import {
   tertiaryColor,
   textColor,
 } from "../../themes";
+import { ApiDataRepository } from "../../api/ApiDataRepository";
+import { v4 as uuid } from "uuid";
 
 function FileSelectField(props) {
+  const repo = ApiDataRepository.getInstance();
   const label = props.data.label;
   const style = props.style;
   const value = props.value;
@@ -173,12 +176,17 @@ function FileSelectField(props) {
             getInputText={(value) => (value ? value : "Select a file")}
             onChange={(file) => {
               if (file === null) return;
-              const urlObj = URL.createObjectURL(file);
+              const fileID = uuid();
+              const fileName = fileID + file.name;
+              file = new File([file], fileName, { type: file.type });
+              repo.uploadFile(file).then((res) => {
+                const urlObj = URL.createObjectURL(file);
 
-              handleFieldChange(props.data.name, {
-                blob: urlObj,
-                filename: file.name,
-                inputType: "file",
+                handleFieldChange(props.data.name, {
+                  blob: urlObj,
+                  filename: fileName,
+                  inputType: "file",
+                });
               });
             }}
             value={value.inputType == "file" ? value.filename : ""}

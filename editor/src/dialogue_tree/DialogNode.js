@@ -9,8 +9,10 @@ import {
   tertiaryColor,
   textColor,
 } from "../themes";
+import { ApiDataRepository } from "../api/ApiDataRepository";
 
 export default function DialogNode(props) {
+  const repo = ApiDataRepository.getInstance();
   const character = props.data?.character ?? "";
   const text = props.data?.text ?? "";
   const [error, setError] = React.useState(false);
@@ -48,9 +50,7 @@ export default function DialogNode(props) {
               textAlign: "end",
               justifyContent: "end",
             }}
-            onError={(e) => {
-              setError(true);
-            }}
+            onError={(e) => {}}
             src={
               error
                 ? "../assets/character_dialogue_node.png"
@@ -106,7 +106,13 @@ export default function DialogNode(props) {
           >
             <Typography
               variant="h6"
-              sx={{ px: 3, fontSize: 22, color: textColor, fontWeight: 400 }}
+              sx={{
+                px: 3,
+                fontSize: 22,
+                color: textColor,
+                fontWeight: 400,
+                whiteSpace: "pre-wrap",
+              }}
             >
               {text}
             </Typography>

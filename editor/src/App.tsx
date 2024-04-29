@@ -9,16 +9,20 @@ import { StyledEngineProvider, ThemeProvider } from '@mui/material';
 import MainWindow from './components/MainWindow';
 import { myTheme } from './themes';
 import { narrator } from './data/narrator';
+import { ApiDataRepository } from './api/ApiDataRepository';
 
 
 const theme = myTheme;
 
 function App() {
-
+  const repo = ApiDataRepository.getInstance();
   useEffect(() => {
-    if(localStorage.getItem('characters') === null){
+
+    if(localStorage.getItem('characters') == null){
       localStorage.setItem('characters', JSON.stringify([narrator]))
+      return;
     }
+   
   }
   , []);
 

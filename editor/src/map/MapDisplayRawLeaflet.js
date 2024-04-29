@@ -6,8 +6,11 @@ import { flushSync } from "react-dom";
 import PopupAnchor from "./PopupAnchor";
 import { MarkerTypes } from "../models/MarkerTypes";
 import PopupMarker from "./PopupMarker";
+import { ApiDataRepository } from "../api/ApiDataRepository";
 
 export default function MapDisplayRawLeaflet(props) {
+  const repo = ApiDataRepository.getInstance();
+
   const zoom = props.zoom;
   const center = props.center;
   const mapInfo = props.map;
@@ -122,9 +125,16 @@ export default function MapDisplayRawLeaflet(props) {
       localStorage.setItem("maps", JSON.stringify(newMaps));
       addMarker(e.latlng, map, anchorId, MarkerTypes.anchor).openPopup();
     });
-    var image = L.imageOverlay(mapInfo.image, bounds).addTo(map);
-
-    map.fitBounds(bounds);
+    repo
+      .getFile(mapInfo.image)
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const image = L.imageOverlay(url, bounds).addTo(map);
+        map.fitBounds(bounds);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
     // unmount map function
     return () => {

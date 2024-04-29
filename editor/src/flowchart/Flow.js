@@ -71,6 +71,7 @@ function Flow(props) {
     windows,
     changeDisplayedWindow,
   } = props;
+
   const nodeTypes = useMemo(
     () => ({
       quizNode: QuizNode,
@@ -163,6 +164,7 @@ function Flow(props) {
 
   const handleNodeDataChange = (id, data, openWindow) => {
     let newNodes = [...nodes];
+
     for (let i = 0; i < newNodes.length; i++) {
       if (newNodes[i].id == id) {
         if (openWindow) {
@@ -215,12 +217,7 @@ function Flow(props) {
           if (selectedNode != undefined) {
             // the node is changing, save the current inspector data
             selectedNode.data = inspectorData;
-            console.log(
-              "Saving node: ",
-              selectedNode.id,
-              " with data: ",
-              selectedNode.data
-            );
+
             let newNodes = [...nodes];
             for (let i = 0; i < nodes.length; i++) {
               if (nodes[i].id == selectedNode.id) {

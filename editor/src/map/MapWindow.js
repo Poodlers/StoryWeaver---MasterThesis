@@ -19,8 +19,11 @@ import {
 import { DeleteOutline } from "@mui/icons-material";
 import MapDisplayRawLeaflet from "./MapDisplayRawLeaflet";
 import NameMapPopup from "./NameMapPopup";
+import { ApiDataRepository } from "../api/ApiDataRepository";
+import { v4 as uuid } from "uuid";
 
 export default function MapWindow(props) {
+  const repo = ApiDataRepository.getInstance();
   const mapsState = props.mapState;
   const setMaps = props.setMaps;
   const [displayAlert, setDisplayAlert] = React.useState(false);
@@ -66,7 +69,7 @@ export default function MapWindow(props) {
     fileInput.accept = ".png, .jpg, .jpeg";
     fileInput.click();
     fileInput.onchange = (e) => {
-      const file = e.target.files[0];
+      let file = e.target.files[0];
       const reader = new FileReader();
       reader.onload = (e) => {
         const data = e.target.result;
@@ -75,19 +78,25 @@ export default function MapWindow(props) {
         const img = new Image();
         img.src = data;
         img.onload = () => {
-          const newMap = {
-            id: mapsState.length,
-            name: "Mapa" + mapsState.length,
-            progressionState: "not-started",
-            image: data,
-            mapSize: { width: img.width, height: img.height },
-            description: "This is your map's description",
-            anchors: [],
-          };
-          const newMaps = [newMap, ...mapsState];
-          localStorage.setItem("maps", JSON.stringify(newMaps));
-          setSelectedMap(newMap);
-          setMaps(newMaps);
+          const fileID = uuid();
+          const fileName = fileID + file.name;
+          file = new File([file], fileName, { type: file.type });
+          repo.uploadFile(file).then((res) => {
+            const newMap = {
+              id: mapsState.length,
+              name: "Mapa" + mapsState.length,
+              progressionState: "not-started",
+              image: fileName,
+              mapSize: { width: img.width, height: img.height },
+              description: "This is your map's description",
+              anchors: [],
+            };
+
+            const newMaps = [newMap, ...mapsState];
+            localStorage.setItem("maps", JSON.stringify(newMaps));
+            setSelectedMap(newMap);
+            setMaps(newMaps);
+          });
         };
       };
       reader.readAsDataURL(file);

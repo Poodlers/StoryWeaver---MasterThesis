@@ -23,6 +23,7 @@ import maps from "../data/maps";
 import DialogueTree from "../dialogue_tree/DialogueTree";
 import { CloseOutlined } from "@mui/icons-material";
 import { DialogNodeType } from "../models/DialogNodeTypes";
+import { ApiDataRepository } from "../api/ApiDataRepository";
 
 const generateInspectorProps = (props) => {
   return props.fields.reduce(
@@ -77,6 +78,7 @@ const initialNodes = JSON.parse(
 const initialEdges = JSON.parse(localStorage.getItem("edges") || "[]");
 
 export default function MainWindow(props) {
+  const repo = ApiDataRepository.getInstance();
   const [windows, setWindows] = React.useState(["Flowchart", "Mapa"]);
   const [mapsState, setMaps] = React.useState(maps);
   const [selectedMap, setSelectedMap] = React.useState(
@@ -99,14 +101,44 @@ export default function MainWindow(props) {
     if (displayedWindow.startsWith("Diálogo")) {
       const node = nodes.find(
         (node) =>
-          node.data.name == displayedWindow.replace("Diálogo ", "") &&
-          node.type == NodeType.characterNode
+          node.type == NodeType.characterNode &&
+          node.data.name == displayedWindow.replace("Diálogo ", "")
       );
       setDialogNodes(node.data.dialog.nodes);
       setDialogEdges(node.data.dialog.edges);
       setDialogueNodeId(node.id);
     }
   }, [displayedWindow]);
+
+  React.useEffect(() => {
+    //check if the saved blobs are still valid
+    let newNodes = [...nodes];
+    newNodes.forEach((node) => {
+      if (
+        (node.type === NodeType.imageNode ||
+          node.type === NodeType.videoNode) &&
+        node.data.file.inputType === "file"
+      ) {
+        fetch(node.data.file.blob)
+          .then((response) => {
+            console.log(response);
+            if (!response.ok || response.blob.length === 0) {
+              repo.getFile(node.data.file.filename).then((blob) => {
+                node.data.file.blob = URL.createObjectURL(blob);
+              });
+            }
+          })
+          .catch((e) => {
+            console.log("Replacing the blob with the file from the server");
+            repo.getFile(node.data.file.filename).then((blob) => {
+              node.data.file.blob = URL.createObjectURL(blob);
+            });
+          });
+      }
+    });
+    setNodes(newNodes);
+    localStorage.setItem("nodes", JSON.stringify(nodes));
+  }, []);
 
   React.useEffect(() => {
     if (!mountMap) {
