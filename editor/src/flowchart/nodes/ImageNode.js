@@ -17,6 +17,9 @@ export default function ImageNode(props) {
 
   const fileInfo = props.data?.file ?? "";
   const [error, setError] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState(
+    "Insira uma imagem no editor!"
+  );
   return (
     <>
       <Handle
@@ -119,7 +122,7 @@ export default function ImageNode(props) {
               variant="h6"
               sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 500 }}
             >
-              Insira uma imagem no editor!
+              {errorMsg}
             </Typography>
           ) : null}
 
@@ -130,11 +133,18 @@ export default function ImageNode(props) {
             onError={(e) => {
               // if blob is not valid, fetch the image from the server
               if (fileInfo.inputType == "file") {
-                repo.getFile(fileInfo.filename).then((blob) => {
-                  e.target.src = URL.createObjectURL(blob);
-                });
+                repo
+                  .getFile(fileInfo.filename)
+                  .then((blob) => {
+                    e.target.src = URL.createObjectURL(blob);
+                  })
+                  .catch((e) => {
+                    setError(true);
+                    setErrorMsg("Erro ao carregar a imagem!");
+                  });
               } else {
                 setError(true);
+                setErrorMsg("Insira uma imagem no editor!");
               }
             }}
             src={

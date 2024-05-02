@@ -4,11 +4,44 @@ const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
 const cron = require("node-cron");
+require("dotenv").config();
 const cleanupFiles = require("./cleanup-files");
+
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const { randomUUID } = require("crypto");
+const uri =
+  "mongodb+srv://Poodlers:" +
+  process.env.MONGO_PASSWORD +
+  "@storyweaver.6lspmuu.mongodb.net/?retryWrites=true&w=majority&appName=StoryWeaver";
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
+  } finally {
+    // Ensures that the client will close when you finish/error
+    //await client.close();
+  }
+}
+run().catch(console.dir);
 
 const app = express();
 // Enable CORS
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 8080;
 
@@ -27,6 +60,58 @@ const upload = multer({ storage: storage });
 
 // Serve static files from the uploads directory
 app.use("/files", express.static(path.join(__dirname, "files")));
+
+app.post("/save", async (req, res) => {
+  const originalStoryId = req.body.storyId;
+  let storyId = originalStoryId;
+  if (storyId === null || storyId === undefined) {
+    storyId = randomUUID();
+  }
+  const storyTitle = req.body.projectTitle;
+  const nodes = req.body.nodes;
+  const edges = req.body.edges;
+  const characters = req.body.characters;
+  const maps = req.body.maps;
+  //save to database
+  await client
+    .db("projects")
+    .collection("story_structures")
+    .updateOne(
+      { id: originalStoryId },
+      {
+        $set: {
+          id: storyId,
+          title: storyTitle,
+          nodes: nodes,
+          edges: edges,
+          characters: characters,
+          maps: maps,
+        },
+      },
+      { upsert: true }
+    );
+
+  res.send({ storyId: storyId });
+});
+
+app.get("/projects", async (req, res) => {
+  const projects = await client
+    .db("projects")
+    .collection("story_structures")
+    .find({})
+    .project({ id: 1, title: 1 })
+    .toArray();
+  res.send(projects);
+});
+
+app.get("/load/:storyId", async (req, res) => {
+  const storyId = req.params.storyId;
+  const story = await client
+    .db("projects")
+    .collection("story_structures")
+    .findOne({ id: storyId });
+  res.send(story);
+});
 
 // Handle file upload
 app.post("/upload", upload.single("file"), (req, res) => {

@@ -12,11 +12,8 @@ export default function CharactersPopup(props) {
   const onClose = props.onClose;
   const [openCreateCharacter, setOpenCreateCharacter] = React.useState(false);
   const [selectedCharacter, setSelectedCharacter] = React.useState(undefined);
-  const [characters, setCharacters] = React.useState(
-    localStorage.getItem("characters")
-      ? JSON.parse(localStorage.getItem("characters"))
-      : []
-  );
+  const characters = props.characters;
+  const setCharacters = props.setCharacters;
 
   const onCloseCreateCharacter = (character) => {
     setOpenCreateCharacter(false);

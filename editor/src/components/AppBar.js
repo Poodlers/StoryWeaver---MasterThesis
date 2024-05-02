@@ -13,10 +13,15 @@ import AddLocationsPopup from "../flowchart/menu/AddLocationsPopup";
 import CharactersPopup from "../flowchart/menu/CharactersPopup";
 import { possibleNodes } from "../models/possibleNodes";
 import { possibleDialogueNodes } from "../models/possibleDialogueNodes";
+import LoadProjectPopup from "../flowchart/menu/LoadProjectPopup";
+import { ApiDataRepository } from "../api/ApiDataRepository";
 
 export default function TopAppBar(props) {
+  const repo = ApiDataRepository.getInstance();
   const currentWindow = props.currentWindow;
   const projectTitle = props.projectTitle;
+  const characters = props.characters;
+  const setCharacters = props.setCharacters;
   const setProjectTitle = (projectTitle) => {
     props.setProjectTitle(projectTitle);
     localStorage.setItem("projectTitle", projectTitle);
@@ -26,10 +31,14 @@ export default function TopAppBar(props) {
   const addLocation = props.addLocation;
 
   const [openAddNode, setOpenAddNode] = React.useState(false);
+  const [openLoadProjectPopup, setOpenLoadProjectPopup] = React.useState(false);
   const [openCharacterMenu, setOpenCharacterMenu] = React.useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  const [projects, setProjects] = React.useState([]);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -37,9 +46,19 @@ export default function TopAppBar(props) {
     setAnchorEl(null);
   };
 
-  const handleSave = props.handleSave;
+  React.useEffect(() => {
+    if (openLoadProjectPopup) {
+      repo.getProjects().then((projects) => {
+        setProjects(projects);
+      });
+    }
+  }, [openLoadProjectPopup]);
 
-  const handleLoad = props.handleLoad;
+  const handleSaveLocal = props.handleSaveLocal;
+  const handleSaveServer = props.handleSaveServer;
+
+  const handleLoadLocal = props.handleLoadLocal;
+  const handleLoadServer = props.handleLoadServer;
 
   const handleNewProject = props.handleNewProject;
   return (
@@ -61,11 +80,21 @@ export default function TopAppBar(props) {
             <MenuIcon />
           </IconButton>
           <CharactersPopup
+            characters={characters}
+            setCharacters={setCharacters}
             open={openCharacterMenu}
             onClose={() => {
               setOpenCharacterMenu(false);
             }}
           ></CharactersPopup>
+          <LoadProjectPopup
+            open={openLoadProjectPopup}
+            onClose={(projectId) => {
+              if (projectId != undefined) handleLoadServer(projectId);
+              setOpenLoadProjectPopup(false);
+            }}
+            projects={projects}
+          ></LoadProjectPopup>
           <Menu
             id="basic-menu"
             anchorEl={anchorEl}
@@ -105,19 +134,35 @@ export default function TopAppBar(props) {
 
             <MenuItem
               onClick={() => {
-                handleSave();
+                handleSaveLocal();
                 handleClose();
               }}
             >
-              Guardar
+              Guardar Localmente
             </MenuItem>
             <MenuItem
               onClick={() => {
-                handleLoad();
+                handleLoadLocal();
                 handleClose();
               }}
             >
-              Carregar
+              Carregar Localmente
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleSaveServer();
+                handleClose();
+              }}
+            >
+              Guardar no Servidor
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setOpenLoadProjectPopup(true);
+                handleClose();
+              }}
+            >
+              Carregar do Servidor
             </MenuItem>
           </Menu>
           <IconButton

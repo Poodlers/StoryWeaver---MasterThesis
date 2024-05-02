@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Flow from "../flowchart/Flow";
 import L from "leaflet";
-import { IconButton, Typography } from "@mui/material";
+import { Alert, IconButton, Typography } from "@mui/material";
 import {
   primaryColor,
   secondaryColor,
@@ -24,6 +24,7 @@ import DialogueTree from "../dialogue_tree/DialogueTree";
 import { CloseOutlined } from "@mui/icons-material";
 import { DialogNodeType } from "../models/DialogNodeTypes";
 import { ApiDataRepository } from "../api/ApiDataRepository";
+import { narrator } from "../data/narrator";
 
 const generateInspectorProps = (props) => {
   return props.fields.reduce(
@@ -88,6 +89,14 @@ export default function MainWindow(props) {
   const [displayedWindow, changeDisplayedWindow] = React.useState("Flowchart");
   const [nodes, setNodes] = React.useState(initialNodes);
   const [edges, setEdges] = React.useState(initialEdges);
+  const [characters, setCharacters] = React.useState(
+    localStorage.getItem("characters")
+      ? JSON.parse(localStorage.getItem("characters"))
+      : [narrator]
+  );
+
+  const [displayAlert, setDisplayAlert] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState("");
 
   const [dialogNodes, setDialogNodes] = React.useState([]);
   const [dialogEdges, setDialogEdges] = React.useState([]);
@@ -123,16 +132,26 @@ export default function MainWindow(props) {
           .then((response) => {
             console.log(response);
             if (!response.ok || response.blob.length === 0) {
-              repo.getFile(node.data.file.filename).then((blob) => {
-                node.data.file.blob = URL.createObjectURL(blob);
-              });
+              repo
+                .getFile(node.data.file.filename)
+                .then((blob) => {
+                  node.data.file.blob = URL.createObjectURL(blob);
+                })
+                .catch((e) => {
+                  console.log("Error fetching the blob from the server");
+                });
             }
           })
           .catch((e) => {
             console.log("Replacing the blob with the file from the server");
-            repo.getFile(node.data.file.filename).then((blob) => {
-              node.data.file.blob = URL.createObjectURL(blob);
-            });
+            repo
+              .getFile(node.data.file.filename)
+              .then((blob) => {
+                node.data.file.blob = URL.createObjectURL(blob);
+              })
+              .catch((e) => {
+                console.log("Error fetching the blob from the server");
+              });
           });
       }
     });
@@ -146,7 +165,7 @@ export default function MainWindow(props) {
     }
   }, [mountMap]);
 
-  const handleLoad = () => {
+  const handleLoadLocal = () => {
     // read NODES and EDGES from file
     const fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -165,29 +184,55 @@ export default function MainWindow(props) {
         localStorage.setItem("edges", JSON.stringify(data.edges));
         localStorage.setItem("nodes", JSON.stringify(data.nodes));
         localStorage.setItem("projectTitle", data.projectTitle);
+        localStorage.setItem("storyId", data.storyId);
         localStorage.setItem("maps", JSON.stringify(data.maps));
       };
       reader.readAsText(file);
     };
   };
 
+  const handleLoadServer = (projectId) => {
+    if (projectId == undefined) return;
+    repo.getProject(projectId).then((data) => {
+      setNodes(data.nodes);
+      setEdges(data.edges);
+      setMaps(data.maps);
+      setSelectedMap(
+        data.maps ? (data.maps.length > 0 ? data.maps[0] : null) : null
+      );
+      setProjectTitle(data.projectTitle);
+      setCharacters(data.characters);
+      localStorage.setItem("edges", JSON.stringify(data.edges));
+      localStorage.setItem("nodes", JSON.stringify(data.nodes));
+      localStorage.setItem("projectTitle", data.projectTitle);
+      localStorage.setItem("maps", JSON.stringify(data.maps));
+      localStorage.setItem("storyId", projectId);
+      localStorage.setItem("characters", JSON.stringify(data.characters));
+    });
+  };
+
   const handleNewProject = () => {
     setNodes(defaultNodes);
     setEdges([]);
     setMaps([]);
+    setCharacters([narrator]);
     setProjectTitle("Adicone um título ao projeto");
     localStorage.setItem("edges", JSON.stringify([]));
     localStorage.setItem("nodes", JSON.stringify(defaultNodes));
     localStorage.setItem("maps", JSON.stringify([]));
+    localStorage.removeItem("storyId");
     localStorage.setItem("projectTitle", "Adicone um título ao projeto");
+    localStorage.setItem("characters", JSON.stringify([narrator]));
   };
 
-  const handleSave = () => {
+  const handleSaveLocal = () => {
+    //write NODES and EDGES to file
     //write NODES and EDGES to file
     const file = new Blob(
       [
         JSON.stringify({
           projectTitle: projectTitle,
+          storyId: localStorage.getItem("storyId"),
           nodes: nodes,
           edges: edges,
           maps: mapsState,
@@ -205,6 +250,20 @@ export default function MainWindow(props) {
     a.click();
     URL.revokeObjectURL(url);
     a.remove();
+  };
+
+  const handleSaveServer = () => {
+    //write NODES and EDGES to file
+
+    repo
+      .saveProject(projectTitle, nodes, edges, characters, mapsState)
+      .then((data) => {
+        setDisplayAlert(true);
+        setAlertMessage("Projeto salvo com sucesso!");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const changeOneNode = (nodeId, newData) => {
@@ -280,14 +339,18 @@ export default function MainWindow(props) {
   return (
     <>
       <TopAppBar
+        characters={characters}
+        setCharacters={setCharacters}
         projectTitle={projectTitle}
         setProjectTitle={setProjectTitle}
         currentWindow={displayedWindow}
         addNode={addNode}
         addDialogueNode={addDialogueNode}
         addLocation={addLocation}
-        handleSave={handleSave}
-        handleLoad={handleLoad}
+        handleSaveLocal={handleSaveLocal}
+        handleLoadLocal={handleLoadLocal}
+        handleSaveServer={handleSaveServer}
+        handleLoadServer={handleLoadServer}
         handleNewProject={handleNewProject}
       ></TopAppBar>
       <Box sx={{ flexGrow: 1 }}>
@@ -412,6 +475,36 @@ export default function MainWindow(props) {
           ></DialogueTree>
         ) : null}
       </Box>
+
+      <Alert
+        sx={{
+          display: displayAlert ? "flex" : "none",
+          backgroundColor: primaryColor,
+          zIndex: 1000,
+          color: textColor,
+          position: "fixed",
+          width: "90%",
+          bottom: "3%",
+          left: "5%",
+          m: 2,
+          p: 0.3,
+          borderRadius: 3,
+          fontSize: "15px",
+          ".MuiAlert-icon": {
+            color: textColor,
+          },
+          ".MuiAlert-action": {
+            color: textColor,
+            fontSize: "20px",
+            mr: 1,
+          },
+        }}
+        onClose={() => {
+          setDisplayAlert(false);
+        }}
+      >
+        {alertMessage}
+      </Alert>
     </>
   );
 }

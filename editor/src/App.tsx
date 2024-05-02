@@ -4,27 +4,16 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import TopAppBar from './components/AppBar';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material';
 import MainWindow from './components/MainWindow';
 import { myTheme } from './themes';
-import { narrator } from './data/narrator';
-import { ApiDataRepository } from './api/ApiDataRepository';
+
 
 
 const theme = myTheme;
 
 function App() {
-  const repo = ApiDataRepository.getInstance();
-  useEffect(() => {
-
-    if(localStorage.getItem('characters') == null){
-      localStorage.setItem('characters', JSON.stringify([narrator]))
-      return;
-    }
-   
-  }
-  , []);
+  
 
   return (
     <div className="App">
