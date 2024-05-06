@@ -72,6 +72,7 @@ app.post("/save", async (req, res) => {
   const edges = req.body.edges;
   const characters = req.body.characters;
   const maps = req.body.maps;
+  const exported = req.body.exported;
   //save to database
   await client
     .db("projects")
@@ -86,12 +87,24 @@ app.post("/save", async (req, res) => {
           edges: edges,
           characters: characters,
           maps: maps,
+          exported: exported,
         },
       },
       { upsert: true }
     );
 
   res.send({ storyId: storyId });
+});
+
+app.get("/projects/:searchString", async (req, res) => {
+  const searchString = req.params.searchString;
+  const projects = await client
+    .db("projects")
+    .collection("story_structures")
+    .find({ title: { $regex: searchString, $options: "i" } })
+    .project({ id: 1, title: 1 })
+    .toArray();
+  res.send(projects);
 });
 
 app.get("/projects", async (req, res) => {
