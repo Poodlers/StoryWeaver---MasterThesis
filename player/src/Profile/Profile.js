@@ -1,5 +1,6 @@
 import { BottomNavigation, BottomNavigationAction, Box } from "@mui/material";
 import React from "react";
+import LoginPage from "./LoginPage";
 
 export default function Profile(props) {
   return (
@@ -7,6 +8,8 @@ export default function Profile(props) {
       sx={{
         width: "100%",
       }}
-    ></Box>
+    >
+      <LoginPage />
+    </Box>
   );
 }

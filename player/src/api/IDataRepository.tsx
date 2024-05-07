@@ -6,4 +6,8 @@ export interface IDataRepository {
     getProject(projectId: string): Promise<Project>;
     getProjects(): Promise<ProjectsBaseInfo>;
     searchProjects(searchText: string): Promise<ProjectsBaseInfo>;
+    getAllUsers() : Promise<any>;
+    loginUser(bodyObject: any) : Promise<any>;
+    logoutUser() : Promise<any>;
+    checkLoginStatus() : Promise<any>;
 }
