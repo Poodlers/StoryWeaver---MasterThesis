@@ -12,6 +12,10 @@ import {
 
 export default function CharacterNode(props) {
   const title = props.data?.name ?? "";
+  const endNodes =
+    props.data.dialog.nodes.filter((nodes) => nodes.type == "endDialogNode") ??
+    [];
+
   return (
     <>
       <Handle
@@ -90,26 +94,55 @@ export default function CharacterNode(props) {
             backgroundColor: secondaryColor,
             minHeight: 100,
             display: "flex",
+            flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <img
-            src={"../assets/dialog_bubble.svg"}
-            style={{
-              width: "auto",
-              height: "100px",
-              padding: 10,
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              backgroundColor: primaryColor,
             }}
-          />
+          >
+            <Typography
+              variant="h6"
+              sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 400 }}
+            >
+              Fins possíveis
+            </Typography>
+          </Box>
+          {endNodes.map((node, index) => {
+            console.log(node);
+            return (
+              <div key={index}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    px: 3,
+                    py: 0.6,
+                    fontSize: 12,
+                    color: textColor,
+                    fontWeight: 200,
+                  }}
+                >
+                  {"Fim " + node.data.id}
+                </Typography>
+                <Handle
+                  type="source"
+                  position={Position.Right}
+                  style={{
+                    marginTop: 30 * index + (1 / endNodes.length) * 75 + "px",
+                    ...rightNodeHandleStyle,
+                  }}
+                  id={node.data.id}
+                />
+              </div>
+            );
+          })}
         </Box>
       </Box>
-
-      <Handle
-        type="source"
-        position={Position.Right}
-        style={rightNodeHandleStyle}
-      />
     </>
   );
 }

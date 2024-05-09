@@ -227,6 +227,9 @@ app.post("/login/user", async (req, res) => {
     res.status(200).send({
       success: true,
       loginToken: loginToken,
+      name: name,
+      email: email,
+      picture: picture,
     });
   } catch (e) {
     console.log(e);

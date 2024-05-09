@@ -9,7 +9,7 @@ import {
   textColor,
 } from "../../themes";
 import ReactPlayer from "react-player";
-import React from "react";
+import React, { useEffect } from "react";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 
 export default function VideoNode(props) {
@@ -21,6 +21,9 @@ export default function VideoNode(props) {
     fileInfo.inputType == "url" ? fileInfo.filename : fileInfo.blob
   );
 
+  useEffect(() => {
+    setUrl(fileInfo.inputType == "url" ? fileInfo.filename : fileInfo.blob);
+  }, [fileInfo]);
   return (
     <>
       <Handle
