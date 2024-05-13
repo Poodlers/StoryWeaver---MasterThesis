@@ -23,6 +23,7 @@ import ThreeDCoordField from "./inspector/ThreeDCoordField";
 function Inspector(props) {
   const values = props.value;
   const nodeId = props.nodeId;
+  const characters = props.characters;
   const setValues = props.setValue;
   const handleNodeDataChange = props.handleNodeDataChange;
   const handleDelete = props.handleDelete;
@@ -194,6 +195,7 @@ function Inspector(props) {
             case InputFieldType.multiple_choice:
               return (
                 <MultipleChoiceField
+                  characters={characters}
                   key={index}
                   id={index}
                   onChange={handleFieldChange}

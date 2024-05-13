@@ -107,19 +107,6 @@ export default function MainWindow(props) {
   );
 
   React.useEffect(() => {
-    if (displayedWindow.startsWith("Diálogo")) {
-      const node = nodes.find(
-        (node) =>
-          node.type == NodeType.characterNode &&
-          node.data.name == displayedWindow.replace("Diálogo ", "")
-      );
-      setDialogNodes(node.data.dialog.nodes);
-      setDialogEdges(node.data.dialog.edges);
-      setDialogueNodeId(node.id);
-    }
-  }, [displayedWindow]);
-
-  React.useEffect(() => {
     //check if the saved blobs are still valid
     let newNodes = [...nodes];
     newNodes.forEach((node) => {
@@ -216,6 +203,8 @@ export default function MainWindow(props) {
     setEdges([]);
     setMaps([]);
     setCharacters([narrator]);
+    setWindows(["Flowchart", "Mapa"]);
+    changeDisplayedWindow("Flowchart");
     setProjectTitle("Adicone um título ao projeto");
     localStorage.setItem("edges", JSON.stringify([]));
     localStorage.setItem("nodes", JSON.stringify(defaultNodes));
@@ -266,17 +255,6 @@ export default function MainWindow(props) {
       });
   };
 
-  const changeOneNode = (nodeId, newData) => {
-    const newNodes = nodes.map((node) => {
-      if (node.id === nodeId) {
-        return { ...node, data: { ...node.data, dialog: newData } };
-      }
-      return node;
-    });
-    setNodes(newNodes);
-    localStorage.setItem("nodes", JSON.stringify(newNodes));
-  };
-
   const addNode = (nodeType, nodeProps) => {
     const newNode = {
       id: (nodes.length + 1).toString(),
@@ -319,9 +297,20 @@ export default function MainWindow(props) {
     localStorage.setItem("maps", JSON.stringify(newMaps));
   };
 
+  const changeOneNode = (nodeId, newData) => {
+    const newNodes = nodes.map((node) => {
+      if (node.id === nodeId) {
+        return { ...node, data: { ...node.data, dialog: newData } };
+      }
+      return node;
+    });
+    setNodes(newNodes);
+
+    localStorage.setItem("nodes", JSON.stringify(newNodes));
+  };
   const addDialogueNode = (nodeType, nodeProps) => {
     if (!(nodeType in DialogNodeType)) return;
-
+    console.log("add dialogue node", nodeType, "to", dialogueNodeId);
     const newNode = {
       id: (dialogNodes.length + 1).toString(),
       position: { x: 0, y: 0 },
@@ -448,11 +437,15 @@ export default function MainWindow(props) {
             setWindows={setWindows}
             changeDisplayedWindow={changeDisplayedWindow}
             windows={windows}
+            changeWindows={setWindows}
             key={"flowchart"}
             nodes={nodes}
             edges={edges}
             setNodes={setNodes}
             setEdges={setEdges}
+            setDialogNodes={setDialogNodes}
+            setDialogEdges={setDialogEdges}
+            setDialogueNodeId={setDialogueNodeId}
           ></Flow>
         ) : displayedWindow == "Mapa" ? (
           mountMap ? (
@@ -465,6 +458,7 @@ export default function MainWindow(props) {
           ) : null
         ) : displayedWindow.startsWith("Diálogo") ? (
           <DialogueTree
+            characters={characters}
             nodes={dialogNodes}
             edges={dialogEdges}
             setEdges={setDialogEdges}

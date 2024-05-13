@@ -20,10 +20,7 @@ function MultipleChoiceField(props) {
   const style = props.style;
   const value = props.value;
   const handleFieldChange = props.onChange;
-  const options =
-    localStorage.getItem("characters") === null
-      ? []
-      : JSON.parse(localStorage.getItem("characters"));
+  const options = props.characters;
 
   return (
     <Box

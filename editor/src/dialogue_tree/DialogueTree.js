@@ -42,6 +42,7 @@ function DialogueTree(props) {
   const [inspectorData, setInspectorData] = useState({});
   const [inspectorProps, setInspectorProps] = useState(undefined);
   const nodeId = props.nodeId;
+  const characters = props.characters;
   const { nodes, setNodes, edges, setEdges } = props;
 
   const applyChanges = props.applyChanges;
@@ -58,6 +59,12 @@ function DialogueTree(props) {
   const onConnect = useCallback(
     (params) =>
       setEdges((els) => {
+        if (
+          els.find((edge) => edge.sourceHandle == params.sourceHandle) !=
+          undefined
+        ) {
+          return els;
+        }
         applyChanges(nodeId, { nodes: nodes, edges: addEdge(params, els) });
         return addEdge(params, els);
       }),
@@ -69,6 +76,12 @@ function DialogueTree(props) {
   const onEdgeUpdate = useCallback(
     (oldEdge, newConnection) =>
       setEdges((els) => {
+        if (
+          els.find((edge) => edge.sourceHandle == newConnection.sourceHandle) !=
+          undefined
+        ) {
+          return els;
+        }
         applyChanges(nodeId, {
           nodes: nodes,
           edges: updateEdge(oldEdge, newConnection, els),
@@ -153,12 +166,6 @@ function DialogueTree(props) {
           if (selectedNode != undefined) {
             // the node is changing, save the current inspector data
             selectedNode.data = inspectorData;
-            console.log(
-              "Saving node: ",
-              selectedNode.id,
-              " with data: ",
-              selectedNode.data
-            );
             let newNodes = [...nodes];
             for (let i = 0; i < nodes.length; i++) {
               if (nodes[i].id == selectedNode.id) {
@@ -170,17 +177,19 @@ function DialogueTree(props) {
             }
           }
         }}
+        deleteKeyCode={
+          selectedNode
+            ? selectedNode.type === DialogNodeType.beginDialogNode
+              ? ""
+              : "Delete"
+            : "Delete"
+        }
         onEdgeUpdate={onEdgeUpdate}
         onNodeClick={(event, node) => {
           if (selectedNode != undefined && node.id != selectedNode.id) {
             // the node is changing, save the current inspector data
             selectedNode.data = inspectorData;
-            console.log(
-              "Saving node: ",
-              selectedNode.id,
-              " with data: ",
-              selectedNode.data
-            );
+
             let newNodes = [...nodes];
             for (let i = 0; i < nodes.length; i++) {
               if (nodes[i].id == selectedNode.id) {
@@ -254,6 +263,7 @@ function DialogueTree(props) {
         />
       </ReactFlow>
       <Inspector
+        characters={characters}
         value={inspectorData}
         nodeId={selectedNode ? selectedNode.id : undefined}
         handleNodeDataChange={handleNodeDataChange}

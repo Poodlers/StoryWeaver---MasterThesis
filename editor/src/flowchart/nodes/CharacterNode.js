@@ -114,7 +114,6 @@ export default function CharacterNode(props) {
             </Typography>
           </Box>
           {endNodes.map((node, index) => {
-            console.log(node);
             return (
               <div key={index}>
                 <Typography

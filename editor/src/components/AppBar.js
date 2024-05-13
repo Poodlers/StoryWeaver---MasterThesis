@@ -28,6 +28,7 @@ export default function TopAppBar(props) {
   };
   const addNode = props.addNode;
   const addDialogueNode = props.addDialogueNode;
+
   const addLocation = props.addLocation;
 
   const [openAddNode, setOpenAddNode] = React.useState(false);
@@ -204,7 +205,9 @@ export default function TopAppBar(props) {
               possibleNodes={possibleDialogueNodes}
               onClose={(nodeType, nodeProps) => {
                 setOpenAddNode(false);
-                if (nodeType) addDialogueNode(nodeType, nodeProps);
+                if (nodeType) {
+                  addDialogueNode(nodeType, nodeProps);
+                }
               }}
             ></AddNodePopup>
           ) : null}

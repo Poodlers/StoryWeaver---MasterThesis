@@ -60,6 +60,7 @@ const nodeColor = (node) => {
 function Flow(props) {
   const [selectedNode, setSelectedNode] = useState(undefined);
   const [inspectorData, setInspectorData] = useState({});
+
   const [inspectorProps, setInspectorProps] = useState(undefined);
   const [pannable, setPannable] = useState(true);
   const {
@@ -70,6 +71,10 @@ function Flow(props) {
     setWindows,
     windows,
     changeDisplayedWindow,
+    changeWindows,
+    setDialogNodes,
+    setDialogEdges,
+    setDialogueNodeId,
   } = props;
 
   const nodeTypes = useMemo(
@@ -91,6 +96,13 @@ function Flow(props) {
   const onConnect = useCallback(
     (params) =>
       setEdges((els) => {
+        // refuse to add edge if the source already has an edge
+        if (
+          els.find((edge) => edge.sourceHandle == params.sourceHandle) !=
+          undefined
+        ) {
+          return els;
+        }
         localStorage.setItem("edges", JSON.stringify(addEdge(params, els)));
         return addEdge(params, els);
       }),
@@ -102,6 +114,12 @@ function Flow(props) {
   const onEdgeUpdate = useCallback(
     (oldEdge, newConnection) =>
       setEdges((els) => {
+        if (
+          els.find((edge) => edge.sourceHandle == newConnection.sourceHandle) !=
+          undefined
+        ) {
+          return els;
+        }
         localStorage.setItem(
           "edges",
           JSON.stringify(updateEdge(oldEdge, newConnection, els))
@@ -142,6 +160,21 @@ function Flow(props) {
       if (newNodes[i].id == idToDelete) {
         if (newNodes[i].type === NodeType.beginNode) {
           return;
+        } else if (newNodes[i].type === NodeType.characterNode) {
+          setDialogNodes([]);
+          setDialogEdges([]);
+          setDialogueNodeId(null);
+          if (
+            windows.find(
+              (window) => window === "Diálogo " + newNodes[i].data["name"]
+            ) !== undefined
+          ) {
+            changeWindows(
+              windows.filter(
+                (window) => window !== "Diálogo " + newNodes[i].data["name"]
+              )
+            );
+          }
         }
         indexToDelete = i;
         break;
@@ -153,6 +186,7 @@ function Flow(props) {
     newEdges = newEdges.filter(
       (edge) => edge.source != idToDelete && edge.target != idToDelete
     );
+
     setNodes(newNodes);
     setEdges(newEdges);
     localStorage.setItem("nodes", JSON.stringify(newNodes));
@@ -174,7 +208,11 @@ function Flow(props) {
           ) {
             setWindows([...windows, "Diálogo " + data["name"]]);
           }
+
           changeDisplayedWindow("Diálogo " + data["name"]);
+          setDialogNodes(data["dialog"].nodes);
+          setDialogEdges(data["dialog"].edges);
+          setDialogueNodeId(newNodes[i].id);
         }
 
         newNodes[i].data = data;
@@ -216,6 +254,15 @@ function Flow(props) {
           setInspectorProps(undefined);
           if (selectedNode != undefined) {
             // the node is changing, save the current inspector data
+            if (selectedNode.type == NodeType.characterNode) {
+              changeWindows(
+                windows.map((window) =>
+                  window === "Diálogo " + selectedNode.data["name"]
+                    ? "Diálogo " + inspectorData["name"]
+                    : window
+                )
+              );
+            }
             selectedNode.data = inspectorData;
 
             let newNodes = [...nodes];
@@ -235,13 +282,17 @@ function Flow(props) {
           }
           if (selectedNode != undefined && node.id != selectedNode.id) {
             // the node is changing, save the current inspector data
+            if (selectedNode.type == NodeType.characterNode) {
+              changeWindows(
+                windows.map((window) =>
+                  window === "Diálogo " + selectedNode.data["name"]
+                    ? "Diálogo " + inspectorData["name"]
+                    : window
+                )
+              );
+            }
             selectedNode.data = inspectorData;
-            console.log(
-              "Saving node: ",
-              selectedNode.id,
-              " with data: ",
-              selectedNode.data
-            );
+
             let newNodes = [...nodes];
             for (let i = 0; i < nodes.length; i++) {
               if (nodes[i].id == selectedNode.id) {
