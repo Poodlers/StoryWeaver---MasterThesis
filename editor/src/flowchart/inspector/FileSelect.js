@@ -16,6 +16,7 @@ import { v4 as uuid } from "uuid";
 function FileSelectField(props) {
   const repo = ApiDataRepository.getInstance();
   const label = props.data.label;
+  const generateMarkerFiles = props.generateMarkerFiles;
   const style = props.style;
   const value = props.value;
   const [inputMethod, setInputMethod] = React.useState(value.inputType);
@@ -187,6 +188,16 @@ function FileSelectField(props) {
                   filename: fileName,
                   inputType: "file",
                 });
+                if (generateMarkerFiles) {
+                  repo
+                    .requestGenerateMarkerFiles(fileName)
+                    .then((res) => {
+                      console.log(res);
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
+                }
               });
             }}
             value={value.inputType == "file" ? value.filename : ""}
@@ -244,6 +255,35 @@ function FileSelectField(props) {
                 inputType: "url",
                 filename: event.target.value,
               });
+              if (generateMarkerFiles) {
+                fetch(event.target.value)
+                  .then((res) => res.blob())
+                  .then((blob) => {
+                    if (!blob.type.includes("image")) return;
+                    const uri = event.target.value;
+                    const extension = uri.substring(uri.lastIndexOf("."));
+                    const fileName = uuid() + extension;
+                    const file = new File([blob], fileName);
+                    repo
+                      .uploadFile(file)
+                      .then((res) => {
+                        repo
+                          .requestGenerateMarkerFiles(fileName)
+                          .then((res) => {
+                            console.log(res);
+                          })
+                          .catch((error) => {
+                            console.error(error);
+                          });
+                      })
+                      .catch((error) => {
+                        console.error(error);
+                      });
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }
             }}
           />
         )}

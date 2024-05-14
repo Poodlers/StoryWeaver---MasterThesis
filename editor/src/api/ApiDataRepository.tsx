@@ -140,5 +140,18 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
             throw error;
         }
     }
+
+    public requestGenerateMarkerFiles = async (fileName: string): Promise<any> => {
+        const instance = this.createInstance();
+
+        try{
+            const result = await instance.get(`${BASE_URL}/generateMarker/${fileName}`).then(transform);
+            return result;
+        }
+        catch(error){
+            console.log(error); 
+            throw error;
+        }
+    }
   
 }

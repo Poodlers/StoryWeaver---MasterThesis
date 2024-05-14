@@ -96,7 +96,6 @@ export default function MapDisplayRawLeaflet(props) {
                   Math.cos((anchors[0].coords.lat * Math.PI) / 180),
             };
 
-            console.log(anchor.coords);
           }
         }
         return anchor;

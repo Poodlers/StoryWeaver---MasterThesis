@@ -424,6 +424,7 @@ function SelectLocationField(props) {
         </Box>
       ) : (
         <FileSelectField
+          generateMarkerFiles={true}
           data={{ label: "Imagem:", name: "image" }}
           style={{ mt: 2 }}
           value={value.image}

@@ -13,6 +13,9 @@ const secretkey = require("./config/secret.json");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { randomUUID } = require("crypto");
 const { OAuth2Client } = require("google-auth-library");
+const generateMarkerFiles = require("./nft-creator");
+var Module = require("./libs/NftMarkerCreator_wasm.js");
+
 const uri =
   "mongodb+srv://Poodlers:" +
   process.env.MONGO_PASSWORD +
@@ -134,6 +137,22 @@ app.get("/load/:storyId", async (req, res) => {
 app.post("/upload", upload.single("file"), (req, res) => {
   res.json({ filename: req.file.originalname });
 });
+
+Module.onRuntimeInitialized = async () => {
+  console.log("WASM Module Loaded");
+  app.get("/generateMarker/:filename", async (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, "files", filename);
+
+    generateMarkerFiles(filePath, true, false, false, false)
+      .then((result) => {
+        res.json({ success: true });
+      })
+      .catch((err) => {
+        res.status(500).send({ error: err });
+      });
+  });
+};
 
 // Define a route to handle DELETE requests for files by name
 app.delete("/files/:filename", (req, res) => {
