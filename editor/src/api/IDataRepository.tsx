@@ -1,3 +1,7 @@
+
+import { Project } from "../models/Project";
+import { ProjectsBaseInfo } from "../models/ProjectsBaseInfo";
+
 export interface IDataRepository {
     getFile: (fileName: string) => Promise<Blob>;
     uploadFile: (file: File) => Promise<any>;

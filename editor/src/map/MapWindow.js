@@ -21,6 +21,7 @@ import MapDisplayRawLeaflet from "./MapDisplayRawLeaflet";
 import NameMapPopup from "./NameMapPopup";
 import { ApiDataRepository } from "../api/ApiDataRepository";
 import { v4 as uuid } from "uuid";
+import { distanceInKmBetweenEarthCoordinates } from "./util";
 
 export default function MapWindow(props) {
   const repo = ApiDataRepository.getInstance();
@@ -41,17 +42,20 @@ export default function MapWindow(props) {
       //use the two anchors to calculate the scale
       const anchor1 = selectedMap.anchors[0];
       const anchor2 = selectedMap.anchors[1];
-      const realDistance = Math.sqrt(
-        Math.pow(anchor1.coords.lat - anchor2.coords.lat, 2) +
-          Math.pow(anchor1.coords.lng - anchor2.coords.lng, 2)
-      );
+      const realDistance =
+        distanceInKmBetweenEarthCoordinates(
+          anchor1.coords.lat,
+          anchor1.coords.lng,
+          anchor2.coords.lat,
+          anchor2.coords.lng
+        ) * 1000;
       console.log("Real distance: ", realDistance);
       const imgDistance = Math.sqrt(
         Math.pow(anchor1.imgCoords.lat - anchor2.imgCoords.lat, 2) +
           Math.pow(anchor1.imgCoords.lng - anchor2.imgCoords.lng, 2)
       );
 
-      selectedMap.scale = realDistance / imgDistance;
+      selectedMap.scale = realDistance / imgDistance; // metros / pixel
 
       const newMaps = mapsState.filter((map) => map.id !== selectedMap.id);
       newMaps.push(selectedMap);

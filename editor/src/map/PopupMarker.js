@@ -38,8 +38,6 @@ export default function PopupMarker(props) {
 
     if (deleteButton) {
       if (deleteButton.contains(e.target)) {
-        console.log("deleting anchor", anchorId);
-
         deleteMarker();
       }
     }

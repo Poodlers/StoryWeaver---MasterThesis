@@ -7,6 +7,7 @@ import PopupAnchor from "./PopupAnchor";
 import { MarkerTypes } from "../models/MarkerTypes";
 import PopupMarker from "./PopupMarker";
 import { ApiDataRepository } from "../api/ApiDataRepository";
+import { distanceInKmBetweenEarthCoordinates } from "./util";
 
 export default function MapDisplayRawLeaflet(props) {
   const repo = ApiDataRepository.getInstance();
@@ -73,6 +74,7 @@ export default function MapDisplayRawLeaflet(props) {
       const newAnchors = mapInfo.anchors.map((anchor) => {
         if (anchor.anchorId == anchorId) {
           anchor.imgCoords = e.target.getLatLng();
+
           //recalculate realCoords using mapInfo.scale
           if (anchorType == MarkerTypes.anchor) {
             anchor.coords = {
@@ -80,10 +82,21 @@ export default function MapDisplayRawLeaflet(props) {
               lng: 0,
             };
           } else {
+            const dx =
+              (anchor.imgCoords.lng - anchors[0].imgCoords.lng) * mapInfo.scale; // x distance from anchor in meters
+            const dy =
+              (anchor.imgCoords.lat - anchors[0].imgCoords.lat) * mapInfo.scale; // y distance from anchor in meters
+
+            const r_earth = 6371e3; // meters
             anchor.coords = {
-              lat: anchor.imgCoords.lat * mapInfo.scale + anchors[0].coords.lat,
-              lng: anchor.imgCoords.lng * mapInfo.scale + anchors[0].coords.lng,
+              lat: anchors[0].coords.lat + (dy / r_earth) * (180 / Math.PI),
+              lng:
+                anchors[0].coords.lng +
+                ((dx / r_earth) * (180 / Math.PI)) /
+                  Math.cos((anchors[0].coords.lat * Math.PI) / 180),
             };
+
+            console.log(anchor.coords);
           }
         }
         return anchor;
