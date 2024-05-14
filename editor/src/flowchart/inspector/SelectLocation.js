@@ -14,9 +14,11 @@ import {
   tertiaryColor,
   textColor,
 } from "../../themes";
+import FileSelectField from "./FileSelect";
 
 function SelectLocationField(props) {
   const label = props.data.label;
+  const conditional = props.conditional;
   const style = props.style;
   const value = props.value;
   const maps = JSON.parse(localStorage.getItem("maps")) || [];
@@ -25,10 +27,21 @@ function SelectLocationField(props) {
     maps.find((map) => map.name == value.map)
   );
 
+  const handleImageTrackFieldChange = (name, newImageValue) => {
+    handleFieldChange(props.data.name, {
+      trigger_mode: value.trigger_mode,
+      map: value.map,
+      place: value.place,
+      qr_code: value.qr_code,
+      tolerance: value.tolerance,
+      image: newImageValue,
+    });
+  };
+
   return (
     <Box
       sx={{
-        display: "flex",
+        display: conditional ? "flex" : "none",
         width: "100%",
         flexDirection: "column",
         alignItems: "center",
@@ -77,6 +90,8 @@ function SelectLocationField(props) {
               map: value.map,
               place: value.place,
               qr_code: value.qr_code,
+              tolerance: value.tolerance,
+              image: value.image,
             });
           }}
         >
@@ -85,6 +100,9 @@ function SelectLocationField(props) {
           </MenuItem>
           <MenuItem sx={{ color: "black" }} value={"QR-Code"}>
             QR-Code
+          </MenuItem>
+          <MenuItem sx={{ color: "black" }} value={"Image Tracking"}>
+            Image Tracking
           </MenuItem>
         </Select>
       </Box>
@@ -150,7 +168,9 @@ function SelectLocationField(props) {
                     trigger_mode: value.trigger_mode,
                     map: event.target.value,
                     place: value.place,
+                    tolerance: value.tolerance,
                     qr_code: value.qr_code,
+                    image: value.image,
                   });
                   setSelectedMap(
                     maps.find((map) => map.name == event.target.value)
@@ -213,6 +233,8 @@ function SelectLocationField(props) {
                     map: value.map,
                     place: event.target.value,
                     qr_code: value.qr_code,
+                    tolerance: value.tolerance,
+                    image: value.image,
                   });
                 }}
               >
@@ -242,6 +264,69 @@ function SelectLocationField(props) {
                       })}
               </Select>
             </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                mt: 2,
+              }}
+            >
+              <Typography
+                variant="h7"
+                component="div"
+                sx={{
+                  py: 1,
+                  px: 2,
+                  color: textColor,
+                  m: 0,
+
+                  textAlign: "start",
+                }}
+              >
+                Tolerância de distância:
+              </Typography>
+
+              <TextField
+                inputProps={{
+                  style: {
+                    color: "black",
+                    height: 40,
+                    padding: 0,
+                    margin: 0,
+                    backgroundColor: "#ffffff",
+                    borderRadius: 10,
+                  },
+                }}
+                sx={{
+                  py: 0,
+                  px: 1,
+                  color: textColor,
+                  flexGrow: 1,
+                  borderRadius: 0,
+                  ".MuiInputBase-root": {
+                    borderRadius: 2,
+                    backgroundColor: "#ffffff",
+                  },
+                }}
+                id="outlined-basic"
+                variant="outlined"
+                value={value.tolerance}
+                onChange={(event) => {
+                  handleFieldChange(props.data.name, {
+                    trigger_mode: value.trigger_mode,
+                    map: value.map,
+                    place: value.place,
+                    qr_code: value.qr_code,
+                    image: value.image,
+                    tolerance: event.target.value,
+                  });
+                }}
+              />
+            </Box>
           </Box>
         ) : (
           <Typography
@@ -252,7 +337,7 @@ function SelectLocationField(props) {
             Nenhum mapa disponível - Adicione um mapa!
           </Typography>
         )
-      ) : (
+      ) : value.trigger_mode === "QR-Code" ? (
         <Box
           sx={{
             display: "flex",
@@ -327,6 +412,8 @@ function SelectLocationField(props) {
                   map: value.map,
                   place: value.place,
                   qr_code: event.target.value,
+                  tolerance: value.tolerance,
+                  image: value.image,
                 });
               }}
             />
@@ -335,6 +422,13 @@ function SelectLocationField(props) {
             </Icon>
           </Box>
         </Box>
+      ) : (
+        <FileSelectField
+          data={{ label: "Imagem:", name: "image" }}
+          style={{ mt: 2 }}
+          value={value.image}
+          onChange={handleImageTrackFieldChange}
+        />
       )}
     </Box>
   );

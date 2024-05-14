@@ -118,6 +118,7 @@ function Inspector(props) {
             case InputFieldType.select_location:
               return (
                 <SelectLocationField
+                  conditional={values[field.conditional]}
                   key={index}
                   id={index}
                   onChange={handleFieldChange}
