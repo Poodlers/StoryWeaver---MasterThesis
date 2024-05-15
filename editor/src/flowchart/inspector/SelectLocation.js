@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useRef, useState } from "react";
 import {
   primaryColor,
   secondaryColor,
@@ -15,8 +15,12 @@ import {
   textColor,
 } from "../../themes";
 import FileSelectField from "./FileSelect";
+import QRCode from "react-qr-code";
+import * as htmlToImage from "html-to-image";
+import { ApiDataRepository } from "../../api/ApiDataRepository";
 
 function SelectLocationField(props) {
+  const repo = ApiDataRepository.getInstance();
   const label = props.data.label;
   const conditional = props.conditional;
   const style = props.style;
@@ -26,6 +30,56 @@ function SelectLocationField(props) {
   const [selectedMap, setSelectedMap] = React.useState(
     maps.find((map) => map.name == value.map)
   );
+
+  const qrCodeRef = useRef(null);
+  const [qrIsVisible, setQrIsVisible] = useState(false);
+  const handleQrCodeGenerator = () => {
+    if (!value.qr_code) {
+      return;
+    }
+    setQrIsVisible(true);
+  };
+  const downloadQRCode = () => {
+    htmlToImage
+      .toPng(qrCodeRef.current)
+      .then(function (dataUrl) {
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = value.qr_code + ".png";
+        link.click();
+      })
+      .catch(function (error) {
+        console.error("Error generating QR code:", error);
+      });
+  };
+
+  const generateMarkerFilesQRCode = async () => {
+    htmlToImage
+      .toBlob(qrCodeRef.current)
+      .then(function (blob) {
+        const file = new File([blob], value.qr_code + ".png", {
+          type: "image/png",
+        });
+        repo
+          .uploadFile(file)
+          .then((response) => {
+            repo
+              .requestGenerateMarkerFiles(file.name)
+              .then((response) => {
+                console.log(response);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch(function (error) {
+        console.error("Error generating QR code:", error);
+      });
+  };
 
   const handleImageTrackFieldChange = (name, newImageValue) => {
     handleFieldChange(props.data.name, {
@@ -407,6 +461,8 @@ function SelectLocationField(props) {
               variant="outlined"
               value={value.qr_code}
               onChange={(event) => {
+                setQrIsVisible(false);
+
                 handleFieldChange(props.data.name, {
                   trigger_mode: value.trigger_mode,
                   map: value.map,
@@ -417,10 +473,29 @@ function SelectLocationField(props) {
                 });
               }}
             />
-            <Icon fontSize="large" sx={{ fontSize: "100px", color: "black" }}>
-              print
-            </Icon>
+            <Box
+              sx={{
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                handleQrCodeGenerator();
+                downloadQRCode();
+                generateMarkerFilesQRCode();
+              }}
+            >
+              <Icon fontSize="large" sx={{ fontSize: "100px", color: "black" }}>
+                print
+              </Icon>
+            </Box>
           </Box>
+          {qrIsVisible && (
+            <QRCode
+              ref={qrCodeRef}
+              style={{ marginTop: "10px" }}
+              value={value.qr_code}
+              size={100}
+            />
+          )}
         </Box>
       ) : (
         <FileSelectField
