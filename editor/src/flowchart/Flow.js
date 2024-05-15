@@ -98,8 +98,11 @@ function Flow(props) {
       setEdges((els) => {
         // refuse to add edge if the source already has an edge
         if (
-          els.find((edge) => edge.sourceHandle == params.sourceHandle) !=
-          undefined
+          els.find(
+            (edge) =>
+              edge.sourceHandle == params.sourceHandle &&
+              edge.source == params.source
+          ) != undefined
         ) {
           return els;
         }
@@ -180,9 +183,7 @@ function Flow(props) {
         break;
       }
     }
-    if (indexToDelete != -1) {
-      newNodes.splice(indexToDelete, 1);
-    }
+    newNodes = newNodes.filter((node) => node.id != idToDelete);
     newEdges = newEdges.filter(
       (edge) => edge.source != idToDelete && edge.target != idToDelete
     );

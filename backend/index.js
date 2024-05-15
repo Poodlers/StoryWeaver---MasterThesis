@@ -1,5 +1,6 @@
 // app.js
 const express = require("express");
+const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
@@ -143,6 +144,16 @@ Module.onRuntimeInitialized = async () => {
   app.get("/generateMarker/:filename", async (req, res) => {
     const filename = req.params.filename;
     const filePath = path.join(__dirname, "files", filename);
+    const fileNameWithoutExtension = filename.split(".")[0];
+    if (
+      fs.existsSync(
+        path.join(__dirname, "files", fileNameWithoutExtension + ".fset")
+      )
+    ) {
+      console.log("Marker files already exist for this image");
+      res.json({ success: true });
+      return;
+    }
 
     generateMarkerFiles(filePath, true, false, false, false)
       .then((result) => {

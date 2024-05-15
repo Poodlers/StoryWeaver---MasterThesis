@@ -60,8 +60,11 @@ function DialogueTree(props) {
     (params) =>
       setEdges((els) => {
         if (
-          els.find((edge) => edge.sourceHandle == params.sourceHandle) !=
-          undefined
+          els.find(
+            (edge) =>
+              edge.sourceHandle == params.sourceHandle &&
+              edge.source == params.source
+          ) != undefined
         ) {
           return els;
         }
