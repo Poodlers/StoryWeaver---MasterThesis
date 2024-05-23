@@ -3,6 +3,7 @@ import { DialogNodeType } from "../../models/DialogNodeTypes";
 import { FileTypesInput } from "../../models/FileTypesInput";
 import { InputFieldType } from "../../models/InputFieldTypes";
 import { NodeType } from "../../models/NodeTypes";
+import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
 
 const ThreeDModelProps = {
   nodeType: "3DModelNode",
@@ -14,11 +15,16 @@ const ThreeDModelProps = {
       name: "name",
     },
     {
-      type: InputFieldType.textField,
+      type: InputFieldType.file_select,
       label: "Ficheiro:",
-      initialValue: "",
-      name: "url",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "file",
       acceptedType: FileTypesInput.ThreeDModel,
+    },
+    {
+      type: InputFieldType.hidden,
+      initialValue: ThreeDModelTypes.gltf,
+      name: "modelType",
     },
     {
       type: InputFieldType.threeDCoord,
@@ -63,7 +69,7 @@ const ThreeDModelProps = {
         tolerance: 5,
         image: { inputType: "url", filename: "", blob: null },
       },
-      name: "location",
+      name: "ar_type",
     },
     {
       type: InputFieldType.multichoice_check,
@@ -131,7 +137,21 @@ const VideoProps = {
         qr_code: "qr_code",
         image: { inputType: "url", filename: "", blob: null },
       },
-      name: "location",
+      name: "ar_type",
+    },
+    {
+      type: InputFieldType.threeDCoord,
+      label: "Posição:",
+      conditional: "ar",
+      initialValue: { x: 0, y: 0, z: 0 },
+      name: "position",
+    },
+    {
+      type: InputFieldType.threeDCoord,
+      label: "Escala:",
+      conditional: "ar",
+      initialValue: { x: 0, y: 0, z: 0 },
+      name: "scale",
     },
   ],
 };
@@ -171,7 +191,21 @@ const ImageProps = {
         qr_code: "qr_code",
         image: { inputType: "url", filename: "", blob: null },
       },
-      name: "location",
+      name: "ar_type",
+    },
+    {
+      type: InputFieldType.threeDCoord,
+      label: "Posição:",
+      conditional: "ar",
+      initialValue: { x: 0, y: 0, z: 0 },
+      name: "position",
+    },
+    {
+      type: InputFieldType.threeDCoord,
+      label: "Escala:",
+      conditional: "ar",
+      initialValue: { x: 0, y: 0, z: 0 },
+      name: "scale",
     },
   ],
 };
@@ -205,10 +239,39 @@ const TextProps = {
       name: "text",
     },
     {
+      type: InputFieldType.checkbox,
+      label: "AR enabled? ",
+      initialValue: false,
+      name: "ar",
+    },
+    {
+      type: InputFieldType.select_location,
+      conditional: "ar",
+      label: "Modo de acionamento:",
+      options: ["GPS Coords", "QR-Code", "Image Tracking"],
+      initialValue: {
+        trigger_mode: "GPS Coords",
+        map: "Map 1",
+        place: "place",
+        tolerance: 5,
+        qr_code: "qr_code",
+        image: { inputType: "url", filename: "", blob: null },
+      },
+      name: "ar_type",
+    },
+    {
       type: InputFieldType.threeDCoord,
       label: "Posição:",
+      conditional: "ar",
       initialValue: { x: 0, y: 0, z: 0 },
       name: "position",
+    },
+    {
+      type: InputFieldType.threeDCoord,
+      label: "Escala:",
+      conditional: "ar",
+      initialValue: { x: 0, y: 0, z: 0 },
+      name: "scale",
     },
   ],
 };

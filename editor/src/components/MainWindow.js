@@ -25,6 +25,7 @@ import { CloseOutlined } from "@mui/icons-material";
 import { DialogNodeType } from "../models/DialogNodeTypes";
 import { ApiDataRepository } from "../api/ApiDataRepository";
 import { narrator } from "../data/narrator";
+import { v4 as uuid } from "uuid";
 
 const generateInspectorProps = (props) => {
   return props.fields.reduce(
@@ -257,7 +258,7 @@ export default function MainWindow(props) {
 
   const addNode = (nodeType, nodeProps) => {
     const newNode = {
-      id: (nodes.length + 1).toString(),
+      id: uuid(),
       position: { x: 0, y: 0 },
       data: generateInspectorProps(nodeProps),
       type: nodeType,

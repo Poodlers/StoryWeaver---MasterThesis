@@ -9,5 +9,6 @@ export enum InputFieldType {
     file_select,
     open_window,
     multiple_choice,
+    hidden
 
 }

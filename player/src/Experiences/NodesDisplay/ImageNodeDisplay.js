@@ -7,7 +7,6 @@ import {
 } from "@mui/material";
 import React, { useEffect } from "react";
 import { backgroundColor, textColor } from "../../themes";
-import ReactPlayer from "react-player";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 
 export default function ImageNodeDisplay(props) {

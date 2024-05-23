@@ -14,6 +14,7 @@ import BeginNodeDisplay from "./NodesDisplay/BeginNodeDisplay";
 import QuizNodeDisplay from "./NodesDisplay/QuizNodeDisplay";
 import VideoNodeDisplay from "./NodesDisplay/VideoNodeDisplay";
 import ImageNodeDisplay from "./NodesDisplay/ImageNodeDisplay";
+import ThreeDModelDisplay from "./NodesDisplay/ThreeDModelDisplay";
 
 export default function ExperiencePlay(props) {
   const repo = ApiDataRepository.getInstance();
@@ -87,7 +88,7 @@ export default function ExperiencePlay(props) {
           node={currentNode}
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
-          experienceName={projectInfo.name}
+          experienceName={projectInfo.title}
         ></BeginNodeDisplay>
       );
     case NodeType.endNode:
@@ -95,7 +96,7 @@ export default function ExperiencePlay(props) {
         <EndNodeDisplay
           node={currentNode}
           setNextNode={setExperience}
-          experienceName={projectInfo.name}
+          experienceName={projectInfo.title}
         ></EndNodeDisplay>
       );
     case NodeType.videoNode:
@@ -104,7 +105,7 @@ export default function ExperiencePlay(props) {
           node={currentNode}
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
-          experienceName={projectInfo.name}
+          experienceName={projectInfo.title}
         ></VideoNodeDisplay>
       );
     case NodeType.imageNode:
@@ -126,6 +127,14 @@ export default function ExperiencePlay(props) {
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
         ></QuizNodeDisplay>
+      );
+    case NodeType.threeDModelNode:
+      return (
+        <ThreeDModelDisplay
+          node={currentNode}
+          possibleNextNodes={nextNodes}
+          setNextNode={setCurrentNode}
+        ></ThreeDModelDisplay>
       );
     default:
       return (

@@ -12,6 +12,14 @@ import {
 } from "../../themes";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import { v4 as uuid } from "uuid";
+import { BlobReader, ZipReader } from "@zip.js/zip.js";
+import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
+
+async function getFileNamesFromZip(fileBlob) {
+  const zipReader = new ZipReader(new BlobReader(fileBlob));
+  const entries = await zipReader.getEntries();
+  return entries.map((entry) => entry.filename);
+}
 
 function FileSelectField(props) {
   const repo = ApiDataRepository.getInstance();
@@ -137,7 +145,7 @@ function FileSelectField(props) {
               inputProps: {
                 accept:
                   props.data.acceptedType == FileTypesInput.ThreeDModel
-                    ? ".glb, .gltf"
+                    ? ".zip"
                     : props.data.acceptedType == FileTypesInput.Image
                     ? ".png, .jpg, .jpeg"
                     : props.data.acceptedType == FileTypesInput.Video
@@ -182,12 +190,27 @@ function FileSelectField(props) {
               file = new File([file], fileName, { type: file.type });
               repo.uploadFile(file).then((res) => {
                 const urlObj = URL.createObjectURL(file);
-
                 handleFieldChange(props.data.name, {
                   blob: urlObj,
                   filename: fileName,
                   inputType: "file",
                 });
+                if (props.data.acceptedType == FileTypesInput.ThreeDModel) {
+                  getFileNamesFromZip(file).then((fileNames) => {
+                    if (fileNames.find((name) => name.includes(".obj"))) {
+                      handleFieldChange("modelType", ThreeDModelTypes.obj);
+                    } else if (
+                      fileNames.find((name) => name.includes(".fbx"))
+                    ) {
+                      handleFieldChange("modelType", ThreeDModelTypes.fbx);
+                    } else if (
+                      fileNames.find((name) => name.includes(".gltf"))
+                    ) {
+                      handleFieldChange("modelType", ThreeDModelTypes.gltf);
+                    }
+                  });
+                }
+
                 if (generateMarkerFiles) {
                   repo
                     .requestGenerateMarkerFiles(fileName)

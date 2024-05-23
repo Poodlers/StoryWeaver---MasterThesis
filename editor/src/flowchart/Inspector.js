@@ -108,6 +108,7 @@ function Inspector(props) {
               return (
                 <ThreeDCoordField
                   key={index}
+                  conditional={values[field.conditional]}
                   id={index}
                   onChange={handleFieldChange}
                   value={values[field.name]}

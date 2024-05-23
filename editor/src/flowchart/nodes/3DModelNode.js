@@ -11,8 +11,8 @@ import {
 
 export default function ThreeDModelNode(props) {
   const name = props.data?.name ?? "";
-
-  const filepath = props.data?.url ?? "";
+  console.log(props.data);
+  const filepath = props.data?.file ?? "";
 
   return (
     <>
@@ -128,27 +128,7 @@ export default function ThreeDModelNode(props) {
               Nenhum modelo 3D selecionado
             </Typography>
           ) : (
-            <div className="sketchfab-embed-wrapper">
-              {" "}
-              <iframe
-                title="Sketchfab Model"
-                frameBorder="0"
-                allowFullScreen={true}
-                mozallowfullscreen="true"
-                webkitallowfullscreen="true"
-                allow="autoplay; fullscreen; xr-spatial-tracking"
-                xr-spatial-tracking="true"
-                execution-while-out-of-viewport="true"
-                execution-while-not-rendered="true"
-                web-share="true"
-                src={filepath + "/embed"}
-                style={{
-                  margin: "3px",
-                }}
-              >
-                {" "}
-              </iframe>
-            </div>
+            <div className="sketchfab-embed-wrapper"></div>
           )}
         </Box>
       </Box>

@@ -28,6 +28,9 @@ const transform = (response: AxiosResponse): Promise<ApiResponse<any>> => {
 
 
 export class ApiDataRepository extends HttpClient implements IDataRepository{
+    
+    currentProject: Project | null = null;
+
     private static instance: ApiDataRepository;
     private constructor() {
         super();
@@ -38,6 +41,15 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
         }
 
         return ApiDataRepository.instance;
+    }
+
+    public getMapPlaceCoords = async (mapName: string, placeName: string): Promise<any> => {
+        if (this.currentProject === null){
+           throw new Error("No project loaded");
+        }
+       const anchor = this.currentProject.maps.find((map: any) => map.name === mapName)?.anchors.find((anchor : any) => anchor.name === placeName);
+       return anchor ? anchor.coords :
+        new Error("No anchor found");
     }
 
     public getFile = async (fileName: string): Promise<Blob> => {
@@ -59,11 +71,14 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
  
     }
 
+
+
     public getProject = async (projectId: string): Promise<Project> => {
         const instance = this.createInstance();
 
         try{
             const result = await instance.get(`${BASE_URL}/load/${projectId}`).then(transform);
+            this.currentProject = result.data;
             return result.data;
         }
         catch(error){
