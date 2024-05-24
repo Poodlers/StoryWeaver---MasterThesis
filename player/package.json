@@ -14,6 +14,7 @@
     "@types/node": "^16.18.96",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
+    "@zip.js/zip.js": "^2.7.44",
     "axios": "^1.6.8",
     "lodash": "^4.17.21",
     "react": "^18.3.1",

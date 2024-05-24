@@ -188,6 +188,11 @@ function FileSelectField(props) {
               const fileID = uuid();
               const fileName = fileID + file.name;
               file = new File([file], fileName, { type: file.type });
+              if (value.inputType == "file" && value.filename != fileName) {
+                repo.deleteFile(value.filename).catch((error) => {
+                  console.error(error);
+                });
+              }
               repo
                 .uploadFile(file)
                 .then((res) => {

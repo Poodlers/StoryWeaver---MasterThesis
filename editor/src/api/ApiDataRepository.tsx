@@ -46,9 +46,10 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
         };
         
         const instance = this.createInstance();
+        const storyID = localStorage.getItem('storyId');
 
         try{
-            const result = await instance.get(`${BASE_URL}/files/${fileName}`, config).then(transform);
+            const result = await instance.get(`${BASE_URL}/files/${storyID}/${fileName}`, config).then(transform);
             
             return result.data;
         }
@@ -62,7 +63,8 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
     public uploadFile = async (file: File): Promise<any> => {
         const formData = new FormData();
       
-        formData.append('file', file);
+        formData.append("projectID",  localStorage.getItem('storyId')!);
+        formData.append("file", file, file.name)
 
         const instance = this.createInstance();
 
@@ -82,9 +84,9 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
 
     public deleteFile = async (fileName: string): Promise<any> => {
         const instance = this.createInstance();
-
+        const storyID = localStorage.getItem('storyId');
         try{
-            const result = await instance.delete(`${BASE_URL}/files/${fileName}`).then(transform);
+            const result = await instance.delete(`${BASE_URL}/files/${storyID}/${fileName}`).then(transform);
             return result;
         }
         catch(error){
@@ -143,9 +145,9 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
 
     public requestGenerateMarkerFiles = async (fileName: string): Promise<any> => {
         const instance = this.createInstance();
-
+        const storyID = localStorage.getItem('storyId');
         try{
-            const result = await instance.get(`${BASE_URL}/generateMarker/${fileName}`).then(transform);
+            const result = await instance.get(`${BASE_URL}/generateMarker/${storyID}/${fileName}`).then(transform);
             return result;
         }
         catch(error){

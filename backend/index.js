@@ -14,8 +14,8 @@ const secretkey = require("./config/secret.json");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { randomUUID } = require("crypto");
 const { OAuth2Client } = require("google-auth-library");
-const generateMarkerFiles = require("./nft-creator");
-var Module = require("./libs/NftMarkerCreator_wasm.js");
+
+const { Worker } = require("worker_threads");
 
 const uri =
   "mongodb+srv://Poodlers:" +
@@ -56,7 +56,12 @@ const PORT = process.env.PORT || 8080;
 // Set storage engine for multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "files/");
+    let destinationPath = path.join("files", req.body.projectID);
+
+    if (!fs.existsSync(destinationPath)) {
+      fs.mkdirSync(destinationPath);
+    }
+    cb(null, destinationPath);
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -134,41 +139,62 @@ app.get("/load/:storyId", async (req, res) => {
   res.send(story);
 });
 
-// Handle file upload
-app.post("/upload", upload.single("file"), (req, res) => {
-  res.json({ filename: req.file.originalname });
+app.delete("/delete/:storyId", async (req, res) => {
+  const storyId = req.params.storyId;
+  await client
+    .db("projects")
+    .collection("story_structures")
+    .deleteOne({ id: storyId });
+  res.send({ success: true });
 });
 
-Module.onRuntimeInitialized = async () => {
-  console.log("WASM Module Loaded");
-  app.get("/generateMarker/:filename", async (req, res) => {
-    const filename = req.params.filename;
-    const filePath = path.join(__dirname, "files", filename);
-    const fileNameWithoutExtension = filename.split(".")[0];
-    if (
-      fs.existsSync(
-        path.join(__dirname, "files", fileNameWithoutExtension + ".fset")
-      )
-    ) {
-      console.log("Marker files already exist for this image");
-      res.json({ success: true });
-      return;
-    }
+// Handle file upload
+app.post(
+  "/upload",
+  upload.fields([{ name: "file" }, { name: "projectID" }]),
+  (req, res) => {
+    res.json({ success: true });
+  }
+);
 
-    generateMarkerFiles(filePath, true, false, false, false)
-      .then((result) => {
-        res.json({ success: true });
-      })
-      .catch((err) => {
-        res.status(500).send({ error: err });
-      });
+app.get("/generateMarker/:storyID/:filename", async (req, res) => {
+  const filename = req.params.filename;
+  const storyID = req.params.storyID;
+  const filePath = path.join(__dirname, "files", storyID, filename);
+  const fileNameWithoutExtension = filename.split(".")[0];
+  if (
+    fs.existsSync(
+      path.join(__dirname, "files", storyID, fileNameWithoutExtension + ".fset")
+    )
+  ) {
+    console.log("Marker files already exist for this image");
+    res.json({ success: true });
+    return;
+  }
+  const worker = new Worker("./nft-creator.js", {
+    workerData: {
+      imageURL: filePath,
+      outputPath: "/files/" + storyID + "/",
+      iParam: true,
+      noConfParam: false,
+      zftParam: false,
+      onlyConfidenceParam: false,
+    },
   });
-};
+
+  worker.on("message", (data) => {
+    res.status(200).send(data);
+  });
+  worker.on("error", (msg) => {
+    res.status(404).send(`An error occurred: ${msg}`);
+  });
+});
 
 // Define a route to handle DELETE requests for files by name
-app.delete("/files/:filename", (req, res) => {
+app.delete("/files/:storyID/:filename", (req, res) => {
   const filename = req.params.filename;
-  const filePath = path.join(__dirname, "files", filename);
+  const storyID = req.params.storyID;
+  const filePath = path.join(__dirname, "files", storyID, filename);
 
   // Delete the file
   fs.unlink(filePath, (err) => {
@@ -183,15 +209,15 @@ app.delete("/files/:filename", (req, res) => {
 });
 
 // Define a route to handle GET requests for files by name
-app.get("/files/:filename", (req, res) => {
+app.get("/files/:storyID/:filename", (req, res) => {
   const filename = req.params.filename;
-
+  const storyID = req.params.storyID;
   // Set the appropriate content type based on the file extension
   const contentType = getContentType(filename);
   res.setHeader("Content-Type", contentType);
 
   // Serve the file from the 'uploads' directory
-  res.sendFile(path.join(__dirname, "files", filename), (err) => {
+  res.sendFile(path.join(__dirname, "files", storyID, filename), (err) => {
     if (err) {
       console.error("Error serving file:", err);
       res.status(404).send("File not found");

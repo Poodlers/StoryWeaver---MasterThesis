@@ -60,7 +60,7 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
         const instance = this.createInstance();
 
         try{
-            const result = await instance.get(`${BASE_URL}/files/${fileName}`, config).then(transform);
+            const result = await instance.get(`${BASE_URL}/files/${this.currentProject?.id}/${fileName}`, config).then(transform);
             
             return result.data;
         }
