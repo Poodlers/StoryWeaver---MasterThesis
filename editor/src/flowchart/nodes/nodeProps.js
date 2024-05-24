@@ -17,15 +17,16 @@ const ThreeDModelProps = {
     {
       type: InputFieldType.file_select,
       label: "Ficheiro:",
-      initialValue: { inputType: "url", filename: "", blob: null },
+      initialValue: {
+        inputType: "url",
+        filename: "",
+        blob: null,
+        modelType: ThreeDModelTypes.gltf,
+      },
       name: "file",
       acceptedType: FileTypesInput.ThreeDModel,
     },
-    {
-      type: InputFieldType.hidden,
-      initialValue: ThreeDModelTypes.gltf,
-      name: "modelType",
-    },
+
     {
       type: InputFieldType.threeDCoord,
       label: "Posição:",
@@ -173,6 +174,20 @@ const ImageProps = {
       acceptedType: FileTypesInput.Image,
     },
     {
+      type: InputFieldType.threeDCoord,
+      label: "Posição:",
+      conditional: "ar",
+      initialValue: { x: 0, y: 0, z: 0 },
+      name: "position",
+    },
+    {
+      type: InputFieldType.threeDCoord,
+      label: "Escala:",
+      conditional: "ar",
+      initialValue: { x: 0, y: 0, z: 0 },
+      name: "scale",
+    },
+    {
       type: InputFieldType.checkbox,
       label: "AR enabled? ",
       initialValue: false,
@@ -192,20 +207,6 @@ const ImageProps = {
         image: { inputType: "url", filename: "", blob: null },
       },
       name: "ar_type",
-    },
-    {
-      type: InputFieldType.threeDCoord,
-      label: "Posição:",
-      conditional: "ar",
-      initialValue: { x: 0, y: 0, z: 0 },
-      name: "position",
-    },
-    {
-      type: InputFieldType.threeDCoord,
-      label: "Escala:",
-      conditional: "ar",
-      initialValue: { x: 0, y: 0, z: 0 },
-      name: "scale",
     },
   ],
 };

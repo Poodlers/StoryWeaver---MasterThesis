@@ -188,40 +188,62 @@ function FileSelectField(props) {
               const fileID = uuid();
               const fileName = fileID + file.name;
               file = new File([file], fileName, { type: file.type });
-              repo.uploadFile(file).then((res) => {
-                const urlObj = URL.createObjectURL(file);
-                handleFieldChange(props.data.name, {
-                  blob: urlObj,
-                  filename: fileName,
-                  inputType: "file",
-                });
-                if (props.data.acceptedType == FileTypesInput.ThreeDModel) {
-                  getFileNamesFromZip(file).then((fileNames) => {
-                    if (fileNames.find((name) => name.includes(".obj"))) {
-                      handleFieldChange("modelType", ThreeDModelTypes.obj);
-                    } else if (
-                      fileNames.find((name) => name.includes(".fbx"))
-                    ) {
-                      handleFieldChange("modelType", ThreeDModelTypes.fbx);
-                    } else if (
-                      fileNames.find((name) => name.includes(".gltf"))
-                    ) {
-                      handleFieldChange("modelType", ThreeDModelTypes.gltf);
-                    }
-                  });
-                }
+              repo
+                .uploadFile(file)
+                .then((res) => {
+                  const urlObj = URL.createObjectURL(file);
 
-                if (generateMarkerFiles) {
-                  repo
-                    .requestGenerateMarkerFiles(fileName)
-                    .then((res) => {
-                      console.log(res);
-                    })
-                    .catch((error) => {
-                      console.error(error);
+                  if (props.data.acceptedType == FileTypesInput.ThreeDModel) {
+                    getFileNamesFromZip(file).then((fileNames) => {
+                      if (fileNames.find((name) => name.includes(".obj"))) {
+                        handleFieldChange(props.data.name, {
+                          blob: urlObj,
+                          filename: fileName,
+                          inputType: "file",
+                          modelType: ThreeDModelTypes.obj,
+                        });
+                      } else if (
+                        fileNames.find((name) => name.includes(".fbx"))
+                      ) {
+                        handleFieldChange(props.data.name, {
+                          blob: urlObj,
+                          filename: fileName,
+                          inputType: "file",
+                          modelType: ThreeDModelTypes.fbx,
+                        });
+                      } else if (
+                        fileNames.find((name) => name.includes(".gltf"))
+                      ) {
+                        handleFieldChange(props.data.name, {
+                          blob: urlObj,
+                          filename: fileName,
+                          inputType: "file",
+                          modelType: ThreeDModelTypes.gltf,
+                        });
+                      }
                     });
-                }
-              });
+                  } else {
+                    handleFieldChange(props.data.name, {
+                      blob: urlObj,
+                      filename: fileName,
+                      inputType: "file",
+                    });
+                  }
+
+                  if (generateMarkerFiles) {
+                    repo
+                      .requestGenerateMarkerFiles(fileName)
+                      .then((res) => {
+                        console.log(res);
+                      })
+                      .catch((error) => {
+                        console.error(error);
+                      });
+                  }
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
             }}
             value={value.inputType == "file" ? value.filename : ""}
             sx={{

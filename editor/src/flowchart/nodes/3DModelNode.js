@@ -11,7 +11,7 @@ import {
 
 export default function ThreeDModelNode(props) {
   const name = props.data?.name ?? "";
-  console.log(props.data);
+
   const filepath = props.data?.file ?? "";
 
   return (

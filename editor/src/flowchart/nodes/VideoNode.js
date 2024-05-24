@@ -17,6 +17,7 @@ export default function VideoNode(props) {
   const title = props.data?.name ?? "";
   const fileInfo = props.data?.file ?? "";
   const [error, setError] = React.useState(false);
+
   const [url, setUrl] = React.useState(
     fileInfo.inputType == "url" ? fileInfo.filename : fileInfo.blob
   );
@@ -127,7 +128,7 @@ export default function VideoNode(props) {
             alignItems: "center",
           }}
         >
-          {error || fileInfo.filename == "" ? (
+          {fileInfo.filename == "" ? (
             <Typography
               variant="h6"
               sx={{
@@ -141,6 +142,20 @@ export default function VideoNode(props) {
             >
               Por favor insira um video no Inspetor!
             </Typography>
+          ) : error ? (
+            <Typography
+              variant="h6"
+              sx={{
+                px: 3,
+                fontSize: 15,
+                color: textColor,
+                fontWeight: 500,
+                textAlign: "center",
+                m: "0 auto",
+              }}
+            >
+              Erro ao carregar o vídeo!
+            </Typography>
           ) : null}
 
           <ReactPlayer
@@ -148,9 +163,14 @@ export default function VideoNode(props) {
             onReady={() => setError(false)}
             onError={(e) => {
               if (fileInfo.inputType == "file") {
-                repo.getFile(fileInfo.filename).then((blob) => {
-                  setUrl(URL.createObjectURL(blob));
-                });
+                repo
+                  .getFile(fileInfo.filename)
+                  .then((blob) => {
+                    setUrl(URL.createObjectURL(blob));
+                  })
+                  .catch((err) => {
+                    setError(true);
+                  });
               } else {
                 setError(true);
               }

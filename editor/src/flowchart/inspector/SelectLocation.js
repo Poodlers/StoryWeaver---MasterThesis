@@ -25,6 +25,7 @@ function SelectLocationField(props) {
   const conditional = props.conditional;
   const style = props.style;
   const value = props.value;
+
   const maps = JSON.parse(localStorage.getItem("maps")) || [];
   const handleFieldChange = props.onChange;
   const [selectedMap, setSelectedMap] = React.useState(
