@@ -53,10 +53,17 @@ export default function ThreeDModelDisplay(props) {
         await zipFs.importBlob(file);
         const realFilesToBlobNames = {};
 
-        async function processZipThreeDModelChildren(entry, mainBlob) {
+        async function processZipThreeDModelChildren(
+          entry,
+          mainBlob,
+          parentsNames = []
+        ) {
           if (entry.data.directory) {
             for (const child of entry.children) {
-              await processZipThreeDModelChildren(child, mainBlob);
+              await processZipThreeDModelChildren(child, mainBlob, [
+                ...parentsNames,
+                entry.name,
+              ]);
             }
           } else {
             const data = await entry.data.getData(new BlobWriter());
@@ -68,9 +75,10 @@ export default function ThreeDModelDisplay(props) {
               setOtherFile(createdURL);
             } else {
               const createdURL = URL.createObjectURL(data);
-              realFilesToBlobNames[createdURL] = entry.parent.name
-                ? entry.parent.name + "/" + entry.name
-                : entry.name;
+              realFilesToBlobNames[createdURL] =
+                parentsNames.length > 0
+                  ? parentsNames.join("/") + "/" + entry.name
+                  : entry.name;
             }
           }
         }
