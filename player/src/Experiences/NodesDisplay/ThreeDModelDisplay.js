@@ -15,9 +15,11 @@ import { ComponentState } from "../../models/ComponentState";
 import {
   BlobReader,
   BlobWriter,
-  ZipDirectoryEntry,
+  fs,
+  TextReader,
   ZipReader,
 } from "@zip.js/zip.js";
+const { FS } = fs;
 
 export default function ThreeDModelDisplay(props) {
   const repo = ApiDataRepository.getInstance();
@@ -42,34 +44,54 @@ export default function ThreeDModelDisplay(props) {
       setComponentState(ComponentState.LOADED);
       return;
     }
+    var mainFileBlob = { data: undefined };
     repo
       .getFile(file.filename)
-      .then((file) => {
-        const blobReader = new BlobReader(file);
-        const zipReader = new ZipReader(blobReader);
-        const URLBlobToRealFileName = {};
-        zipReader
-          .getEntries()
-          .then((entries) => {
-            entries.forEach((entry) => {
-              entry.getData(new BlobWriter()).then((data) => {
-                if (entry.directory) {
-                  console.log(entry.children);
-                }
-                const createdURL = URL.createObjectURL(data);
+      .then(async (file) => {
+        const zipFs = new FS();
 
-                if (entry.filename.split(".")[1] === modelType) {
-                  setFileURL(createdURL);
-                } else {
-                  setOtherFile(createdURL);
-                }
-              });
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-            setComponentState(ComponentState.ERROR);
-          });
+        await zipFs.importBlob(file);
+        const realFilesToBlobNames = {};
+
+        async function processZipThreeDModelChildren(entry, mainBlob) {
+          if (entry.data.directory) {
+            for (const child of entry.children) {
+              await processZipThreeDModelChildren(child, mainBlob);
+            }
+          } else {
+            const data = await entry.data.getData(new BlobWriter());
+
+            if (entry.name.split(".")[1] === modelType) {
+              mainBlob.data = data;
+            } else if (entry.name.split(".")[1] === "mtl") {
+              const createdURL = URL.createObjectURL(data);
+              setOtherFile(createdURL);
+            } else {
+              const createdURL = URL.createObjectURL(data);
+              realFilesToBlobNames[createdURL] = entry.parent.name
+                ? entry.parent.name + "/" + entry.name
+                : entry.name;
+            }
+          }
+        }
+
+        for (const entry of zipFs.root.children) {
+          await processZipThreeDModelChildren(entry, mainFileBlob);
+        }
+
+        const rawTextData = await new BlobReader(mainFileBlob.data).readable
+          .getReader()
+          .read();
+        var string = new TextDecoder().decode(rawTextData.value);
+        for (const [key, value] of Object.entries(realFilesToBlobNames)) {
+          string = string.replace(value, key);
+        }
+
+        const mainModelBlob = new Blob([string]);
+
+        const mainFileURL = URL.createObjectURL(mainModelBlob);
+        setFileURL(mainFileURL);
+
         setComponentState(ComponentState.LOADED);
       })
       .catch((error) => {

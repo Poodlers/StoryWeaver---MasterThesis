@@ -101,7 +101,7 @@ export default function LocationBasedARDisplay(props) {
             ) : entityType === AREntityTypes.ThreeDModel ? (
               threeDModelType === ThreeDModelTypes.gltf ? (
                 <a-entity
-                  gltf-model={"src: " + src}
+                  gltf-model-next={"src: url(" + src + ");"}
                   animation-mixer
                   gps-new-entity-place={
                     "latitude: " + coords.lat + ";" + "longitude: " + coords.lng
