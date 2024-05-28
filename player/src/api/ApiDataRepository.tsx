@@ -52,6 +52,13 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
         new Error("No anchor found");
     }
 
+    public getFilePath = async (fileName: string): Promise<string> => {
+        if (this.currentProject === null){
+            throw new Error("No project loaded");
+         }
+        return `${BASE_URL}/files/${this.currentProject?.id}/${fileName}`;
+    }
+
     public getFile = async (fileName: string): Promise<Blob> => {
         const config: AxiosRequestConfig = {
             responseType: 'blob',

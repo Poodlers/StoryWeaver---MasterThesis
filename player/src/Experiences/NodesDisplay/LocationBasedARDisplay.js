@@ -53,13 +53,18 @@ export default function LocationBasedARDisplay(props) {
         <div>
           <a-scene
             vr-mode-ui="enabled: false"
-            arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false"
+            arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
             renderer="antialias: true; alpha: true"
           >
             <a-camera
               gps-camera
               rotation-reader
-              gps-new-camera="gpsMinDistance: 0.5"
+              gps-new-camera={
+                "gpsMinDistance: 0.5; simulateLatitude:" +
+                coords.lat +
+                "; simulateLongitude: " +
+                coords.lng
+              }
             ></a-camera>
             <Typography
               variant="h4"
@@ -140,6 +145,7 @@ export default function LocationBasedARDisplay(props) {
                   ></video>
                 </a-assets>
                 <a-video
+                  look-at="[gps-camera]"
                   gps-new-entity-place={
                     "latitude: " + coords.lat + ";" + "longitude: " + coords.lng
                   }

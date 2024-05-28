@@ -11,7 +11,7 @@ export default function MainWindow(props) {
     <Box
       sx={{
         width: "100%",
-        minHeight: "100vh",
+
         backgroundColor: secondaryColor,
       }}
     >

@@ -19,6 +19,7 @@ import {
   TextReader,
   ZipReader,
 } from "@zip.js/zip.js";
+import ImageTrackingBasedARDisplay from "./ImageTrackingBasedARDisplay";
 const { FS } = fs;
 
 export default function ThreeDModelDisplay(props) {
@@ -151,7 +152,15 @@ export default function ThreeDModelDisplay(props) {
         threeDModelType={modelType}
       />
     ) : (
-      <div></div>
+      <ImageTrackingBasedARDisplay
+        name={name}
+        markerSrc={ARTypeInfo.image}
+        src={fileURL}
+        position={position}
+        scale={scale}
+        entityType={AREntityTypes.ThreeDModel}
+        threeDModelType={modelType}
+      />
     )
   ) : (
     <Box
