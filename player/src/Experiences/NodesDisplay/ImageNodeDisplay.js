@@ -46,33 +46,7 @@ export default function ImageNodeDisplay(props) {
       setUrl(fileInfo.filename);
     }
   }, []);
-  return componentState === ComponentState.LOADING ? (
-    <Typography
-      variant="h4"
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      Loading...
-    </Typography>
-  ) : componentState === ComponentState.ERROR ? (
-    <Typography
-      variant="h4"
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      Error loading
-    </Typography>
-  ) : (
+  return (
     <Box
       sx={{
         width: "100%",
@@ -83,7 +57,33 @@ export default function ImageNodeDisplay(props) {
         alignItems: "center",
       }}
     >
-      {isAR ? (
+      {componentState === ComponentState.LOADING ? (
+        <Typography
+          variant="h4"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          Loading...
+        </Typography>
+      ) : componentState === ComponentState.ERROR ? (
+        <Typography
+          variant="h4"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          Error loading
+        </Typography>
+      ) : isAR ? (
         ARTypeInfo.trigger_mode === ARTriggerMode.GPSCoords ? (
           <LocationBasedARDisplay
             name={title}
@@ -135,21 +135,23 @@ export default function ImageNodeDisplay(props) {
               display: "block",
             }}
           />
-
-          <ButtonBase
-            sx={{
-              mt: 2,
-              backgroundColor: backgroundColor,
-              color: textColor,
-            }}
-            onClick={() => {
-              setNextNode(possibleNextNodes[0]);
-            }}
-          >
-            <Typography variant="h4">Avançar</Typography>
-          </ButtonBase>
         </>
       )}
+      <ButtonBase
+        sx={{
+          backgroundColor: backgroundColor,
+          color: textColor,
+          position: "absolute",
+          bottom: "10vh",
+          right: 10,
+        }}
+        onClick={() => {
+          document.querySelector("video").remove();
+          setNextNode(possibleNextNodes[0]);
+        }}
+      >
+        <Typography variant="h4">Avançar</Typography>
+      </ButtonBase>
     </Box>
   );
 }

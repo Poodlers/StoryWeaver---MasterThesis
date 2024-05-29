@@ -47,59 +47,7 @@ export default function VideoNodeDisplay(props) {
     }
   }, []);
 
-  return componentState === ComponentState.LOADING ? (
-    <Typography
-      variant="h4"
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      Loading...
-    </Typography>
-  ) : componentState === ComponentState.ERROR ? (
-    <Typography
-      variant="h4"
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      Error loading
-    </Typography>
-  ) : isAR ? (
-    ARTypeInfo.trigger_mode === ARTriggerMode.GPSCoords ? (
-      <LocationBasedARDisplay
-        name={title}
-        src={fileInfo.filename}
-        map={ARTypeInfo.map}
-        place={ARTypeInfo.place}
-        tolerance={ARTypeInfo.tolerance}
-        position={position}
-        scale={scale}
-        entityType={AREntityTypes.Video}
-      />
-    ) : (
-      <ImageTrackingBasedARDisplay
-        name={title}
-        markerSrc={
-          ARTypeInfo.trigger_mode == ARTriggerMode.QRCode
-            ? ARTypeInfo.qr_code
-            : ARTypeInfo.image.filename
-        }
-        src={url}
-        position={position}
-        scale={scale}
-        entityType={AREntityTypes.Video}
-      />
-    )
-  ) : (
+  return (
     <Box
       sx={{
         width: "100%",
@@ -110,32 +58,95 @@ export default function VideoNodeDisplay(props) {
         alignItems: "center",
       }}
     >
-      <Typography variant="h4">{title}</Typography>
-      <ReactPlayer
-        style={{ padding: 5 }}
-        onError={(e) => {
-          if (fileInfo.inputType == "file") {
-            repo.getFile(fileInfo.filename).then((blob) => {
-              setUrl(URL.createObjectURL(blob));
-            });
-          } else {
-            setComponentState(ComponentState.ERROR);
-          }
-        }}
-        url={url}
-        width={"auto"}
-        height={"500px"}
-        controls={true}
-        playing={false}
-        muted={false}
-      />
+      {componentState === ComponentState.LOADING ? (
+        <Typography
+          variant="h4"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          Loading...
+        </Typography>
+      ) : componentState === ComponentState.ERROR ? (
+        <Typography
+          variant="h4"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          Error loading
+        </Typography>
+      ) : isAR ? (
+        ARTypeInfo.trigger_mode === ARTriggerMode.GPSCoords ? (
+          <LocationBasedARDisplay
+            name={title}
+            src={fileInfo.filename}
+            map={ARTypeInfo.map}
+            place={ARTypeInfo.place}
+            tolerance={ARTypeInfo.tolerance}
+            position={position}
+            scale={scale}
+            entityType={AREntityTypes.Video}
+          />
+        ) : (
+          <ImageTrackingBasedARDisplay
+            name={title}
+            markerSrc={
+              ARTypeInfo.trigger_mode == ARTriggerMode.QRCode
+                ? ARTypeInfo.qr_code
+                : ARTypeInfo.image.filename
+            }
+            src={url}
+            position={position}
+            scale={scale}
+            entityType={AREntityTypes.Video}
+          />
+        )
+      ) : (
+        <>
+          <Typography variant="h4">{title}</Typography>
+          <ReactPlayer
+            style={{ padding: 5 }}
+            onError={(e) => {
+              if (fileInfo.inputType == "file") {
+                repo.getFile(fileInfo.filename).then((blob) => {
+                  setUrl(URL.createObjectURL(blob));
+                });
+              } else {
+                setComponentState(ComponentState.ERROR);
+              }
+            }}
+            url={url}
+            width={"auto"}
+            height={"500px"}
+            controls={true}
+            playing={false}
+            muted={false}
+          />
+        </>
+      )}
       <ButtonBase
         sx={{
-          mt: 2,
           backgroundColor: backgroundColor,
           color: textColor,
+          position: "absolute",
+          bottom: "10vh",
+          right: 10,
         }}
         onClick={() => {
+          document.querySelectorAll("video").forEach((video) => {
+            video.remove();
+          });
+          document.querySelector("html").classList.remove("a-fullscreen");
+          document.querySelector("body").style.marginTop = "0px !important";
           setNextNode(possibleNextNodes[0]);
         }}
       >

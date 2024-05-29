@@ -65,60 +65,69 @@ export default function ExperiencePlay(props) {
     setCurrentNode(node);
   };
 
-  if (componentState === ComponentState.LOADING) {
-    return (
-      <Box
-        sx={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h4">Carregando...</Typography>
-      </Box>
-    );
-  }
-
-  switch (currentNode.type) {
-    case NodeType.beginNode:
-      return (
+  return componentState === ComponentState.LOADING ? (
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Typography variant="h4">Carregando...</Typography>
+    </Box>
+  ) : componentState === ComponentState.ERROR ? (
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Typography variant="h4">Erro ao carregar</Typography>
+    </Box>
+  ) : (
+    <Box
+      key={currentNode.id}
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {currentNode.type == NodeType.beginNode ? (
         <BeginNodeDisplay
           node={currentNode}
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
           experienceName={projectInfo.title}
         ></BeginNodeDisplay>
-      );
-    case NodeType.endNode:
-      return (
+      ) : currentNode.type == NodeType.endNode ? (
         <EndNodeDisplay
           node={currentNode}
           setNextNode={setExperience}
           experienceName={projectInfo.title}
         ></EndNodeDisplay>
-      );
-    case NodeType.videoNode:
-      return (
+      ) : currentNode.type == NodeType.videoNode ? (
         <VideoNodeDisplay
           node={currentNode}
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
           experienceName={projectInfo.title}
         ></VideoNodeDisplay>
-      );
-    case NodeType.imageNode:
-      return (
+      ) : currentNode.type == NodeType.imageNode ? (
         <ImageNodeDisplay
           node={currentNode}
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
         ></ImageNodeDisplay>
-      );
-
-    case NodeType.quizNode:
-      return (
+      ) : currentNode.type == NodeType.quizNode ? (
         <QuizNodeDisplay
           node={currentNode}
           outGoingEdges={projectInfo.edges.filter(
@@ -127,17 +136,13 @@ export default function ExperiencePlay(props) {
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
         ></QuizNodeDisplay>
-      );
-    case NodeType.threeDModelNode:
-      return (
+      ) : currentNode.type == NodeType.threeDModelNode ? (
         <ThreeDModelDisplay
           node={currentNode}
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
         ></ThreeDModelDisplay>
-      );
-    default:
-      return (
+      ) : (
         <Box>
           <p>Node type not supported</p>
           <ButtonBase
@@ -152,6 +157,7 @@ export default function ExperiencePlay(props) {
             <Typography variant="h4">Voltar ao inicio</Typography>
           </ButtonBase>
         </Box>
-      );
-  }
+      )}
+    </Box>
+  );
 }

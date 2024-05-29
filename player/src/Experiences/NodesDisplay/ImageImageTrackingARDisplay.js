@@ -6,9 +6,7 @@ export default function ImageImageTrackingARDisplay(props) {
   const rotation = props.rotation || { x: 0, y: 0, z: 0 };
   const src = props.src;
   const markerSrc = props.markerSrc;
-  window.addEventListener("arjs-nft-loaded", (event) => {
-    console.log("NFT Loaded");
-  });
+
   return (
     <a-scene
       vr-mode-ui="enabled: false;"
@@ -21,7 +19,9 @@ export default function ImageImageTrackingARDisplay(props) {
       </a-assets>
       <a-nft
         type="nft"
-        url={markerSrc}
+        url={
+          "https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/trex-image/trex"
+        }
         smooth="true"
         smoothCount="10"
         smoothTolerance=".01"

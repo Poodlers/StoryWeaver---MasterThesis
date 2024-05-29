@@ -6,6 +6,7 @@ import { AREntityTypes } from "../../models/AREntityTypes";
 import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
 import VideoImageTrackingARDisplay from "./VideoImageTrackingARDisplay";
 import ImageImageTrackingARDisplay from "./ImageImageTrackingARDisplay";
+import ThreeDModelImageTrackingDisplay from "./ThreeDModelImageTrackingDisplay";
 
 export default function ImageTrackingBasedARDisplay(props) {
   const repo = ApiDataRepository.getInstance();
@@ -73,9 +74,13 @@ export default function ImageTrackingBasedARDisplay(props) {
               scale={scale}
             ></ImageImageTrackingARDisplay>
           ) : AREntityTypes.ThreeDModel ? (
-            <div>
-              <Typography variant="h4">3D Model</Typography>
-            </div>
+            <ThreeDModelImageTrackingDisplay
+              src={src}
+              markerSrc={imageDescriptorsPath}
+              position={position}
+              rotation={rotation}
+              scale={scale}
+            ></ThreeDModelImageTrackingDisplay>
           ) : null}
         </div>
       )}

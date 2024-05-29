@@ -111,58 +111,7 @@ export default function ThreeDModelDisplay(props) {
 
   const setNextNode = props.setNextNode;
 
-  return componentState === ComponentState.LOADING ? (
-    <Typography
-      variant="h4"
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      Loading...
-    </Typography>
-  ) : componentState === ComponentState.ERROR ? (
-    <Typography
-      variant="h4"
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      Error loading
-    </Typography>
-  ) : isAR ? (
-    ARTypeInfo.trigger_mode === ARTriggerMode.GPSCoords ? (
-      <LocationBasedARDisplay
-        name={name}
-        additionalFiles={otherFile}
-        src={fileURL}
-        map={ARTypeInfo.map}
-        place={ARTypeInfo.place}
-        tolerance={ARTypeInfo.tolerance}
-        position={position}
-        scale={scale}
-        entityType={AREntityTypes.ThreeDModel}
-        threeDModelType={modelType}
-      />
-    ) : (
-      <ImageTrackingBasedARDisplay
-        name={name}
-        markerSrc={ARTypeInfo.image}
-        src={fileURL}
-        position={position}
-        scale={scale}
-        entityType={AREntityTypes.ThreeDModel}
-        threeDModelType={modelType}
-      />
-    )
-  ) : (
+  return (
     <Box
       sx={{
         width: "100%",
@@ -173,25 +122,70 @@ export default function ThreeDModelDisplay(props) {
         alignItems: "center",
       }}
     >
-      <Typography variant="h4">{name}</Typography>
-
-      <div
-        className="sketchfab-embed-wrapper"
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      ></div>
-
+      {componentState === ComponentState.LOADING ? (
+        <Typography
+          variant="h4"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          Loading...
+        </Typography>
+      ) : componentState === ComponentState.ERROR ? (
+        <Typography
+          variant="h4"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          Error loading
+        </Typography>
+      ) : isAR ? (
+        ARTypeInfo.trigger_mode === ARTriggerMode.GPSCoords ? (
+          <LocationBasedARDisplay
+            name={name}
+            additionalFiles={otherFile}
+            src={fileURL}
+            map={ARTypeInfo.map}
+            place={ARTypeInfo.place}
+            tolerance={ARTypeInfo.tolerance}
+            position={position}
+            scale={scale}
+            entityType={AREntityTypes.ThreeDModel}
+            threeDModelType={modelType}
+          />
+        ) : (
+          <ImageTrackingBasedARDisplay
+            name={name}
+            markerSrc={ARTypeInfo.image}
+            src={fileURL}
+            position={position}
+            scale={scale}
+            entityType={AREntityTypes.ThreeDModel}
+            threeDModelType={modelType}
+          />
+        )
+      ) : (
+        <div>Will implement</div>
+      )}
       <ButtonBase
         sx={{
-          mt: 2,
           backgroundColor: backgroundColor,
           color: textColor,
+          position: "absolute",
+          bottom: "10vh",
+          right: 10,
         }}
         onClick={() => {
+          document.querySelector("video").remove();
           setNextNode(possibleNextNodes[0]);
         }}
       >

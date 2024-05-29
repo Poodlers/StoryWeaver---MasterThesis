@@ -1,15 +1,19 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, ButtonBase, Typography } from "@mui/material";
 import zIndex from "@mui/material/styles/zIndex";
-import React, { useEffect } from "react";
+import React, { Component, useEffect } from "react";
+import { backgroundColor, textColor } from "../../themes";
 
-export default function VideoImageTrackingARDisplay(props) {
-  const position = props.position || { x: 0, y: 0, z: 0 };
-  const scale = props.scale || { x: 1, y: 1, z: 1 };
-  const rotation = props.rotation || { x: 0, y: 0, z: 0 };
-  const src = props.src;
-  const markerSrc = props.markerSrc;
+export default class VideoImageTrackingARDisplay extends Component {
+  constructor(props) {
+    super(props);
+    this.position = props.position || { x: 0, y: 0, z: 0 };
+    this.scale = props.scale || { x: 1, y: 1, z: 1 };
+    this.rotation = props.rotation || { x: 0, y: 0, z: 0 };
+    this.src = props.src;
+    this.markerSrc = props.markerSrc;
+  }
 
-  useEffect(() => {
+  componentDidMount() {
     if (!window.AFRAME.components["videohandler"]) {
       window.AFRAME.registerComponent("videohandler", {
         init: function () {
@@ -34,74 +38,70 @@ export default function VideoImageTrackingARDisplay(props) {
         },
       });
     }
+  }
 
-    return () => {
+  componentWillUnmount() {
+    if (window.AFRAME.components["videohandler"]) {
       delete window.AFRAME.components["videohandler"];
-    };
-  }, []);
+    }
+  }
 
-  return (
-    <div>
-      <div className="arjs-loader">
-        <div>Loading, please wait...</div>
-      </div>
-      <a-scene
-        vr-mode-ui="enabled: false;"
-        arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
-        renderer="antialias: true; alpha: true; precision: medium;"
-      >
-        <Typography
-          variant="h4"
-          sx={{
-            position: "absolute",
-            top: "0",
-            left: "0",
-            zIndex: "1",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            color: "white",
-            padding: "5px",
-          }}
+  render() {
+    return (
+      <div>
+        <div className="arjs-loader">
+          <div>Loading, please wait...</div>
+        </div>
+        <a-scene
+          vr-mode-ui="enabled: false;"
+          arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+          renderer="antialias: true; alpha: true; precision: medium;"
         >
-          {"Video AR Display"}
-        </Typography>
+          <a-text
+            value="Hello, AR.js!"
+            position="3 5 -10"
+            scale="2 2 2"
+            rotation="0 0 0"
+          ></a-text>
 
-        <a-assets>
-          <video
-            src={
-              "http://localhost:8080/files/61df0221-5231-4104-94fd-1e43264d2f84/dc44034b-5880-4c07-ad9b-0d35ad7066c5content_warning_ca994a61.mp4"
+          <a-assets>
+            <video
+              src={
+                "http://localhost:8080/files/61df0221-5231-4104-94fd-1e43264d2f84/20231222_221058.mp4"
+              }
+              preload="auto"
+              response-type="arraybuffer"
+              id="vid"
+              loop
+              crossOrigin="anonymous"
+              webkit-playsinline="true"
+              muted={false}
+              playsInline
+            ></video>
+          </a-assets>
+          <a-nft
+            videohandler
+            type="nft"
+            url={
+              "https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/trex-image/trex"
             }
-            preload="auto"
-            response-type="arraybuffer"
-            id="vid"
-            loop
-            crossOrigin="anonymous"
-            webkit-playsinline="true"
-            muted={false}
-            playsInline
-          ></video>
-        </a-assets>
-        <a-nft
-          videohandler
-          type="nft"
-          url={
-            "https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/trex-image/trex"
-          }
-          smooth="true"
-          smoothCount="10"
-          smoothTolerance=".01"
-          smoothThreshold="5"
-        >
-          <a-video
-            src="#vid"
-            width="500"
-            height="500"
-            rotation="90 0 180"
-            position="100 150 -100"
-          ></a-video>
-        </a-nft>
+            smooth="true"
+            smoothCount="10"
+            smoothTolerance=".01"
+            smoothThreshold="5"
+          >
+            <a-video
+              src="#vid"
+              width="500"
+              height="500"
+              rotation="-90 0 0"
+              position="250 0 0"
+            ></a-video>
+          </a-nft>
 
-        <a-entity camera></a-entity>
-      </a-scene>
-    </div>
-  );
+          <a-entity camera></a-entity>
+        </a-scene>
+      </div>
+    );
+  }
 }
