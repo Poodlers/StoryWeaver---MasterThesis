@@ -40,6 +40,19 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
         return ApiDataRepository.instance;
     }
 
+    public getFilePath = async (fileName: string): Promise<string> => {
+          
+      
+        const storyID = localStorage.getItem('storyId');
+        if(!storyID){
+            throw new Error('Story ID is not set');
+        }
+
+        return `${BASE_URL}/files/${storyID}/${fileName}`;
+            
+        
+    }
+
     public getFile = async (fileName: string): Promise<Blob> => {
         const config: AxiosRequestConfig = {
             responseType: 'blob',

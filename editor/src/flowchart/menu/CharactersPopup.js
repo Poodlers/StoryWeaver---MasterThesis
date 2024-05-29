@@ -186,7 +186,8 @@ export default function CharactersPopup(props) {
                                 JSON.stringify(newCharacters)
                               );
                               e.target.src = URL.createObjectURL(blob);
-                            });
+                            })
+                            .catch(() => console.log("error"));
                         }
                       }}
                       style={{

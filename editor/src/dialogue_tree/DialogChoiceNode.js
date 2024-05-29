@@ -16,9 +16,18 @@ export default function DialogChoiceNode(props) {
   const character = props.data?.character ?? undefined;
   const question = props.data?.prompt ?? "";
   const answers = props.data?.answers ?? ["Empty"];
-  const [error, setError] = React.useState(false);
+  const [filepath, setFilepath] = React.useState("");
   React.useEffect(() => {
-    setError(false);
+    if (character && character.image.inputType === "file") {
+      repo
+        .getFilePath(character.image.filename)
+        .then((filepath) => {
+          setFilepath(filepath);
+        })
+        .catch(() => setFilepath("../assets/character_dialogue_node.png"));
+    } else {
+      setFilepath(character.image.filename);
+    }
   }, [character]);
   return (
     <>
@@ -40,22 +49,8 @@ export default function DialogChoiceNode(props) {
               textAlign: "end",
               justifyContent: "end",
             }}
-            onError={(e) => {
-              if (character.image.inputType == "file") {
-                repo.getFile(character.image.filename).then((blob) => {
-                  e.target.src = URL.createObjectURL(blob);
-                });
-              } else {
-                setError(true);
-              }
-            }}
-            src={
-              error
-                ? "../assets/character_dialogue_node.png"
-                : character.image.inputType === "file"
-                ? character.image.blob
-                : character.image.filename
-            }
+            onError={(e) => {}}
+            src={filepath}
             alt="character"
           />
         ) : null}

@@ -107,10 +107,17 @@ const VideoProps = {
   nodeType: "Video Node",
   fields: [
     {
-      type: InputFieldType.textField,
-      label: "Nome:",
+      type: InputFieldType.textFieldMultiline,
+      label: "Texto:",
       initialValue: "Nome do video",
       name: "name",
+    },
+    {
+      type: InputFieldType.file_select,
+      label: "Fundo:",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "background",
+      acceptedType: FileTypesInput.Image,
     },
     {
       type: InputFieldType.file_select,

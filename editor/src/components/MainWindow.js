@@ -171,7 +171,7 @@ export default function MainWindow(props) {
         setProjectTitle(data.projectTitle);
         localStorage.setItem("edges", JSON.stringify(data.edges));
         localStorage.setItem("nodes", JSON.stringify(data.nodes));
-        localStorage.setItem("projectTitle", data.projectTitle);
+        localStorage.setItem("projectTitle", data.title);
         localStorage.setItem("storyId", data.storyId);
         localStorage.setItem("maps", JSON.stringify(data.maps));
       };
@@ -192,7 +192,7 @@ export default function MainWindow(props) {
       setCharacters(data.characters);
       localStorage.setItem("edges", JSON.stringify(data.edges));
       localStorage.setItem("nodes", JSON.stringify(data.nodes));
-      localStorage.setItem("projectTitle", data.projectTitle);
+      localStorage.setItem("projectTitle", data.title);
       localStorage.setItem("maps", JSON.stringify(data.maps));
       localStorage.setItem("storyId", projectId);
       localStorage.setItem("characters", JSON.stringify(data.characters));
@@ -213,6 +213,22 @@ export default function MainWindow(props) {
     localStorage.removeItem("storyId");
     localStorage.setItem("projectTitle", "Adicone um título ao projeto");
     localStorage.setItem("characters", JSON.stringify([narrator]));
+
+    repo
+      .saveProject(
+        "Adicone um título ao projeto",
+        defaultNodes,
+        [],
+        [narrator],
+        []
+      )
+      .then((data) => {
+        setDisplayAlert(true);
+        setAlertMessage("Projeto criado com sucesso!");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const handleSaveLocal = () => {
@@ -221,7 +237,7 @@ export default function MainWindow(props) {
     const file = new Blob(
       [
         JSON.stringify({
-          projectTitle: projectTitle,
+          title: projectTitle,
           storyId: localStorage.getItem("storyId"),
           nodes: nodes,
           edges: edges,

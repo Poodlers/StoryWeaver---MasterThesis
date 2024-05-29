@@ -15,9 +15,18 @@ export default function DialogNode(props) {
   const repo = ApiDataRepository.getInstance();
   const character = props.data?.character ?? "";
   const text = props.data?.text ?? "";
-  const [error, setError] = React.useState(false);
+  const [filepath, setFilepath] = React.useState("");
   React.useEffect(() => {
-    setError(false);
+    if (character && character.image.inputType === "file") {
+      repo
+        .getFilePath(character.image.filename)
+        .then((filepath) => {
+          setFilepath(filepath);
+        })
+        .catch(() => setFilepath("../assets/character_dialogue_node.png"));
+    } else {
+      setFilepath(character.image.filename);
+    }
   }, [character]);
   return (
     <>
@@ -51,13 +60,7 @@ export default function DialogNode(props) {
               justifyContent: "end",
             }}
             onError={(e) => {}}
-            src={
-              error
-                ? "../assets/character_dialogue_node.png"
-                : character.image.inputType === "file"
-                ? character.image.blob
-                : character.image.filename
-            }
+            src={filepath}
             alt="character"
           />
         ) : null}

@@ -15,6 +15,9 @@ import { ApiDataRepository } from "../../api/ApiDataRepository";
 export default function VideoNode(props) {
   const repo = ApiDataRepository.getInstance();
   const title = props.data?.name ?? "";
+  const isAR = props.data?.ar ?? false;
+
+  const backgroundFileInfo = props.data?.background ?? "";
   const fileInfo = props.data?.file ?? "";
   const [error, setError] = React.useState(false);
 
@@ -22,11 +25,47 @@ export default function VideoNode(props) {
     fileInfo.inputType == "url" ? fileInfo.filename : fileInfo.blob
   );
 
+  const [backgroundURL, setBackgroundURL] = React.useState("");
+
   useEffect(() => {
-    setUrl(fileInfo.inputType == "url" ? fileInfo.filename : fileInfo.blob);
+    if (backgroundFileInfo.filename == "") {
+      setBackgroundURL("");
+      return;
+    }
+    if (backgroundFileInfo.inputType == "url") {
+      setBackgroundURL(backgroundFileInfo.filename);
+    } else {
+      repo
+        .getFilePath(backgroundFileInfo.filename)
+        .then((url) => {
+          setBackgroundURL(url);
+        })
+        .catch(() => {
+          setBackgroundURL("");
+        });
+    }
+  }, [backgroundFileInfo]);
+
+  useEffect(() => {
+    if (fileInfo.filename == "") {
+      setUrl("");
+      return;
+    }
+    if (fileInfo.inputType == "url") {
+      setUrl(fileInfo.filename);
+    } else {
+      repo
+        .getFilePath(fileInfo.filename)
+        .then((path) => {
+          setUrl(path);
+        })
+        .catch((err) => {
+          setError(true);
+        });
+    }
   }, [fileInfo]);
   return (
-    <>
+    <div>
       <Handle
         type="target"
         position={Position.Left}
@@ -56,7 +95,12 @@ export default function VideoNode(props) {
       </Box>
       <Box
         sx={{
-          backgroundColor: secondaryColor,
+          background: isAR
+            ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
+            : backgroundURL == ""
+            ? secondaryColor
+            : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+          backgroundSize: "cover",
           borderColor: tertiaryColor,
           borderWidth: 2,
           borderStyle: "solid",
@@ -64,66 +108,65 @@ export default function VideoNode(props) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          width: "375px",
+          minHeight: "677px",
         }}
       >
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 400 }}
-          >
-            Título
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: secondaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
+        <Box>
+          <Box
             sx={{
-              px: 3,
-              py: 1,
-              fontSize: 12,
-              color: textColor,
-              fontWeight: 200,
+              backgroundColor: primaryColor,
+              border: "2px solid black",
+              borderRadius: "5px",
+              m: 1,
+              width: "50%",
+              textAlign: "center",
+              mb: 0,
             }}
           >
-            {title}
-          </Typography>
-        </Box>
+            <Typography
+              variant="h6"
+              sx={{
+                fontSize: 14,
+                color: textColor,
+                fontWeight: 500,
+              }}
+            >
+              {"Mensagem"}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
 
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 400 }}
+              backgroundColor: "white",
+              border: "2px solid black",
+              borderRadius: "5px",
+            }}
           >
-            Preview
-          </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                px: 3,
+                py: 1,
+                fontSize: 20,
+                color: "black",
+                fontWeight: 200,
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              {title}
+            </Typography>
+          </Box>
         </Box>
-
         <Box
           sx={{
             width: "100%",
             height: "100%",
-            backgroundColor: secondaryColor,
-            minHeight: 100,
             display: "flex",
+            flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -133,11 +176,12 @@ export default function VideoNode(props) {
               variant="h6"
               sx={{
                 px: 3,
-                fontSize: 15,
+                fontSize: 18,
                 color: textColor,
                 fontWeight: 500,
                 textAlign: "center",
                 m: "0 auto",
+                mt: 5,
               }}
             >
               Por favor insira um video no Inspetor!
@@ -159,25 +203,14 @@ export default function VideoNode(props) {
           ) : null}
 
           <ReactPlayer
-            style={{ padding: 5, display: error ? "none" : "block" }}
-            onReady={() => setError(false)}
-            onError={(e) => {
-              if (fileInfo.inputType == "file") {
-                repo
-                  .getFile(fileInfo.filename)
-                  .then((blob) => {
-                    setUrl(URL.createObjectURL(blob));
-                  })
-                  .catch((err) => {
-                    setError(true);
-                  });
-              } else {
-                setError(true);
-              }
+            style={{
+              display: error ? "none" : "block",
+              width: "375px",
             }}
+            onReady={() => setError(false)}
+            onError={(e) => {}}
             url={url}
-            width={"auto"}
-            height={"200px"}
+            width={"100%"}
             controls={true}
             playing={false}
             muted={false}
@@ -190,6 +223,6 @@ export default function VideoNode(props) {
         position={Position.Right}
         style={rightNodeHandleStyle}
       />
-    </>
+    </div>
   );
 }
