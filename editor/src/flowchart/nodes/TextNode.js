@@ -8,9 +8,36 @@ import {
   tertiaryColor,
   textColor,
 } from "../../themes";
+import React, { useEffect } from "react";
+import { ApiDataRepository } from "../../api/ApiDataRepository";
+import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 
 export default function TextNode(props) {
+  const repo = ApiDataRepository.getInstance();
   const text = props.data?.text ?? "";
+  const isAR = props.data?.ar ?? false;
+  const backgroundFileInfo = props.data?.background ?? "";
+  const [backgroundURL, setBackgroundURL] = React.useState("");
+
+  useEffect(() => {
+    if (backgroundFileInfo.filename == "") {
+      setBackgroundURL("");
+      return;
+    }
+    if (backgroundFileInfo.inputType == "url") {
+      setBackgroundURL(backgroundFileInfo.filename);
+    } else {
+      repo
+        .getFilePath(backgroundFileInfo.filename)
+        .then((url) => {
+          setBackgroundURL(url);
+        })
+        .catch(() => {
+          setBackgroundURL("");
+        });
+    }
+  }, [backgroundFileInfo]);
+
   return (
     <>
       <Handle
@@ -36,9 +63,9 @@ export default function TextNode(props) {
           variant="h6"
           sx={{
             px: 2,
-            fontSize: 15,
+            fontSize: 20,
             color: textColor,
-            fontWeight: 400,
+            fontWeight: 500,
             textAlign: "center",
           }}
         >
@@ -47,7 +74,12 @@ export default function TextNode(props) {
       </Box>
       <Box
         sx={{
-          backgroundColor: secondaryColor,
+          background: isAR
+            ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
+            : backgroundURL == ""
+            ? secondaryColor
+            : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+          backgroundSize: "cover",
           borderColor: tertiaryColor,
           borderWidth: 2,
           borderStyle: "solid",
@@ -55,49 +87,11 @@ export default function TextNode(props) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          width: "375px",
+          minHeight: "677px",
         }}
       >
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              px: 3,
-              fontSize: 15,
-              color: textColor,
-              fontWeight: 400,
-              textAlign: "center",
-            }}
-          >
-            Texto
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: secondaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              px: 3,
-              py: 3,
-              fontSize: 12,
-              color: textColor,
-              fontWeight: 200,
-            }}
-          >
-            <pre style={{ fontFamily: "inherit" }}>{text ?? "Texto vazio"}</pre>
-          </Typography>
-        </Box>
+        <PlayerTextFinalDisplay text={text} messageType={"Mensagem"} />
       </Box>
     </>
   );

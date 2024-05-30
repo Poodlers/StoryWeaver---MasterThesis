@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 import {
   leftNodeHandleStyle,
@@ -10,16 +10,63 @@ import {
   textColor,
 } from "../../themes";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
+import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 
 export default function ImageNode(props) {
   const repo = ApiDataRepository.getInstance();
   const title = props.data?.name ?? "";
+
+  const isAR = props.data?.ar ?? false;
+
+  const backgroundFileInfo = props.data?.background ?? "";
 
   const fileInfo = props.data?.file ?? "";
   const [error, setError] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState(
     "Insira uma imagem no editor!"
   );
+
+  const [url, setUrl] = React.useState("");
+
+  const [backgroundURL, setBackgroundURL] = React.useState("");
+
+  useEffect(() => {
+    if (backgroundFileInfo.filename == "") {
+      setBackgroundURL("");
+      return;
+    }
+    if (backgroundFileInfo.inputType == "url") {
+      setBackgroundURL(backgroundFileInfo.filename);
+    } else {
+      repo
+        .getFilePath(backgroundFileInfo.filename)
+        .then((url) => {
+          setBackgroundURL(url);
+        })
+        .catch(() => {
+          setBackgroundURL("");
+        });
+    }
+  }, [backgroundFileInfo]);
+
+  useEffect(() => {
+    if (fileInfo.filename == "") {
+      setUrl("");
+      return;
+    }
+    if (fileInfo.inputType == "url") {
+      setUrl(fileInfo.filename);
+    } else {
+      repo
+        .getFilePath(fileInfo.filename)
+        .then((path) => {
+          setUrl(path);
+        })
+        .catch((err) => {
+          setError(true);
+        });
+    }
+  }, [fileInfo]);
   return (
     <>
       <Handle
@@ -38,14 +85,19 @@ export default function ImageNode(props) {
       >
         <Typography
           variant="h6"
-          sx={{ px: 2, fontSize: 15, color: textColor, fontWeight: 400 }}
+          sx={{ px: 2, fontSize: 20, color: textColor, fontWeight: 500 }}
         >
           Imagem
         </Typography>
       </Box>
       <Box
         sx={{
-          backgroundColor: secondaryColor,
+          background: isAR
+            ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
+            : backgroundURL == ""
+            ? secondaryColor
+            : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+          backgroundSize: "cover",
           borderColor: tertiaryColor,
           borderWidth: 2,
           borderStyle: "solid",
@@ -53,64 +105,16 @@ export default function ImageNode(props) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          width: "375px",
+          minHeight: "677px",
         }}
       >
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 400 }}
-          >
-            Título
-          </Typography>
-        </Box>
+        <PlayerTextFinalDisplay text={title} messageType={"Mensagem"} />
 
         <Box
           sx={{
             width: "100%",
             height: "100%",
-            backgroundColor: secondaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              px: 3,
-              py: 1,
-              fontSize: 12,
-              color: textColor,
-              fontWeight: 200,
-            }}
-          >
-            {title}
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 400 }}
-          >
-            Preview
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: secondaryColor,
             minHeight: 100,
             display: "flex",
             justifyContent: "center",
@@ -147,9 +151,7 @@ export default function ImageNode(props) {
                 setErrorMsg("Insira uma imagem no editor!");
               }
             }}
-            src={
-              fileInfo.inputType == "file" ? fileInfo.blob : fileInfo.filename
-            }
+            src={url}
             style={{
               width: "auto",
               height: "200px",

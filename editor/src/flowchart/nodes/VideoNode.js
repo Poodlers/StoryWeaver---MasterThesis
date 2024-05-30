@@ -11,6 +11,7 @@ import {
 import ReactPlayer from "react-player";
 import React, { useEffect } from "react";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
+import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 
 export default function VideoNode(props) {
   const repo = ApiDataRepository.getInstance();
@@ -21,9 +22,7 @@ export default function VideoNode(props) {
   const fileInfo = props.data?.file ?? "";
   const [error, setError] = React.useState(false);
 
-  const [url, setUrl] = React.useState(
-    fileInfo.inputType == "url" ? fileInfo.filename : fileInfo.blob
-  );
+  const [url, setUrl] = React.useState("");
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
@@ -84,9 +83,9 @@ export default function VideoNode(props) {
           variant="h6"
           sx={{
             px: 2,
-            fontSize: 15,
+            fontSize: 20,
             color: textColor,
-            fontWeight: 400,
+            fontWeight: 500,
             textAlign: "center",
           }}
         >
@@ -112,55 +111,7 @@ export default function VideoNode(props) {
           minHeight: "677px",
         }}
       >
-        <Box>
-          <Box
-            sx={{
-              backgroundColor: primaryColor,
-              border: "2px solid black",
-              borderRadius: "5px",
-              m: 1,
-              width: "50%",
-              textAlign: "center",
-              mb: 0,
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                fontSize: 14,
-                color: textColor,
-                fontWeight: 500,
-              }}
-            >
-              {"Mensagem"}
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-
-              backgroundColor: "white",
-              border: "2px solid black",
-              borderRadius: "5px",
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                px: 3,
-                py: 1,
-                fontSize: 20,
-                color: "black",
-                fontWeight: 200,
-                whiteSpace: "pre-wrap",
-              }}
-            >
-              {title}
-            </Typography>
-          </Box>
-        </Box>
+        <PlayerTextFinalDisplay text={title} messageType={"Mensagem"} />
         <Box
           sx={{
             width: "100%",

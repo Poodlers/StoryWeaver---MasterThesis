@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import AudioPlayer from "mui-audio-player-plus";
-import React from "react";
+import React, { useEffect } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 import {
   leftNodeHandleStyle,
@@ -10,6 +10,8 @@ import {
   tertiaryColor,
   textColor,
 } from "../../themes";
+import { ApiDataRepository } from "../../api/ApiDataRepository";
+import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 
 var BASE64_MARKER = ";base64,";
 
@@ -27,10 +29,54 @@ function convertDataURIToBinary(dataURI) {
 }
 
 export default function AudioNode(props) {
+  const repo = ApiDataRepository.getInstance();
   const title = props.data?.name ?? "";
   const fileInfo = props.data?.file ?? "";
+  const audioColor = props.data?.color ?? "#000000";
+  const backgroundFileInfo = props.data?.background ?? "";
 
   const [error, setError] = React.useState(false);
+  const [url, setUrl] = React.useState("");
+
+  const [backgroundURL, setBackgroundURL] = React.useState("");
+
+  useEffect(() => {
+    if (backgroundFileInfo.filename == "") {
+      setBackgroundURL("");
+      return;
+    }
+    if (backgroundFileInfo.inputType == "url") {
+      setBackgroundURL(backgroundFileInfo.filename);
+    } else {
+      repo
+        .getFilePath(backgroundFileInfo.filename)
+        .then((url) => {
+          setBackgroundURL(url);
+        })
+        .catch(() => {
+          setBackgroundURL("");
+        });
+    }
+  }, [backgroundFileInfo]);
+
+  useEffect(() => {
+    if (fileInfo.filename == "") {
+      setUrl("");
+      return;
+    }
+    if (fileInfo.inputType == "url") {
+      setUrl(fileInfo.filename);
+    } else {
+      repo
+        .getFilePath(fileInfo.filename)
+        .then((path) => {
+          setUrl(path);
+        })
+        .catch((err) => {
+          setError(true);
+        });
+    }
+  }, [fileInfo]);
   return (
     <>
       <Handle
@@ -49,14 +95,18 @@ export default function AudioNode(props) {
       >
         <Typography
           variant="h6"
-          sx={{ px: 2, fontSize: 15, color: textColor, fontWeight: 400 }}
+          sx={{ px: 2, fontSize: 20, color: textColor, fontWeight: 500 }}
         >
           Audio
         </Typography>
       </Box>
       <Box
         sx={{
-          backgroundColor: secondaryColor,
+          background:
+            backgroundURL == ""
+              ? secondaryColor
+              : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+          backgroundSize: "cover",
           borderColor: tertiaryColor,
           borderWidth: 2,
           borderStyle: "solid",
@@ -64,64 +114,21 @@ export default function AudioNode(props) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          width: "375px",
+          minHeight: "677px",
         }}
       >
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 400 }}
-          >
-            Nome
-          </Typography>
-        </Box>
+        <PlayerTextFinalDisplay
+          text={title}
+          messageType="Texto"
+          style={{ mb: 2 }}
+        />
 
         <Box
           sx={{
             width: "100%",
             height: "100%",
-            backgroundColor: secondaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              px: 3,
-              py: 1,
-              fontSize: 12,
-              color: textColor,
-              fontWeight: 200,
-            }}
-          >
-            {title}
-          </Typography>
-        </Box>
 
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 400 }}
-          >
-            Preview
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: secondaryColor,
             minHeight: 100,
             display: "flex",
             justifyContent: "center",
@@ -138,16 +145,13 @@ export default function AudioNode(props) {
           ) : null}
           <div className="audio-player-container">
             <AudioPlayer
-              src={
-                fileInfo.inputType == "file" ? fileInfo.blob : fileInfo.filename
-              }
+              src={url}
               id="inline-timeline"
               display="timeline"
-              inline={true}
-              paperize
+              containerWidth={300}
+              inline
               size="medium"
               playPauseIconButtonProps={{
-                size: "large",
                 TouchRippleProps: { style: { color: "transparent" } },
                 sx: {
                   color: textColor,
@@ -161,11 +165,10 @@ export default function AudioNode(props) {
                   },
                 },
               }}
-              waveColor={tertiaryColor}
               containerSx={{
                 display: error || fileInfo.filename == "" ? "none" : "block",
                 textAlign: "center",
-                backgroundColor: primaryColor,
+                backgroundColor: audioColor,
                 p: 1,
                 "& .MuiSlider-root": { color: "#fff" },
                 "& .MuiIconButton-root": { color: "#fff" },

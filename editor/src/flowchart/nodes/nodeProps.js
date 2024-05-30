@@ -16,6 +16,13 @@ const ThreeDModelProps = {
     },
     {
       type: InputFieldType.file_select,
+      label: "Fundo:",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "background",
+      acceptedType: FileTypesInput.Image,
+    },
+    {
+      type: InputFieldType.file_select,
       label: "Ficheiro:",
       initialValue: {
         inputType: "url",
@@ -36,7 +43,7 @@ const ThreeDModelProps = {
     {
       type: InputFieldType.threeDCoord,
       label: "Escala:",
-      initialValue: { x: 0, y: 0, z: 0 },
+      initialValue: { x: 1, y: 1, z: 1 },
       name: "scale",
     },
     {
@@ -89,10 +96,17 @@ const QuizProps = {
   nodeType: "Quiz Node",
   fields: [
     {
-      type: InputFieldType.textField,
+      type: InputFieldType.textFieldMultiline,
       label: "Pergunta:",
       initialValue: "Pergunta",
       name: "question",
+    },
+    {
+      type: InputFieldType.file_select,
+      label: "Fundo:",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "background",
+      acceptedType: FileTypesInput.Image,
     },
     {
       type: InputFieldType.textFieldExpandable,
@@ -158,7 +172,7 @@ const VideoProps = {
       type: InputFieldType.threeDCoord,
       label: "Escala:",
       conditional: "ar",
-      initialValue: { x: 0, y: 0, z: 0 },
+      initialValue: { x: 1, y: 1, z: 1 },
       name: "scale",
     },
   ],
@@ -168,10 +182,17 @@ const ImageProps = {
   nodeType: "Image Node",
   fields: [
     {
-      type: InputFieldType.textField,
+      type: InputFieldType.textFieldMultiline,
       label: "Nome:",
       initialValue: "Modelo 3D",
       name: "name",
+    },
+    {
+      type: InputFieldType.file_select,
+      label: "Fundo:",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "background",
+      acceptedType: FileTypesInput.Image,
     },
     {
       type: InputFieldType.file_select,
@@ -191,7 +212,7 @@ const ImageProps = {
       type: InputFieldType.threeDCoord,
       label: "Escala:",
       conditional: "ar",
-      initialValue: { x: 0, y: 0, z: 0 },
+      initialValue: { x: 1, y: 1, z: 1 },
       name: "scale",
     },
     {
@@ -222,11 +243,25 @@ const AudioProps = {
   nodeType: "Audio Node",
   fields: [
     {
-      type: InputFieldType.textField,
+      type: InputFieldType.textFieldMultiline,
       label: "Nome:",
       initialValue: "Nome do audio",
       name: "name",
     },
+    {
+      type: InputFieldType.file_select,
+      label: "Fundo:",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "background",
+      acceptedType: FileTypesInput.Image,
+    },
+    {
+      type: InputFieldType.color_picker,
+      label: "Cor do audio:",
+      initialValue: "#000000",
+      name: "color",
+    },
+
     {
       type: InputFieldType.file_select,
       label: "Ficheiro:",
@@ -243,8 +278,15 @@ const TextProps = {
     {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
-      initialValue: "Texto",
+      initialValue: "Texto exemplo",
       name: "text",
+    },
+    {
+      type: InputFieldType.file_select,
+      label: "Fundo:",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "background",
+      acceptedType: FileTypesInput.Image,
     },
     {
       type: InputFieldType.checkbox,
@@ -278,7 +320,7 @@ const TextProps = {
       type: InputFieldType.threeDCoord,
       label: "Escala:",
       conditional: "ar",
-      initialValue: { x: 0, y: 0, z: 0 },
+      initialValue: { x: 1, y: 1, z: 1 },
       name: "scale",
     },
   ],
@@ -288,10 +330,17 @@ const PathProps = {
   nodeType: "Path Node",
   fields: [
     {
-      type: InputFieldType.textField,
+      type: InputFieldType.textFieldMultiline,
       label: "Nome:",
       initialValue: "Nome do caminho",
       name: "name",
+    },
+    {
+      type: InputFieldType.file_select,
+      label: "Fundo:",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "background",
+      acceptedType: FileTypesInput.Image,
     },
     {
       type: InputFieldType.select_location,
@@ -405,6 +454,13 @@ const CharacterProps = {
       label: "Nome:",
       initialValue: "Nome do Diálogo",
       name: "name",
+    },
+    {
+      type: InputFieldType.file_select,
+      label: "Fundo:",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "background",
+      acceptedType: FileTypesInput.Image,
     },
     {
       type: InputFieldType.open_window,

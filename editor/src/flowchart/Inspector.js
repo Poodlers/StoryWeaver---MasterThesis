@@ -19,6 +19,7 @@ import TextFieldInspector from "./inspector/TextField";
 import TextFieldExpandable from "./inspector/TextFieldExpandable";
 import TextFieldMultiline from "./inspector/TextFieldMultiline";
 import ThreeDCoordField from "./inspector/ThreeDCoordField";
+import ColorPicker from "./inspector/ColorPicker";
 
 function Inspector(props) {
   const values = props.value;
@@ -205,6 +206,17 @@ function Inspector(props) {
                   data={field}
                   style={{ mt: 2 }}
                 ></MultipleChoiceField>
+              );
+            case InputFieldType.color_picker:
+              return (
+                <ColorPicker
+                  key={index}
+                  id={index}
+                  onChange={handleFieldChange}
+                  value={values[field.name]}
+                  data={field}
+                  style={{ mt: 2 }}
+                ></ColorPicker>
               );
           }
         })}
