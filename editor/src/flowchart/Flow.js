@@ -249,6 +249,9 @@ function Flow(props) {
               : "Delete"
             : "Delete"
         }
+        onNodesDelete={(nodeToDelete) => {
+          handleDelete(nodeToDelete[0].id);
+        }}
         panOnDrag={pannable}
         nodesDraggable={pannable}
         onPaneClick={(event) => {
@@ -390,6 +393,7 @@ function Flow(props) {
         handleDelete={handleDelete}
         setValue={setInspectorData}
         data={inspectorProps}
+        setData={setInspectorProps}
       ></Inspector>
     </div>
   );

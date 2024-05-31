@@ -6,7 +6,7 @@ import { NodeType } from "../../models/NodeTypes";
 import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
 
 const ThreeDModelProps = {
-  nodeType: "3DModelNode",
+  nodeType: "Cena 3D",
   fields: [
     {
       type: InputFieldType.textField,
@@ -93,7 +93,7 @@ const ThreeDModelProps = {
 };
 
 const QuizProps = {
-  nodeType: "Quiz Node",
+  nodeType: "Cena Quiz",
   fields: [
     {
       type: InputFieldType.textFieldMultiline,
@@ -118,7 +118,7 @@ const QuizProps = {
 };
 
 const VideoProps = {
-  nodeType: "Video Node",
+  nodeType: "Cena Vídeo",
   fields: [
     {
       type: InputFieldType.textFieldMultiline,
@@ -179,7 +179,7 @@ const VideoProps = {
 };
 
 const ImageProps = {
-  nodeType: "Image Node",
+  nodeType: "Cena Imagem",
   fields: [
     {
       type: InputFieldType.textFieldMultiline,
@@ -240,7 +240,7 @@ const ImageProps = {
 };
 
 const AudioProps = {
-  nodeType: "Audio Node",
+  nodeType: "Cena Áudio",
   fields: [
     {
       type: InputFieldType.textFieldMultiline,
@@ -273,7 +273,7 @@ const AudioProps = {
 };
 
 const TextProps = {
-  nodeType: "Text Node",
+  nodeType: "Cena Texto",
   fields: [
     {
       type: InputFieldType.textFieldMultiline,
@@ -327,7 +327,7 @@ const TextProps = {
 };
 
 const PathProps = {
-  nodeType: "Path Node",
+  nodeType: "Caminho",
   fields: [
     {
       type: InputFieldType.textFieldMultiline,
@@ -360,7 +360,7 @@ const PathProps = {
 };
 
 const DialogProps = {
-  nodeType: "Dialog Node",
+  nodeType: "Diálogo",
   fields: [
     {
       type: InputFieldType.multiple_choice,
@@ -374,11 +374,18 @@ const DialogProps = {
       initialValue: "Texto",
       name: "text",
     },
+    {
+      type: InputFieldType.file_select,
+      label: "Áudio:",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "audio",
+      acceptedType: FileTypesInput.Audio,
+    },
   ],
 };
 
 const DialogChoiceProps = {
-  nodeType: "Dialog Choice Node",
+  nodeType: "Pergunta",
   fields: [
     {
       type: InputFieldType.multiple_choice,
@@ -398,16 +405,23 @@ const DialogChoiceProps = {
       initialValue: ["Resposta 1", "Resposta 2", "Resposta 3", "Resposta 4"],
       name: "answers",
     },
+    {
+      type: InputFieldType.file_select,
+      label: "Áudio:",
+      initialValue: { inputType: "url", filename: "", blob: null },
+      name: "audio",
+      acceptedType: FileTypesInput.Audio,
+    },
   ],
 };
 
 const EndDialogProps = {
-  nodeType: "End Dialog Node",
+  nodeType: "Fim",
   fields: [
     {
       type: InputFieldType.textField,
       label: "Identificador:",
-      initialValue: "Texto",
+      initialValue: "Normal",
       name: "id",
     },
   ],
@@ -433,7 +447,7 @@ const defaultDialogNodes = [
 const defaultDialogEdges = [];
 
 const CharacterProps = {
-  nodeType: "Character Node",
+  nodeType: "Cena Diálogo",
   fields: [
     {
       type: InputFieldType.textField,

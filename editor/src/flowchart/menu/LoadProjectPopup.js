@@ -2,11 +2,15 @@ import { Dialog, Grid, Icon, IconButton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import * as React from "react";
 import { primaryColor, secondaryColor, textColor } from "../../themes";
+import { ApiDataRepository } from "../../api/ApiDataRepository";
 
 export default function LoadProjectPopup(props) {
+  const repo = ApiDataRepository.getInstance();
   const open = props.open;
   const onClose = props.onClose;
   const projects = props.projects;
+
+  const setProjects = props.setProjects;
   return (
     <Dialog
       id="load-project-popup"
@@ -55,7 +59,7 @@ export default function LoadProjectPopup(props) {
               borderBottomColor: secondaryColor,
             }}
           >
-            LOAD
+            CARREGAR PROJETO
           </Typography>
 
           <Icon
@@ -86,17 +90,21 @@ export default function LoadProjectPopup(props) {
               return (
                 <Box
                   key={project.id}
-                  onClick={() => {
-                    onClose(project.id);
-                  }}
                   sx={{
                     py: 2,
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "start",
+                    alignContent: "center",
                     cursor: "pointer",
                   }}
                 >
                   <Typography
                     variant="h7"
                     component="div"
+                    onClick={() => {
+                      onClose(project.id);
+                    }}
                     sx={{
                       py: 1,
                       px: 2,
@@ -112,6 +120,19 @@ export default function LoadProjectPopup(props) {
                   >
                     {project.title}
                   </Typography>
+                  {project.id != localStorage.getItem("storyId") ? (
+                    <IconButton
+                      onClick={() =>
+                        repo.deleteProject(project.id).then(() => {
+                          setProjects(
+                            projects.filter((p) => p.id !== project.id)
+                          );
+                        })
+                      }
+                    >
+                      <Icon>delete</Icon>
+                    </IconButton>
+                  ) : null}
                 </Box>
               );
             })}

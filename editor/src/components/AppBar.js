@@ -6,7 +6,14 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { ButtonBase, Icon, Menu, MenuItem, TextField } from "@mui/material";
+import {
+  Alert,
+  ButtonBase,
+  Icon,
+  Menu,
+  MenuItem,
+  TextField,
+} from "@mui/material";
 import AddNodePopup from "../flowchart/menu/AddNodePopup";
 import {
   primaryColor,
@@ -21,12 +28,20 @@ import { possibleDialogueNodes } from "../models/possibleDialogueNodes";
 import LoadProjectPopup from "../flowchart/menu/LoadProjectPopup";
 import { ApiDataRepository } from "../api/ApiDataRepository";
 import ExportProjectPopup from "../flowchart/menu/ExportProjectPopup";
+import { NodeType } from "../models/NodeTypes";
+import { DialogNodeType } from "../models/DialogNodeTypes";
 
 export default function TopAppBar(props) {
   const repo = ApiDataRepository.getInstance();
   const currentWindow = props.currentWindow;
   const projectTitle = props.projectTitle;
   const characters = props.characters;
+  const nodes = props.nodes;
+  const edges = props.edges;
+
+  const [displayAlert, setDisplayAlert] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState("");
+  const [severity, setSeverity] = React.useState("error");
   const setCharacters = props.setCharacters;
   const setProjectTitle = (projectTitle) => {
     props.setProjectTitle(projectTitle);
@@ -47,6 +62,87 @@ export default function TopAppBar(props) {
   const open = Boolean(anchorEl);
 
   const [projects, setProjects] = React.useState([]);
+
+  const checkIfStoryIsReadyForExport = () => {
+    setSeverity("error");
+    if (nodes.length === 0) {
+      setAlertMessage("Não existem nós para exportar.");
+      setDisplayAlert(true);
+      return false;
+    }
+    if (edges.length === 0) {
+      setAlertMessage("Adicione ligações à sua história para exportar.");
+      setDisplayAlert(true);
+      return false;
+    }
+
+    for (let node of nodes) {
+      const hasIncomingConnection =
+        edges.some((edge) => edge.target === node.id) ||
+        node.type === NodeType.beginNode;
+
+      if (!hasIncomingConnection) {
+        setAlertMessage(
+          `O nó "${
+            node.data.name ? node.data.name : node.data.id
+          }" não tem ligações de entrada!`
+        );
+        setDisplayAlert(true);
+        return false;
+      }
+
+      if (node.type === NodeType.characterNode) {
+        const allEndings = node.data.dialog.nodes.filter(
+          (dialogNode) => dialogNode.type === DialogNodeType.endDialogNode
+        );
+        //check that every ending has a connection
+        const dialogName = node.data.name;
+        for (let ending of allEndings) {
+          const endingName = ending.data.id;
+          const hasConnection = edges.some(
+            (edge) => edge.sourceHandle === endingName
+          );
+          if (!hasConnection) {
+            setAlertMessage(
+              `O fim "${endingName}" no diálogo ${dialogName} não tem ligação!"`
+            );
+            setDisplayAlert(true);
+            return false;
+          }
+        }
+      } else if (node.type === NodeType.quizNode) {
+        const allAnswers = node.data.answers;
+        //check that every question has a connection
+        const quizId = node.id;
+        const quizQuestion = node.data.question;
+        for (let i = 0; i < allAnswers.length; i++) {
+          const hasConnection = edges.some(
+            (edge) =>
+              edge.source === quizId && edge.sourceHandle === i.toString()
+          );
+          if (!hasConnection) {
+            setAlertMessage(
+              `A resposta "${allAnswers[i]}" no quiz ${quizQuestion} não tem ligação!"`
+            );
+            setDisplayAlert(true);
+            return false;
+          }
+        }
+      } else {
+        const hasOutgoingConnection =
+          edges.some((edge) => edge.source === node.id) ||
+          node.type === NodeType.endNode;
+
+        if (!hasOutgoingConnection) {
+          setAlertMessage(`O nó "${node.id}" não tem ligações de saída!`);
+          setDisplayAlert(true);
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -93,7 +189,6 @@ export default function TopAppBar(props) {
             onClose={() => {
               setOpenExportProjectPopup(false);
             }}
-            projects={projects}
           ></ExportProjectPopup>
           <CharactersPopup
             characters={characters}
@@ -105,6 +200,7 @@ export default function TopAppBar(props) {
           ></CharactersPopup>
           <LoadProjectPopup
             open={openLoadProjectPopup}
+            setProjects={setProjects}
             onClose={(projectId) => {
               if (projectId != undefined) handleLoadServer(projectId);
               setOpenLoadProjectPopup(false);
@@ -133,15 +229,14 @@ export default function TopAppBar(props) {
           >
             <MenuItem
               onClick={() => {
-                setOpenCharacterMenu(true);
-                handleClose();
-              }}
-            >
-              Ver Personagens
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleNewProject();
+                setDisplayAlert(true);
+                if (handleNewProject()) {
+                  setSeverity("success");
+                  setAlertMessage("Projeto criado com sucesso!");
+                } else {
+                  setSeverity("error");
+                  setAlertMessage("Erro ao criar projeto");
+                }
                 handleClose();
               }}
             >
@@ -166,7 +261,14 @@ export default function TopAppBar(props) {
             </MenuItem>
             <MenuItem
               onClick={() => {
-                handleSaveServer();
+                setDisplayAlert(true);
+                if (handleSaveServer()) {
+                  setSeverity("success");
+                  setAlertMessage("Projeto guardado no servidor com sucesso!");
+                } else {
+                  setSeverity("error");
+                  setAlertMessage("Erro ao guardar projeto");
+                }
                 handleClose();
               }}
             >
@@ -226,7 +328,22 @@ export default function TopAppBar(props) {
               }}
             ></AddNodePopup>
           ) : null}
-
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2, fontSize: "30px !important" }}
+            onClick={() => {
+              setOpenCharacterMenu(true);
+            }}
+          >
+            <img
+              src="./assets/character_dialogue_node.png"
+              alt="Add"
+              style={{ width: "50px", height: "50px" }}
+            />
+          </IconButton>
           <TextField
             aria-autocomplete="off"
             autoComplete="off"
@@ -262,7 +379,9 @@ export default function TopAppBar(props) {
           />
           <ButtonBase
             onClick={() => {
-              setOpenExportProjectPopup(true);
+              if (checkIfStoryIsReadyForExport()) {
+                setOpenExportProjectPopup(true);
+              }
             }}
             sx={{
               backgroundColor: tertiaryColor,
@@ -277,6 +396,37 @@ export default function TopAppBar(props) {
           </ButtonBase>
         </Toolbar>
       </AppBar>
+
+      <Alert
+        severity={severity}
+        sx={{
+          display: displayAlert ? "flex" : "none",
+          backgroundColor: severity == "success" ? primaryColor : "#F21414",
+          zIndex: 1000,
+          color: textColor,
+          position: "fixed",
+          width: "90%",
+          bottom: "3%",
+          left: "5%",
+          m: 2,
+          p: 0.3,
+          borderRadius: 3,
+          fontSize: "15px",
+          ".MuiAlert-icon": {
+            color: textColor,
+          },
+          ".MuiAlert-action": {
+            color: textColor,
+            fontSize: "20px",
+            mr: 1,
+          },
+        }}
+        onClose={() => {
+          setDisplayAlert(false);
+        }}
+      >
+        {alertMessage}
+      </Alert>
     </Box>
   );
 }

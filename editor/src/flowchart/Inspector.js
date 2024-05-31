@@ -23,6 +23,7 @@ import ColorPicker from "./inspector/ColorPicker";
 
 function Inspector(props) {
   const values = props.value;
+  const setInspectorData = props.setData;
   const nodeId = props.nodeId;
   const characters = props.characters;
   const setValues = props.setValue;
@@ -83,6 +84,18 @@ function Inspector(props) {
         >
           {props.data.nodeType}
         </Typography>
+        <IconButton
+          onClick={() => setInspectorData(undefined)}
+          sx={{ color: primaryColor }}
+        >
+          <Icon
+            sx={{
+              fontSize: "35px !important",
+            }}
+          >
+            close
+          </Icon>
+        </IconButton>
       </Box>
       <Box
         sx={{

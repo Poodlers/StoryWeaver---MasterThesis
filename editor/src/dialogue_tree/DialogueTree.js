@@ -187,6 +187,9 @@ function DialogueTree(props) {
               : "Delete"
             : "Delete"
         }
+        onNodesDelete={(nodeToDelete) => {
+          handleDelete(nodeToDelete[0].id);
+        }}
         onEdgeUpdate={onEdgeUpdate}
         onNodeClick={(event, node) => {
           if (selectedNode != undefined && node.id != selectedNode.id) {

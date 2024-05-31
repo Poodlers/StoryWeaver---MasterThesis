@@ -101,6 +101,7 @@ app.post("/save", async (req, res) => {
           characters: characters,
           maps: maps,
           exported: exported,
+          lastModified: new Date().toISOString(),
         },
       },
       { upsert: true }
@@ -130,6 +131,16 @@ app.get("/projects", async (req, res) => {
   res.send(projects);
 });
 
+app.get("/exported-projects", async (req, res) => {
+  const projects = await client
+    .db("projects")
+    .collection("story_structures")
+    .find({ exported: true })
+    .project({ id: 1, title: 1 })
+    .toArray();
+  res.send(projects);
+});
+
 app.get("/load/:storyId", async (req, res) => {
   const storyId = req.params.storyId;
   const story = await client
@@ -137,6 +148,28 @@ app.get("/load/:storyId", async (req, res) => {
     .collection("story_structures")
     .findOne({ id: storyId });
   res.send(story);
+});
+
+app.post("/export/:storyId", async (req, res) => {
+  const storyId = req.params.storyId;
+  const experienceName = req.body.name;
+  const description = req.body.description;
+  const tags = req.body.tags;
+  const story = await client
+    .db("projects")
+    .collection("story_structures")
+    .updateOne(
+      { id: storyId },
+      {
+        $set: {
+          exported: true,
+          experienceName: experienceName,
+          description: description,
+          tags: tags,
+        },
+      }
+    );
+  res.send({ success: true });
 });
 
 app.delete("/delete/:storyId", async (req, res) => {
@@ -357,7 +390,7 @@ app.listen(PORT, () => {
   // Schedule a cron job to run every day at midnight
   cron.schedule("0 0 * * *", () => {
     console.log("Running file cleanup task...");
-    cleanupFiles(path.join(__dirname, "files"));
+    //cleanupFiles(path.join(__dirname, "files"));
   });
   console.log(`Server is running on http://localhost:${PORT}`);
 });

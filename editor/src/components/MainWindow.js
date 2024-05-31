@@ -42,31 +42,6 @@ const defaultNodes = [
     type: NodeType.beginNode,
   },
   {
-    id: "1",
-    position: { x: 0, y: 0 },
-    data: generateInspectorProps(QuizProps),
-    type: NodeType.quizNode,
-  },
-  {
-    id: "2",
-    position: { x: 100, y: 100 },
-    data: generateInspectorProps(VideoProps),
-    type: NodeType.videoNode,
-  },
-  {
-    id: "3",
-    position: { x: 200, y: 100 },
-    data: generateInspectorProps(ImageProps),
-    type: NodeType.imageNode,
-  },
-
-  {
-    id: "4",
-    position: { x: 300, y: 100 },
-    data: generateInspectorProps(ThreeDModelProps),
-    type: NodeType.threeDModelNode,
-  },
-  {
     id: "5",
     position: { x: 400, y: 100 },
     data: generateInspectorProps(EndDialogProps),
@@ -95,9 +70,6 @@ export default function MainWindow(props) {
       ? JSON.parse(localStorage.getItem("characters"))
       : [narrator]
   );
-
-  const [displayAlert, setDisplayAlert] = React.useState(false);
-  const [alertMessage, setAlertMessage] = React.useState("");
 
   const [dialogNodes, setDialogNodes] = React.useState([]);
   const [dialogEdges, setDialogEdges] = React.useState([]);
@@ -168,7 +140,7 @@ export default function MainWindow(props) {
         setEdges(data.edges);
         setMaps(data.maps);
         setSelectedMap(data.maps.length > 0 ? data.maps[0] : null);
-        setProjectTitle(data.projectTitle);
+        setProjectTitle(data.title);
         localStorage.setItem("edges", JSON.stringify(data.edges));
         localStorage.setItem("nodes", JSON.stringify(data.nodes));
         localStorage.setItem("projectTitle", data.title);
@@ -188,7 +160,7 @@ export default function MainWindow(props) {
       setSelectedMap(
         data.maps ? (data.maps.length > 0 ? data.maps[0] : null) : null
       );
-      setProjectTitle(data.projectTitle);
+      setProjectTitle(data.title);
       setCharacters(data.characters);
       localStorage.setItem("edges", JSON.stringify(data.edges));
       localStorage.setItem("nodes", JSON.stringify(data.nodes));
@@ -199,7 +171,7 @@ export default function MainWindow(props) {
     });
   };
 
-  const handleNewProject = () => {
+  const handleNewProject = async () => {
     setNodes(defaultNodes);
     setEdges([]);
     setMaps([]);
@@ -213,22 +185,20 @@ export default function MainWindow(props) {
     localStorage.removeItem("storyId");
     localStorage.setItem("projectTitle", "Adicone um título ao projeto");
     localStorage.setItem("characters", JSON.stringify([narrator]));
-
-    repo
-      .saveProject(
+    try {
+      const response = await repo.saveProject(
         "Adicone um título ao projeto",
         defaultNodes,
         [],
         [narrator],
         []
-      )
-      .then((data) => {
-        setDisplayAlert(true);
-        setAlertMessage("Projeto criado com sucesso!");
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      );
+
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   };
 
   const handleSaveLocal = () => {
@@ -258,18 +228,21 @@ export default function MainWindow(props) {
     a.remove();
   };
 
-  const handleSaveServer = () => {
+  const handleSaveServer = async () => {
     //write NODES and EDGES to file
-
-    repo
-      .saveProject(projectTitle, nodes, edges, characters, mapsState)
-      .then((data) => {
-        setDisplayAlert(true);
-        setAlertMessage("Projeto salvo com sucesso!");
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    try {
+      const response = await repo.saveProject(
+        projectTitle,
+        nodes,
+        edges,
+        characters,
+        mapsState
+      );
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   };
 
   const addNode = (nodeType, nodeProps) => {
@@ -345,6 +318,8 @@ export default function MainWindow(props) {
   return (
     <>
       <TopAppBar
+        nodes={nodes}
+        edges={edges}
         characters={characters}
         setCharacters={setCharacters}
         projectTitle={projectTitle}
@@ -486,36 +461,6 @@ export default function MainWindow(props) {
           ></DialogueTree>
         ) : null}
       </Box>
-
-      <Alert
-        sx={{
-          display: displayAlert ? "flex" : "none",
-          backgroundColor: primaryColor,
-          zIndex: 1000,
-          color: textColor,
-          position: "fixed",
-          width: "90%",
-          bottom: "3%",
-          left: "5%",
-          m: 2,
-          p: 0.3,
-          borderRadius: 3,
-          fontSize: "15px",
-          ".MuiAlert-icon": {
-            color: textColor,
-          },
-          ".MuiAlert-action": {
-            color: textColor,
-            fontSize: "20px",
-            mr: 1,
-          },
-        }}
-        onClose={() => {
-          setDisplayAlert(false);
-        }}
-      >
-        {alertMessage}
-      </Alert>
     </>
   );
 }

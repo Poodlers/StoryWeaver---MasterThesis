@@ -16,6 +16,7 @@ import {
 } from "../../themes";
 
 import ProjectTag from "./ProjectTag";
+import { ApiDataRepository } from "../../api/ApiDataRepository";
 
 const colors = [
   "#FF0000",
@@ -25,18 +26,20 @@ const colors = [
   "#0000FF",
   "#4B0082",
   "#EE82EE",
-  "#000000",
+
   "#A9A9A9",
   "#FFFFFF",
 ];
 
 export default function ExportProjectPopup(props) {
+  const repo = ApiDataRepository.getInstance();
   const open = props.open;
   const onClose = props.onClose;
-  const projects = props.projects;
 
-  const [name, setName] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [name, setName] = React.useState("Adicione o nome da sua experiência");
+  const [description, setDescription] = React.useState(
+    "Adicione uma descrição breve!"
+  );
   const [tags, setTags] = React.useState([]);
 
   return (
@@ -153,7 +156,7 @@ export default function ExportProjectPopup(props) {
                 fullWidth
                 sx={{
                   px: 4,
-                  textAlign: "center",
+                  textAlign: "start",
 
                   backgroundColor: textColor,
                   border: "none",
@@ -171,7 +174,7 @@ export default function ExportProjectPopup(props) {
                   disableUnderline: true,
                   sx: {
                     "& .MuiInput-input": {
-                      textAlign: "center !important",
+                      textAlign: "start !important",
                       color: "black",
                       fontSize: "17px",
                       borderRadius: 2,
@@ -215,7 +218,7 @@ export default function ExportProjectPopup(props) {
                 sx={{
                   px: 4,
                   minHeight: "100px",
-                  textAlign: "center",
+                  textAlign: "start",
                   backgroundColor: textColor,
                   border: "none",
                   outline: "none",
@@ -232,7 +235,7 @@ export default function ExportProjectPopup(props) {
                   disableUnderline: true,
                   sx: {
                     "& .MuiInput-input": {
-                      textAlign: "center !important",
+                      textAlign: "start !important",
                       color: "black",
                       fontSize: "17px",
                       borderRadius: 2,
@@ -268,7 +271,14 @@ export default function ExportProjectPopup(props) {
               >
                 Etiquetas:
               </Typography>
-              <>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: "10px",
+                  mt: 2,
+                }}
+              >
                 {tags.map((tag, index) => {
                   return (
                     <ProjectTag
@@ -281,12 +291,14 @@ export default function ExportProjectPopup(props) {
                       }}
                       color={tag.color}
                       onDelete={(name) =>
-                        setTags(tags.filter((tag) => tag.name !== name))
+                        setTags(
+                          tags.slice(0, index).concat(tags.slice(index + 1))
+                        )
                       }
                     />
                   );
                 })}
-              </>
+              </Box>
               <IconButton
                 sx={{
                   color: "black",
@@ -308,6 +320,14 @@ export default function ExportProjectPopup(props) {
             <ButtonBase
               onClick={() => {
                 onClose();
+                repo
+                  .exportProject(name, description, tags)
+                  .then((res) => {
+                    console.log(res);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
               }}
               sx={{
                 backgroundColor: tertiaryColor,

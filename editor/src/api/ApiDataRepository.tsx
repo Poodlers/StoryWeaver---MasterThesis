@@ -130,6 +130,39 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
         }
     }
 
+    public async deleteProject(projectId: string): Promise<any> {
+        const instance = this.createInstance();
+  
+        try{
+            const result = await instance.delete(`${BASE_URL}/delete/${projectId}`
+            ).then(transform);
+            return result.data;
+        }
+        catch(error){
+            console.log(error); 
+            throw error;
+        }
+    }
+
+    public exportProject = async (name: string, description: string, tags: any): Promise<any> => {
+        const instance = this.createInstance();
+        const storyID = localStorage.getItem('storyId');
+        try{
+            const result = await instance.post(`${BASE_URL}/export/${storyID}`,
+                {
+                    name: name,
+                    description: description,
+                    tags: tags
+                }
+            ).then(transform);
+            return result.data;
+        }
+        catch(error){
+            console.log(error); 
+            throw error;
+        }
+    }
+
     public getProject = async (projectId: string): Promise<Project> => {
         const instance = this.createInstance();
 
