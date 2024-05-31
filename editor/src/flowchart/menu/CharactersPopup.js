@@ -41,7 +41,7 @@ export default function CharactersPopup(props) {
     <Dialog
       id="characters-popup"
       open={open}
-      onClose={onClose}
+      onClose={() => onClose(undefined)}
       sx={{
         width: "100%",
         scrollbarWidth: "thin",

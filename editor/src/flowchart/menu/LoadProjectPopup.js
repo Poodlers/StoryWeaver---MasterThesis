@@ -11,7 +11,7 @@ export default function LoadProjectPopup(props) {
     <Dialog
       id="load-project-popup"
       open={open}
-      onClose={onClose}
+      onClose={() => onClose(undefined)}
       sx={{
         width: "100%",
         scrollbarWidth: "thin",

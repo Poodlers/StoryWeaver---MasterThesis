@@ -331,7 +331,7 @@ const PathProps = {
   fields: [
     {
       type: InputFieldType.textFieldMultiline,
-      label: "Nome:",
+      label: "Texto:",
       initialValue: "Nome do caminho",
       name: "name",
     },
@@ -341,20 +341,6 @@ const PathProps = {
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "background",
       acceptedType: FileTypesInput.Image,
-    },
-    {
-      type: InputFieldType.select_location,
-      label: "Início:",
-      options: ["GPS Coords", "QR-Code", "Image Tracking"],
-      initialValue: {
-        trigger_mode: "GPS Coords",
-        map: "Map 1",
-        place: "place",
-        qr_code: "qr_code",
-        tolerance: 5,
-        image: { inputType: "url", filename: "", blob: null },
-      },
-      name: "start",
     },
     {
       type: InputFieldType.select_location,

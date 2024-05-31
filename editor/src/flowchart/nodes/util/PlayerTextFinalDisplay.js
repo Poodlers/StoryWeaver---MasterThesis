@@ -6,6 +6,7 @@ export default function PlayerTextFinalDisplay(props) {
   const text = props.text;
   const messageType = props.messageType;
   const style = props.style;
+  const icon = props.icon;
   return (
     <Box
       sx={{
@@ -47,6 +48,7 @@ export default function PlayerTextFinalDisplay(props) {
           borderRadius: "5px",
         }}
       >
+        {icon}
         <Typography
           variant="h6"
           sx={{

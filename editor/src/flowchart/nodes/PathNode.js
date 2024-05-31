@@ -8,23 +8,44 @@ import {
   tertiaryColor,
   textColor,
 } from "../../themes";
+import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
+import { ApiDataRepository } from "../../api/ApiDataRepository";
+import React, { useEffect } from "react";
 
 export default function PathNode(props) {
+  const repo = ApiDataRepository.getInstance();
   const pathName = props.data?.name ?? "";
-  const start = props.data?.start ?? "";
+
   const maps = localStorage.getItem("maps")
     ? JSON.parse(localStorage.getItem("maps"))
     : [];
-  const mapStart = maps.find((map) => map.name == start.map);
-  const mapEnd = maps.find((map) => map.name == end.map);
-  const placeStart = mapStart
-    ? mapStart.anchors.find((place) => place.name == start.place)
-    : null;
 
+  const mapEnd = maps.find((map) => map.name == end.map);
+  const backgroundFileInfo = props.data?.background ?? "";
+  const [backgroundURL, setBackgroundURL] = React.useState("");
   const end = props.data?.destination ?? "";
   const placeEnd = mapEnd
     ? mapEnd.anchors.find((place) => place.name == end.place)
     : null;
+
+  useEffect(() => {
+    if (backgroundFileInfo.filename == "") {
+      setBackgroundURL("");
+      return;
+    }
+    if (backgroundFileInfo.inputType == "url") {
+      setBackgroundURL(backgroundFileInfo.filename);
+    } else {
+      repo
+        .getFilePath(backgroundFileInfo.filename)
+        .then((url) => {
+          setBackgroundURL(url);
+        })
+        .catch(() => {
+          setBackgroundURL("");
+        });
+    }
+  }, [backgroundFileInfo]);
   return (
     <>
       <Handle
@@ -50,18 +71,22 @@ export default function PathNode(props) {
           variant="h6"
           sx={{
             px: 2,
-            fontSize: 15,
+            fontSize: 20,
             color: textColor,
-            fontWeight: 400,
+            fontWeight: 500,
             textAlign: "center",
           }}
         >
-          Path - Caminho
+          Rota
         </Typography>
       </Box>
       <Box
         sx={{
-          backgroundColor: secondaryColor,
+          background:
+            backgroundURL == ""
+              ? secondaryColor
+              : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+          backgroundSize: "cover",
           borderColor: tertiaryColor,
           borderWidth: 2,
           borderStyle: "solid",
@@ -69,208 +94,44 @@ export default function PathNode(props) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          width: "375px",
+          minHeight: "677px",
         }}
       >
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              px: 3,
-              fontSize: 15,
-              color: textColor,
-              fontWeight: 400,
-              textAlign: "center",
-            }}
-          >
-            Nome
-          </Typography>
-        </Box>
+        <PlayerTextFinalDisplay
+          style={{ width: "90%" }}
+          text={pathName}
+          messageType={"Texto auxiliar"}
+        />
 
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: secondaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              px: 3,
-              py: 1,
-              fontSize: 12,
-              color: textColor,
-              fontWeight: 200,
-            }}
-          >
-            {pathName}
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 400 }}
-          >
-            Início
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: secondaryColor,
-          }}
-        >
-          <>
-            {start.trigger_mode === "GPS Coords" ? (
-              <Box
-                sx={{
-                  color: "black",
-                  display: "flex",
-                  py: 2,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Icon sx={{ fontSize: 20, color: textColor, mr: 1 }}>
-                  {placeStart ? placeStart.icon : "place"}
-                </Icon>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    px: 1,
-                    fontSize: 15,
-                    color: textColor,
-                    fontWeight: 400,
-                    textAlign: "center",
-                  }}
-                >
-                  {start.place}
-                </Typography>
-              </Box>
-            ) : (
-              <Box
-                sx={{
-                  color: "black",
-                  display: "flex",
-                  py: 2,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Icon sx={{ fontSize: 20, color: textColor, mr: 1 }}>
-                  qr_code
-                </Icon>
-                <Typography
-                  variant="h7"
-                  sx={{
-                    px: 1,
-                    fontSize: 15,
-                    color: textColor,
-                    fontWeight: 400,
-                    textAlign: "center",
-                  }}
-                >
-                  {start.qr_code}
-                </Typography>
-              </Box>
-            )}
-          </>
-        </Box>
-
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 400 }}
-          >
-            Destino
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: secondaryColor,
-          }}
-        >
-          {end.trigger_mode === "GPS Coords" ? (
-            <Box
-              sx={{
-                color: "black",
-                display: "flex",
-                py: 2,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Icon sx={{ fontSize: 20, color: textColor, mr: 1 }}>
+        <PlayerTextFinalDisplay
+          text={
+            end.trigger_mode === "GPS Coords"
+              ? end.place
+              : end.trigger_mode === "QR Code"
+              ? end.qr_code
+              : end.image.filename
+              ? end.image.filename
+              : " "
+          }
+          messageType={"Destino"}
+          icon={
+            end.trigger_mode === "GPS Coords" ? (
+              <Icon sx={{ fontSize: 20, color: primaryColor, mr: 1 }}>
                 {placeEnd ? placeEnd.icon : "place"}
               </Icon>
-              <Typography
-                variant="h6"
-                sx={{
-                  px: 1,
-                  fontSize: 15,
-                  color: textColor,
-                  fontWeight: 400,
-                  textAlign: "center",
-                }}
-              >
-                {end.place}
-              </Typography>
-            </Box>
-          ) : (
-            <Box
-              sx={{
-                color: textColor,
-                display: "flex",
-                py: 2,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Icon sx={{ fontSize: 20, color: textColor, mr: 1 }}>
+            ) : end.trigger_mode === "QR Code" ? (
+              <Icon sx={{ fontSize: 20, color: primaryColor, mr: 1 }}>
                 qr_code
               </Icon>
-              <Typography
-                variant="h7"
-                sx={{
-                  px: 1,
-                  fontSize: 15,
-                  color: textColor,
-                  fontWeight: 400,
-                  textAlign: "center",
-                }}
-              >
-                {end.qr_code}
-              </Typography>
-            </Box>
-          )}
-        </Box>
+            ) : (
+              <Icon sx={{ fontSize: 20, color: primaryColor, mr: 1 }}>
+                image
+              </Icon>
+            )
+          }
+          style={{ mt: 2, width: "90%" }}
+        />
       </Box>
     </>
   );

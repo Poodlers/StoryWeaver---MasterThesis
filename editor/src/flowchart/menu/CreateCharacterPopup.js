@@ -52,7 +52,7 @@ export default function CreateCharacterPopup(props) {
     <Dialog
       id="create-character-popup"
       open={open}
-      onClose={onClose}
+      onClose={() => onClose(undefined)}
       sx={{
         width: "100%",
         minWidth: "70vw",

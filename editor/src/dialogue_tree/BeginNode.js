@@ -40,7 +40,7 @@ export default function BeginNode(props) {
             fontWeight: "bold",
           }}
         >
-          Begin
+          Início
         </Typography>
       </Box>
     </>

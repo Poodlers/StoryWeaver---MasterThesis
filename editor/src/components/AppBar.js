@@ -6,15 +6,21 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Icon, Menu, MenuItem, TextField } from "@mui/material";
+import { ButtonBase, Icon, Menu, MenuItem, TextField } from "@mui/material";
 import AddNodePopup from "../flowchart/menu/AddNodePopup";
-import { primaryColor, secondaryColor, textColor } from "../themes";
+import {
+  primaryColor,
+  secondaryColor,
+  tertiaryColor,
+  textColor,
+} from "../themes";
 import AddLocationsPopup from "../flowchart/menu/AddLocationsPopup";
 import CharactersPopup from "../flowchart/menu/CharactersPopup";
 import { possibleNodes } from "../models/possibleNodes";
 import { possibleDialogueNodes } from "../models/possibleDialogueNodes";
 import LoadProjectPopup from "../flowchart/menu/LoadProjectPopup";
 import { ApiDataRepository } from "../api/ApiDataRepository";
+import ExportProjectPopup from "../flowchart/menu/ExportProjectPopup";
 
 export default function TopAppBar(props) {
   const repo = ApiDataRepository.getInstance();
@@ -34,6 +40,8 @@ export default function TopAppBar(props) {
   const [openAddNode, setOpenAddNode] = React.useState(false);
   const [openLoadProjectPopup, setOpenLoadProjectPopup] = React.useState(false);
   const [openCharacterMenu, setOpenCharacterMenu] = React.useState(false);
+  const [openExportProjectPopup, setOpenExportProjectPopup] =
+    React.useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -80,6 +88,13 @@ export default function TopAppBar(props) {
           >
             <MenuIcon />
           </IconButton>
+          <ExportProjectPopup
+            open={openExportProjectPopup}
+            onClose={() => {
+              setOpenExportProjectPopup(false);
+            }}
+            projects={projects}
+          ></ExportProjectPopup>
           <CharactersPopup
             characters={characters}
             setCharacters={setCharacters}
@@ -182,7 +197,7 @@ export default function TopAppBar(props) {
               style={{ width: "50px", height: "50px" }}
             />
           </IconButton>
-          {currentWindow === "Flowchart" ? (
+          {currentWindow === "História" ? (
             <AddNodePopup
               open={openAddNode}
               possibleNodes={possibleNodes}
@@ -245,7 +260,21 @@ export default function TopAppBar(props) {
             value={projectTitle}
             onChange={(e) => setProjectTitle(e.target.value)}
           />
-          <Button color="inherit">Login</Button>
+          <ButtonBase
+            onClick={() => {
+              setOpenExportProjectPopup(true);
+            }}
+            sx={{
+              backgroundColor: tertiaryColor,
+              color: textColor,
+              fontSize: "20px",
+              p: 2,
+              borderRadius: 3,
+              m: 1,
+            }}
+          >
+            Exportar
+          </ButtonBase>
         </Toolbar>
       </AppBar>
     </Box>

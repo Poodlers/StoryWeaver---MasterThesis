@@ -81,13 +81,13 @@ const initialEdges = JSON.parse(localStorage.getItem("edges") || "[]");
 
 export default function MainWindow(props) {
   const repo = ApiDataRepository.getInstance();
-  const [windows, setWindows] = React.useState(["Flowchart", "Mapa"]);
+  const [windows, setWindows] = React.useState(["História", "Mapa"]);
   const [mapsState, setMaps] = React.useState(maps);
   const [selectedMap, setSelectedMap] = React.useState(
     maps.length > 0 ? maps[0] : null
   );
   const [mountMap, setMountMap] = React.useState(true);
-  const [displayedWindow, changeDisplayedWindow] = React.useState("Flowchart");
+  const [displayedWindow, changeDisplayedWindow] = React.useState("História");
   const [nodes, setNodes] = React.useState(initialNodes);
   const [edges, setEdges] = React.useState(initialEdges);
   const [characters, setCharacters] = React.useState(
@@ -204,8 +204,8 @@ export default function MainWindow(props) {
     setEdges([]);
     setMaps([]);
     setCharacters([narrator]);
-    setWindows(["Flowchart", "Mapa"]);
-    changeDisplayedWindow("Flowchart");
+    setWindows(["História", "Mapa"]);
+    changeDisplayedWindow("História");
     setProjectTitle("Adicone um título ao projeto");
     localStorage.setItem("edges", JSON.stringify([]));
     localStorage.setItem("nodes", JSON.stringify(defaultNodes));
@@ -417,7 +417,7 @@ export default function MainWindow(props) {
                         p: 0,
                       }}
                       onClick={() => {
-                        changeDisplayedWindow("Flowchart");
+                        changeDisplayedWindow("História");
                         setWindows(windows.filter((w) => w !== window));
                       }}
                     >
@@ -449,7 +449,7 @@ export default function MainWindow(props) {
           </Box>
         </Box>
 
-        {displayedWindow === "Flowchart" ? (
+        {displayedWindow === "História" ? (
           <Flow
             setWindows={setWindows}
             changeDisplayedWindow={changeDisplayedWindow}

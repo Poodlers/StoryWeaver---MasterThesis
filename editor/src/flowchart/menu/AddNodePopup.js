@@ -11,7 +11,7 @@ export default function AddNodePopup(props) {
     <Dialog
       id="add-node-popup"
       open={open}
-      onClose={onClose}
+      onClose={() => onClose(undefined)}
       sx={{
         width: "100%",
         scrollbarWidth: "thin",
