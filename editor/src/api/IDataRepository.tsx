@@ -5,6 +5,7 @@ import { ProjectsBaseInfo } from "../models/ProjectsBaseInfo";
 export interface IDataRepository {
     getFile: (fileName: string) => Promise<Blob>;
     uploadFile: (file: File) => Promise<any>;
+    unzipFile: (fileName: string) => Promise<any>;
     deleteFile: (fileName: string) => Promise<any>;
     saveProject(projectTitle: any, nodes: any, edges: any, characters: any, maps: any): Promise<any>;
     exportProject(name: string, description: string, tags: any): Promise<any>;

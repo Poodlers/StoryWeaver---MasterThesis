@@ -199,6 +199,15 @@ function FileSelectField(props) {
                   const urlObj = URL.createObjectURL(file);
 
                   if (props.data.acceptedType == FileTypesInput.ThreeDModel) {
+                    repo
+                      .unzipFile(fileName)
+                      .then((res) => {
+                        console.log(res);
+                      })
+                      .catch((error) => {
+                        console.error(error);
+                      });
+
                     getFileNamesFromZip(file).then((fileNames) => {
                       if (fileNames.find((name) => name.includes(".obj"))) {
                         handleFieldChange(props.data.name, {

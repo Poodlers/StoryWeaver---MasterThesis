@@ -23,6 +23,7 @@ import { Entity, Scene } from "aframe-react";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import { ComponentState } from "../../models/ComponentState";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
+import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
 
 const { FS } = fs;
 
@@ -38,7 +39,7 @@ export default function ThreeDModelNode(props) {
 
   const backgroundFileInfo = props.data?.background ?? "";
   const [fileURL, setFileURL] = React.useState("");
-  const [otherFile, setOtherFile] = React.useState("");
+
   const [componentState, setComponentState] = React.useState(
     ComponentState.LOADING
   );
@@ -72,68 +73,10 @@ export default function ThreeDModelNode(props) {
       setComponentState(ComponentState.LOADED);
       return;
     }
-    var mainFileBlob = { data: undefined };
-    repo
-      .getFile(fileInfo.filename)
-      .then(async (file) => {
-        const zipFs = new FS();
-
-        await zipFs.importBlob(file);
-        const realFilesToBlobNames = {};
-
-        async function processZipThreeDModelChildren(
-          entry,
-          mainBlob,
-          parentsNames = []
-        ) {
-          if (entry.data.directory) {
-            for (const child of entry.children) {
-              await processZipThreeDModelChildren(child, mainBlob, [
-                ...parentsNames,
-                entry.name,
-              ]);
-            }
-          } else {
-            const data = await entry.data.getData(new BlobWriter());
-
-            if (entry.name.split(".")[1] === modelType) {
-              mainBlob.data = data;
-            } else if (entry.name.split(".")[1] === "mtl") {
-              const createdURL = URL.createObjectURL(data);
-              setOtherFile(createdURL);
-            } else {
-              const createdURL = URL.createObjectURL(data);
-              realFilesToBlobNames[createdURL] =
-                parentsNames.length > 0
-                  ? parentsNames.join("/") + "/" + entry.name
-                  : entry.name;
-            }
-          }
-        }
-
-        for (const entry of zipFs.root.children) {
-          await processZipThreeDModelChildren(entry, mainFileBlob);
-        }
-
-        const rawTextData = await new BlobReader(mainFileBlob.data).readable
-          .getReader()
-          .read();
-        var string = new TextDecoder().decode(rawTextData.value);
-        for (const [key, value] of Object.entries(realFilesToBlobNames)) {
-          string = string.replace(value, key);
-        }
-
-        const mainModelBlob = new Blob([string]);
-
-        const mainFileURL = URL.createObjectURL(mainModelBlob);
-        setFileURL(mainFileURL);
-
-        setComponentState(ComponentState.LOADED);
-      })
-      .catch((error) => {
-        console.log(error);
-        setComponentState(ComponentState.ERROR);
-      });
+    repo.getThreeDModelPath(fileInfo.filename, modelType).then((url) => {
+      setFileURL(url);
+      setComponentState(ComponentState.LOADED);
+    });
   }, [fileInfo]);
 
   document.onkeydown = function (evt) {
@@ -227,16 +170,25 @@ export default function ThreeDModelNode(props) {
                 material={{ color: "red" }}
                 position={{ x: 0, y: 0, z: -5 }}
               />
-
-              <Entity
-                gltf-model={
-                  "url(" +
-                  "http://localhost:8080/files/61df0221-5231-4104-94fd-1e43264d2f84/scene.gltf" +
-                  ")"
-                }
-                position={position}
-                scale={scale}
-              />
+              {modelType == ThreeDModelTypes.gltf ? (
+                <Entity
+                  gltf-model={"url(" + fileURL + ")"}
+                  position={position}
+                  scale={scale}
+                />
+              ) : (
+                <Entity
+                  obj-model={
+                    "obj: url(" +
+                    fileURL +
+                    "); mtl: url(" +
+                    fileURL.replace(".obj", ".mtl") +
+                    ");"
+                  }
+                  position={position}
+                  scale={scale}
+                />
+              )}
 
               <Entity text={{ value: "Hello, WebVR!" }} />
               <a-camera

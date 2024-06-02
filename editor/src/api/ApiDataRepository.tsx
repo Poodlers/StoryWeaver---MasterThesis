@@ -4,6 +4,7 @@ import { IDataRepository } from "./IDataRepository";
 import { BASE_URL } from "../data/constants";
 import { ProjectsBaseInfo } from "../models/ProjectsBaseInfo";
 import { Project } from "../models/Project";
+import { ThreeDModelTypes } from "../models/ThreeDModelTypes";
 
 
 export class ApiResponse<T> {
@@ -52,6 +53,27 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
             
         
     }
+
+    public getThreeDModelPath = async (fileName: string, modelType: ThreeDModelTypes): Promise<string> => {
+         
+        const fileNameWithoutExtension = fileName.split('.')[0];
+        const fileNameWithoutUUID = fileNameWithoutExtension.split('-')[5];
+        const storyID = localStorage.getItem('storyId');
+        if(!storyID){
+            throw new Error('Story ID is not set');
+        }
+
+
+        if(modelType == ThreeDModelTypes.gltf){
+            return `${BASE_URL}/files/${storyID}/${fileNameWithoutExtension}/scene.gltf`;
+        }else if(modelType == ThreeDModelTypes.obj){
+            return `${BASE_URL}/files/${storyID}/${fileNameWithoutExtension}/${fileNameWithoutUUID}.obj`;
+        }
+
+        return '';
+                
+            
+        }
 
     public getFile = async (fileName: string): Promise<Blob> => {
         const config: AxiosRequestConfig = {
@@ -137,6 +159,19 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
             const result = await instance.delete(`${BASE_URL}/delete/${projectId}`
             ).then(transform);
             return result.data;
+        }
+        catch(error){
+            console.log(error); 
+            throw error;
+        }
+    }
+
+    public unzipFile = async (fileName: string): Promise<any> => {
+        const instance = this.createInstance();
+        const storyID = localStorage.getItem('storyId');
+        try{
+            const result = await instance.get(`${BASE_URL}/unzip/${storyID}/${fileName}`).then(transform);
+            return result;
         }
         catch(error){
             console.log(error); 

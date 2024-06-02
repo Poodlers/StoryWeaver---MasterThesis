@@ -14,6 +14,7 @@ const secretkey = require("./config/secret.json");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { randomUUID } = require("crypto");
 const { OAuth2Client } = require("google-auth-library");
+const unzipper = require("unzipper");
 
 const { Worker } = require("worker_threads");
 
@@ -190,6 +191,39 @@ app.post(
   }
 );
 
+app.get("/unzip/:storyID/:filename", async (req, res) => {
+  const filename = req.params.filename;
+  const storyID = req.params.storyID;
+  const filePath = path.join(__dirname, "files", storyID, filename);
+
+  const fileNameWithoutExtension = filename.split(".")[0];
+  const outputPath = path.join(
+    __dirname,
+    "files",
+    storyID,
+    fileNameWithoutExtension
+  );
+  if (fs.existsSync(outputPath)) {
+    console.log("Unzipped files already exist for this image");
+    res.json({ success: true });
+    return;
+  } else {
+    fs.mkdirSync(outputPath, { recursive: true });
+  }
+
+  const stream = fs
+    .createReadStream(filePath)
+    .pipe(unzipper.Extract({ path: outputPath }));
+
+  stream.on("close", () => {
+    res.json({ success: true });
+  });
+
+  stream.on("error", (err) => {
+    res.json({ success: false, error: err });
+  });
+});
+
 app.get("/generateMarker/:storyID/:filename", async (req, res) => {
   const filename = req.params.filename;
   const storyID = req.params.storyID;
@@ -228,6 +262,16 @@ app.delete("/files/:storyID/:filename", (req, res) => {
   const filename = req.params.filename;
   const storyID = req.params.storyID;
   const filePath = path.join(__dirname, "files", storyID, filename);
+  if (filename.includes(".zip")) {
+    const fileNameWithoutExtension = filename.split(".")[0];
+    const outputPath = path.join(
+      __dirname,
+      "files",
+      storyID,
+      fileNameWithoutExtension
+    );
+    fs.rmdirSync(outputPath, { recursive: true });
+  }
 
   // Delete the file
   fs.unlink(filePath, (err) => {
