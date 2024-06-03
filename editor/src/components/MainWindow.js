@@ -78,7 +78,7 @@ export default function MainWindow(props) {
   const [projectTitle, setProjectTitle] = React.useState(
     localStorage.getItem("projectTitle") || "Projeto Exemplo"
   );
-
+  /*
   React.useEffect(() => {
     //check if the saved blobs are still valid
     let newNodes = [...nodes];
@@ -118,6 +118,7 @@ export default function MainWindow(props) {
     setNodes(newNodes);
     localStorage.setItem("nodes", JSON.stringify(nodes));
   }, []);
+  */
 
   React.useEffect(() => {
     if (!mountMap) {
@@ -182,6 +183,10 @@ export default function MainWindow(props) {
     localStorage.setItem("edges", JSON.stringify([]));
     localStorage.setItem("nodes", JSON.stringify(defaultNodes));
     localStorage.setItem("maps", JSON.stringify([]));
+    localStorage.setItem("exported", false);
+    localStorage.setItem("experienceName", "");
+    localStorage.setItem("experienceDescription", "");
+    localStorage.removeItem("experienceTags");
     localStorage.removeItem("storyId");
     localStorage.setItem("projectTitle", "Adicone um título ao projeto");
     localStorage.setItem("characters", JSON.stringify([narrator]));

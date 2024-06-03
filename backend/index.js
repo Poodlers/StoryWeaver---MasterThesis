@@ -87,6 +87,10 @@ app.post("/save", async (req, res) => {
   const characters = req.body.characters;
   const maps = req.body.maps;
   const exported = req.body.exported;
+  const experienceName = req.body.experienceName;
+  const description = req.body.description;
+  const tags = req.body.tags;
+
   //save to database
   await client
     .db("projects")
@@ -102,6 +106,9 @@ app.post("/save", async (req, res) => {
           characters: characters,
           maps: maps,
           exported: exported,
+          experienceName: experienceName,
+          description: description,
+          tags: tags,
           lastModified: new Date().toISOString(),
         },
       },
@@ -137,8 +144,9 @@ app.get("/exported-projects", async (req, res) => {
     .db("projects")
     .collection("story_structures")
     .find({ exported: true })
-    .project({ id: 1, title: 1 })
+    .project({ id: 1, title: 1, experienceName: 1, description: 1, tags: 1 })
     .toArray();
+  console.log(projects);
   res.send(projects);
 });
 

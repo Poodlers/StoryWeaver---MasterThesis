@@ -6,7 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect } from "react";
-import { backgroundColor, textColor } from "../../themes";
+import { backgroundColor, secondaryColor, textColor } from "../../themes";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import LocationBasedARDisplay from "./LocationBasedARDisplay";
 import { ARTriggerMode } from "../../models/ARTriggerModes";
@@ -20,6 +20,7 @@ import {
   ZipReader,
 } from "@zip.js/zip.js";
 import ImageTrackingBasedARDisplay from "./ImageTrackingBasedARDisplay";
+import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
 const { FS } = fs;
 
 export default function ThreeDModelDisplay(props) {
@@ -28,85 +29,50 @@ export default function ThreeDModelDisplay(props) {
   const file = threeDNode.data.file;
   const position = threeDNode.data.position;
   const scale = threeDNode.data.scale;
+  const rotation = threeDNode.data.rotation;
   const name = threeDNode.data.name;
   const isAR = threeDNode.data.ar;
   const modelType = file.modelType;
   const ARTypeInfo = threeDNode.data.ar_type;
   const possibleNextNodes = props.possibleNextNodes;
   const [fileURL, setFileURL] = React.useState("");
-  const [otherFile, setOtherFile] = React.useState("");
+
+  const backgroundFileInfo = threeDNode.data.background;
+
+  const [backgroundURL, setBackgroundURL] = React.useState("");
+
   const [componentState, setComponentState] = React.useState(
     ComponentState.LOADING
   );
 
+  useEffect(() => {
+    if (backgroundFileInfo.filename == "") {
+      setBackgroundURL("");
+      return;
+    }
+    if (backgroundFileInfo.inputType == "url") {
+      setBackgroundURL(backgroundFileInfo.filename);
+    } else {
+      repo
+        .getFilePath(backgroundFileInfo.filename)
+        .then((url) => {
+          setBackgroundURL(url);
+        })
+        .catch(() => {
+          setBackgroundURL("");
+        });
+    }
+  }, [backgroundFileInfo]);
   useEffect(() => {
     if (file.inputType === "url") {
       setFileURL(file.filename);
       setComponentState(ComponentState.LOADED);
       return;
     }
-    var mainFileBlob = { data: undefined };
-    repo
-      .getFile(file.filename)
-      .then(async (file) => {
-        const zipFs = new FS();
-
-        await zipFs.importBlob(file);
-        const realFilesToBlobNames = {};
-
-        async function processZipThreeDModelChildren(
-          entry,
-          mainBlob,
-          parentsNames = []
-        ) {
-          if (entry.data.directory) {
-            for (const child of entry.children) {
-              await processZipThreeDModelChildren(child, mainBlob, [
-                ...parentsNames,
-                entry.name,
-              ]);
-            }
-          } else {
-            const data = await entry.data.getData(new BlobWriter());
-
-            if (entry.name.split(".")[1] === modelType) {
-              mainBlob.data = data;
-            } else if (entry.name.split(".")[1] === "mtl") {
-              const createdURL = URL.createObjectURL(data);
-              setOtherFile(createdURL);
-            } else {
-              const createdURL = URL.createObjectURL(data);
-              realFilesToBlobNames[createdURL] =
-                parentsNames.length > 0
-                  ? parentsNames.join("/") + "/" + entry.name
-                  : entry.name;
-            }
-          }
-        }
-
-        for (const entry of zipFs.root.children) {
-          await processZipThreeDModelChildren(entry, mainFileBlob);
-        }
-
-        const rawTextData = await new BlobReader(mainFileBlob.data).readable
-          .getReader()
-          .read();
-        var string = new TextDecoder().decode(rawTextData.value);
-        for (const [key, value] of Object.entries(realFilesToBlobNames)) {
-          string = string.replace(value, key);
-        }
-
-        const mainModelBlob = new Blob([string]);
-
-        const mainFileURL = URL.createObjectURL(mainModelBlob);
-        setFileURL(mainFileURL);
-
-        setComponentState(ComponentState.LOADED);
-      })
-      .catch((error) => {
-        console.log(error);
-        setComponentState(ComponentState.ERROR);
-      });
+    repo.getThreeDModelPath(file.filename, modelType).then((path) => {
+      setFileURL(path);
+      setComponentState(ComponentState.LOADED);
+    });
   }, []);
 
   const setNextNode = props.setNextNode;
@@ -115,11 +81,16 @@ export default function ThreeDModelDisplay(props) {
     <Box
       sx={{
         width: "100%",
-        height: "100%",
+        height: isAR ? "100%" : "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        background:
+          backgroundURL == ""
+            ? secondaryColor
+            : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+        backgroundSize: "cover",
       }}
     >
       {componentState === ComponentState.LOADING ? (
@@ -152,7 +123,6 @@ export default function ThreeDModelDisplay(props) {
         ARTypeInfo.trigger_mode === ARTriggerMode.GPSCoords ? (
           <LocationBasedARDisplay
             name={name}
-            additionalFiles={otherFile}
             src={fileURL}
             map={ARTypeInfo.map}
             place={ARTypeInfo.place}
@@ -174,7 +144,29 @@ export default function ThreeDModelDisplay(props) {
           />
         )
       ) : (
-        <div>Will implement</div>
+        <a-scene embedded>
+          {modelType == ThreeDModelTypes.gltf ? (
+            <a-entity
+              gltf-model={fileURL}
+              scale={scale.x + " " + scale.y + " " + scale.z}
+              position={position.x + " " + position.y + " " + position.z}
+              rotation={rotation.x + " " + rotation.y + " " + rotation.z}
+            ></a-entity>
+          ) : (
+            <a-entity
+              obj-model={
+                "obj: " +
+                fileURL +
+                "; " +
+                "mtl: " +
+                fileURL.replace(".obj", ".mtl") +
+                ";"
+              }
+              scale={scale.x + " " + scale.y + " " + scale.z}
+              position={position.x + " " + position.y + " " + position.z}
+            ></a-entity>
+          )}
+        </a-scene>
       )}
       <ButtonBase
         sx={{
@@ -185,7 +177,9 @@ export default function ThreeDModelDisplay(props) {
           right: 10,
         }}
         onClick={() => {
-          document.querySelector("video").remove();
+          const video = document.querySelector("video");
+          if (video) video.remove();
+
           setNextNode(possibleNextNodes[0]);
         }}
       >

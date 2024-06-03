@@ -66,9 +66,7 @@ export default class VideoImageTrackingARDisplay extends Component {
 
           <a-assets>
             <video
-              src={
-                "http://localhost:8080/files/61df0221-5231-4104-94fd-1e43264d2f84/20231222_221058.mp4"
-              }
+              src={this.src}
               preload="auto"
               response-type="arraybuffer"
               id="vid"
@@ -83,7 +81,9 @@ export default class VideoImageTrackingARDisplay extends Component {
             videohandler
             type="nft"
             url={
-              "https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/trex-image/trex"
+              this.markerSrc.includes("http://")
+                ? "https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/trex-image/trex"
+                : this.markerSrc
             }
             smooth="true"
             smoothCount="10"

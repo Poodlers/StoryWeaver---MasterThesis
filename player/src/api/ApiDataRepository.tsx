@@ -4,6 +4,7 @@ import { IDataRepository } from "./IDataRepository";
 import { BASE_URL } from "../data/constants";
 import { ProjectsBaseInfo } from "../models/ProjectsBaseInfo";
 import { Project } from "../models/Project";
+import { ThreeDModelTypes } from "../models/ThreeDModelTypes";
 
 
 export class ApiResponse<T> {
@@ -51,12 +52,32 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
        return anchor ? anchor.coords :
         new Error("No anchor found");
     }
+    
 
     public getFilePath = async (fileName: string): Promise<string> => {
         if (this.currentProject === null){
             throw new Error("No project loaded");
          }
         return `${BASE_URL}/files/${this.currentProject?.id}/${fileName}`;
+    }
+    public getThreeDModelPath = async (fileName: string, modelType: ThreeDModelTypes): Promise<string> => {
+         
+        const fileNameWithoutExtension = fileName.split('.')[0];
+        const fileNameWithoutUUID = fileNameWithoutExtension.split('-')[5];
+        const storyID = localStorage.getItem('storyId');
+        if(!storyID){
+            throw new Error('Story ID is not set');
+        }
+
+        if(modelType == ThreeDModelTypes.gltf){
+            return `${BASE_URL}/files/${storyID}/${fileNameWithoutExtension}/scene.gltf`;
+        }else if(modelType == ThreeDModelTypes.obj){
+            return `${BASE_URL}/files/${storyID}/${fileNameWithoutExtension}/${fileNameWithoutUUID}.obj`;
+        }
+
+        return '';
+                
+            
     }
 
     public getFile = async (fileName: string): Promise<Blob> => {
@@ -92,6 +113,20 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
             console.log(error); 
             throw error;
         }
+    }
+
+    public getExportedProjects = async (): Promise<ProjectsBaseInfo>  => {
+        const instance = this.createInstance();
+
+        try{
+            const result = await instance.get(`${BASE_URL}/exported-projects`).then(transform);
+            return result.data;
+        }
+        catch(error){
+            console.log(error); 
+            throw error;
+        }
+
     }
 
     public getProjects = async (): Promise<ProjectsBaseInfo> => {

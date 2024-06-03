@@ -6,36 +6,35 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect } from "react";
-import { backgroundColor, secondaryColor, textColor } from "../../themes";
+import {
+  backgroundColor,
+  secondaryColor,
+  tertiaryColor,
+  textColor,
+} from "../../themes";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
-import { ComponentState } from "../../models/ComponentState";
-import { AREntityTypes } from "../../models/AREntityTypes";
-import ImageTrackingBasedARDisplay from "./ImageTrackingBasedARDisplay";
-import LocationBasedARDisplay from "./LocationBasedARDisplay";
-import { ARTriggerMode } from "../../models/ARTriggerModes";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
+import { ComponentState } from "../../models/ComponentState";
+import AudioPlayer from "mui-audio-player-plus";
 
-export default function ImageNodeDisplay(props) {
+export default function AudioNodeDisplay(props) {
   const repo = ApiDataRepository.getInstance();
-  const imageNode = props.node;
-  const title = imageNode.data.name;
-  const fileInfo = imageNode.data.file;
-  const possibleNextNodes = props.possibleNextNodes;
-  const ARTypeInfo = imageNode.data.ar_type;
-  const isAR = imageNode.data.ar;
-  const position = imageNode.data.position;
-  const scale = imageNode.data.scale;
-  const rotation = imageNode.data.rotation;
-  const setNextNode = props.setNextNode;
-  const [url, setUrl] = React.useState("");
+  const audioNode = props.node;
+  const name = audioNode.data.name;
+  const fileInfo = audioNode.data.file;
+  const color = audioNode.data.color;
 
-  const backgroundFileInfo = imageNode.data.background;
+  const possibleNextNodes = props.possibleNextNodes;
+
+  const backgroundFileInfo = audioNode.data.background;
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
-
+  const [url, setUrl] = React.useState("");
   const [componentState, setComponentState] = React.useState(
     ComponentState.LOADING
   );
+
+  const setNextNode = props.setNextNode;
 
   useEffect(() => {
     if (backgroundFileInfo.filename == "") {
@@ -71,11 +70,12 @@ export default function ImageNodeDisplay(props) {
       setUrl(fileInfo.filename);
     }
   }, []);
+
   return (
     <Box
       sx={{
         width: "100%",
-        height: isAR ? "100%" : "100vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -113,69 +113,60 @@ export default function ImageNodeDisplay(props) {
         >
           Error loading
         </Typography>
-      ) : isAR ? (
-        ARTypeInfo.trigger_mode === ARTriggerMode.GPSCoords ? (
-          <LocationBasedARDisplay
-            name={title}
-            src={fileInfo.filename}
-            map={ARTypeInfo.map}
-            place={ARTypeInfo.place}
-            tolerance={ARTypeInfo.tolerance}
-            position={position}
-            scale={scale}
-            entityType={AREntityTypes.Image}
-          />
-        ) : (
-          <ImageTrackingBasedARDisplay
-            name={title}
-            markerSrc={
-              ARTypeInfo.trigger_mode == ARTriggerMode.QRCode
-                ? ARTypeInfo.qr_code
-                : ARTypeInfo.image.filename
-            }
-            src={url}
-            position={position}
-            scale={scale}
-            entityType={AREntityTypes.Image}
-          />
-        )
       ) : (
         <>
           <PlayerTextFinalDisplay
-            text={title}
-            messageType="Imagem"
+            text={name}
+            messageType={"Áudio"}
           ></PlayerTextFinalDisplay>
 
-          <img
+          <AudioPlayer
             src={url}
-            style={{
-              width: "90%",
-              height: "auto",
-              padding: 10,
-              display: "block",
+            id="inline-timeline"
+            display="timeline"
+            containerWidth={"90%"}
+            containerHeight={"30vh"}
+            inline
+            size="medium"
+            playPauseIconButtonProps={{
+              TouchRippleProps: { style: { color: "transparent" } },
+              sx: {
+                color: textColor,
+                ".MuiSvgIcon-root": { fontSize: "3.5rem" },
+                "&:hover": { color: tertiaryColor },
+                "&:focused": {
+                  backgroundColor: "transparent",
+                },
+                "&:active": {
+                  backgroundColor: "transparent",
+                },
+              },
+            }}
+            containerSx={{
+              display: url == "" ? "none" : "block",
+              textAlign: "center",
+              backgroundColor: color,
+              p: 1,
+              "& .MuiSlider-root": { color: "#fff" },
+              "& .MuiIconButton-root": { color: "#fff" },
             }}
           />
+          <ButtonBase
+            sx={{
+              backgroundColor: backgroundColor,
+              color: textColor,
+              position: "absolute",
+              bottom: "10vh",
+              right: 10,
+            }}
+            onClick={() => {
+              setNextNode(possibleNextNodes[0]);
+            }}
+          >
+            <Typography variant="h4">Avançar</Typography>
+          </ButtonBase>
         </>
       )}
-      <ButtonBase
-        sx={{
-          backgroundColor: backgroundColor,
-          color: textColor,
-          position: "absolute",
-          bottom: "10vh",
-          right: 10,
-        }}
-        onClick={() => {
-          const video = document.querySelector("video");
-          if (video) {
-            video.remove();
-          }
-
-          setNextNode(possibleNextNodes[0]);
-        }}
-      >
-        <Typography variant="h4">Avançar</Typography>
-      </ButtonBase>
     </Box>
   );
 }

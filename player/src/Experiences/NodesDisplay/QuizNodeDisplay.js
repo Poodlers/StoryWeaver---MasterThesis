@@ -6,9 +6,12 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect } from "react";
-import { backgroundColor, textColor } from "../../themes";
+import { backgroundColor, secondaryColor, textColor } from "../../themes";
+import { ApiDataRepository } from "../../api/ApiDataRepository";
+import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 
 export default function QuizNodeDisplay(props) {
+  const repo = ApiDataRepository.getInstance();
   const quizNode = props.node;
   const question = quizNode.data.question;
   const answers = quizNode.data.answers;
@@ -16,37 +19,78 @@ export default function QuizNodeDisplay(props) {
 
   const possibleNextNodes = props.possibleNextNodes;
 
+  const backgroundFileInfo = quizNode.data.background;
+
+  const [backgroundURL, setBackgroundURL] = React.useState("");
+
   const setNextNode = props.setNextNode;
   const experienceName = props.experienceName;
+
+  useEffect(() => {
+    if (backgroundFileInfo.filename == "") {
+      setBackgroundURL("");
+      return;
+    }
+    if (backgroundFileInfo.inputType == "url") {
+      setBackgroundURL(backgroundFileInfo.filename);
+    } else {
+      repo
+        .getFilePath(backgroundFileInfo.filename)
+        .then((url) => {
+          setBackgroundURL(url);
+        })
+        .catch(() => {
+          setBackgroundURL("");
+        });
+    }
+  }, [backgroundFileInfo]);
+
   return (
     <Box
       sx={{
         width: "100%",
-        height: "100%",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        background:
+          backgroundURL == ""
+            ? secondaryColor
+            : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+        backgroundSize: "cover",
       }}
     >
-      <Typography variant="h4">{question}</Typography>
+      <PlayerTextFinalDisplay
+        text={question}
+        messageType={"Pergunta"}
+        style={{ width: "90%" }}
+      ></PlayerTextFinalDisplay>
       {answers.map((answer, index) => (
         <ButtonBase
           key={index}
           sx={{
-            mt: 2,
-            backgroundColor: backgroundColor,
+            mt: 1,
+            width: "90%",
             color: textColor,
           }}
           onClick={() => {
+            console.log(possibleNextNodes);
             setNextNode(
               possibleNextNodes.find(
-                (node) => node.id == outGoingEdges[index].target
+                (node) =>
+                  node.id ==
+                  outGoingEdges.find((edge) => edge.sourceHandle == answer)
+                    .target
               )
             );
           }}
         >
-          <Typography variant="h4">{answer}</Typography>
+          <PlayerTextFinalDisplay
+            text={answer}
+            messageType={"Opção " + (index + 1)}
+            style={{ width: "90%" }}
+          ></PlayerTextFinalDisplay>
         </ButtonBase>
       ))}
     </Box>

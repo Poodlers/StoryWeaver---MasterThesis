@@ -184,7 +184,7 @@ const ImageProps = {
     {
       type: InputFieldType.textFieldMultiline,
       label: "Nome:",
-      initialValue: "Modelo 3D",
+      initialValue: "Imagem",
       name: "name",
     },
     {

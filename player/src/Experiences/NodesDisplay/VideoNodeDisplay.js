@@ -6,7 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect } from "react";
-import { backgroundColor, textColor } from "../../themes";
+import { backgroundColor, secondaryColor, textColor } from "../../themes";
 import ReactPlayer from "react-player";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import LocationBasedARDisplay from "./LocationBasedARDisplay";
@@ -14,6 +14,7 @@ import { ComponentState } from "../../models/ComponentState";
 import { AREntityTypes } from "../../models/AREntityTypes";
 import { ARTriggerMode } from "../../models/ARTriggerModes";
 import ImageTrackingBasedARDisplay from "./ImageTrackingBasedARDisplay";
+import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 
 export default function VideoNodeDisplay(props) {
   const repo = ApiDataRepository.getInstance();
@@ -28,15 +29,40 @@ export default function VideoNodeDisplay(props) {
   const isAR = videoNode.data.ar;
   const position = videoNode.data.position;
   const scale = videoNode.data.scale;
+
+  const backgroundFileInfo = videoNode.data.background;
+
+  const [backgroundURL, setBackgroundURL] = React.useState("");
   const [componentState, setComponentState] = React.useState(
     ComponentState.LOADING
   );
+
+  useEffect(() => {
+    if (backgroundFileInfo.filename == "") {
+      setBackgroundURL("");
+      return;
+    }
+    if (backgroundFileInfo.inputType == "url") {
+      setBackgroundURL(backgroundFileInfo.filename);
+    } else {
+      repo
+        .getFilePath(backgroundFileInfo.filename)
+        .then((url) => {
+          setBackgroundURL(url);
+        })
+        .catch(() => {
+          setBackgroundURL("");
+        });
+    }
+  }, [backgroundFileInfo]);
+
   useEffect(() => {
     if (fileInfo.inputType == "file") {
       repo
         .getFilePath(fileInfo.filename)
         .then((path) => {
           setUrl(path);
+          console.log("Video URL: " + path);
           setComponentState(ComponentState.LOADED);
         })
         .catch((error) => {
@@ -51,11 +77,16 @@ export default function VideoNodeDisplay(props) {
     <Box
       sx={{
         width: "100%",
-        height: "100%",
+        height: isAR ? "100%" : "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        background:
+          backgroundURL == ""
+            ? secondaryColor
+            : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+        backgroundSize: "cover",
       }}
     >
       {componentState === ComponentState.LOADING ? (
@@ -112,9 +143,13 @@ export default function VideoNodeDisplay(props) {
         )
       ) : (
         <>
-          <Typography variant="h4">{title}</Typography>
+          <PlayerTextFinalDisplay
+            text={title}
+            messageType={"Vídeo"}
+            style={{ width: "90%" }}
+          />
           <ReactPlayer
-            style={{ padding: 5 }}
+            style={{ marginTop: "10px" }}
             onError={(e) => {
               if (fileInfo.inputType == "file") {
                 repo.getFile(fileInfo.filename).then((blob) => {
@@ -125,8 +160,8 @@ export default function VideoNodeDisplay(props) {
               }
             }}
             url={url}
-            width={"auto"}
-            height={"500px"}
+            width={"90%"}
+            height={"auto"}
             controls={true}
             playing={false}
             muted={false}
@@ -138,7 +173,7 @@ export default function VideoNodeDisplay(props) {
           backgroundColor: backgroundColor,
           color: textColor,
           position: "absolute",
-          bottom: "10vh",
+          bottom: "11vh",
           right: 10,
         }}
         onClick={() => {

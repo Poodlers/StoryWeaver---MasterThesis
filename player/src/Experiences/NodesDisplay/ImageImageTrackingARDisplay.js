@@ -20,7 +20,9 @@ export default function ImageImageTrackingARDisplay(props) {
       <a-nft
         type="nft"
         url={
-          "https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/trex-image/trex"
+          markerSrc.includes("http://")
+            ? "https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/trex-image/trex"
+            : markerSrc
         }
         smooth="true"
         smoothCount="10"
@@ -29,11 +31,11 @@ export default function ImageImageTrackingARDisplay(props) {
       >
         <a-image
           src="#image"
-          position={position.x + " " + position.y + " " + position.z}
+          position={position.x + " " + position.y + " " + "-10"}
           rotation={rotation.x + " " + rotation.y + " " + rotation.z}
           scale={scale.x + " " + scale.y + " " + scale.z}
-          width="300"
-          height="175"
+          width="500"
+          height="500"
         ></a-image>
       </a-nft>
       <a-entity camera></a-entity>

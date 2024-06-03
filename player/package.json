@@ -17,6 +17,7 @@
     "@zip.js/zip.js": "^2.7.44",
     "axios": "^1.6.8",
     "lodash": "^4.17.21",
+    "mui-audio-player-plus": "^1.0.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-player": "^2.16.0",

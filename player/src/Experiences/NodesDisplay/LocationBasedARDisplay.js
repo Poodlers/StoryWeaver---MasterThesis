@@ -13,7 +13,7 @@ export default function LocationBasedARDisplay(props) {
   const position = props.position;
   const scale = props.scale;
   const src = props.src;
-  const additionalFiles = props.additionalFiles;
+
   const [componentState, setComponentState] = React.useState(
     ComponentState.LOADING
   );
@@ -116,7 +116,14 @@ export default function LocationBasedARDisplay(props) {
                 ></a-entity>
               ) : threeDModelType === ThreeDModelTypes.obj ? (
                 <a-entity
-                  obj-model={"obj: " + src + "; " + "mtl: " + additionalFiles}
+                  obj-model={
+                    "obj: " +
+                    src +
+                    "; " +
+                    "mtl: " +
+                    src.replace(".obj", ".mtl") +
+                    ";"
+                  }
                   gps-new-entity-place={
                     "latitude: " + coords.lat + ";" + "longitude: " + coords.lng
                   }

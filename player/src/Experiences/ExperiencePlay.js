@@ -15,6 +15,9 @@ import QuizNodeDisplay from "./NodesDisplay/QuizNodeDisplay";
 import VideoNodeDisplay from "./NodesDisplay/VideoNodeDisplay";
 import ImageNodeDisplay from "./NodesDisplay/ImageNodeDisplay";
 import ThreeDModelDisplay from "./NodesDisplay/ThreeDModelDisplay";
+import DialogueNodeDisplay from "./NodesDisplay/DialogueNodeDisplay";
+import AudioNodeDisplay from "./NodesDisplay/AudioNodeDisplay";
+import PathNodeDisplay from "./NodesDisplay/PathNodeDisplay";
 
 export default function ExperiencePlay(props) {
   const repo = ApiDataRepository.getInstance();
@@ -62,6 +65,7 @@ export default function ExperiencePlay(props) {
         edgesFromCurrentNode.find((edge) => edge.target == node.id)
       )
     );
+
     setCurrentNode(node);
   };
 
@@ -142,6 +146,27 @@ export default function ExperiencePlay(props) {
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
         ></ThreeDModelDisplay>
+      ) : currentNode.type == NodeType.characterNode ? (
+        <DialogueNodeDisplay
+          node={currentNode}
+          possibleNextNodes={nextNodes}
+          setNextNode={setCurrentNode}
+          outGoingEdges={projectInfo.edges.filter(
+            (edge) => edge.source == currentNode.id
+          )}
+        ></DialogueNodeDisplay>
+      ) : currentNode.type == NodeType.audioNode ? (
+        <AudioNodeDisplay
+          node={currentNode}
+          possibleNextNodes={nextNodes}
+          setNextNode={setCurrentNode}
+        ></AudioNodeDisplay>
+      ) : currentNode.type == NodeType.pathNode ? (
+        <PathNodeDisplay
+          node={currentNode}
+          possibleNextNodes={nextNodes}
+          setNextNode={setCurrentNode}
+        ></PathNodeDisplay>
       ) : (
         <Box>
           <p>Node type not supported</p>

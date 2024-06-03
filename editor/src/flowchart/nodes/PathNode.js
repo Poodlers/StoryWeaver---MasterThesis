@@ -20,10 +20,10 @@ export default function PathNode(props) {
     ? JSON.parse(localStorage.getItem("maps"))
     : [];
 
-  const mapEnd = maps.find((map) => map.name == end.map);
   const backgroundFileInfo = props.data?.background ?? "";
   const [backgroundURL, setBackgroundURL] = React.useState("");
   const end = props.data?.destination ?? "";
+  const mapEnd = maps.find((map) => map.name == end.map);
   const placeEnd = mapEnd
     ? mapEnd.anchors.find((place) => place.name == end.place)
     : null;

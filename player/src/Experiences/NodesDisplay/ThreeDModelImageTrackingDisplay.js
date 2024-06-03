@@ -30,7 +30,9 @@ export default function ThreeDModelImageTrackingDisplay(props) {
           videohandler
           type="nft"
           url={
-            "https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/trex-image/trex"
+            markerSrc.includes("http://")
+              ? "https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/trex-image/trex"
+              : markerSrc
           }
           smooth="true"
           smoothCount="10"

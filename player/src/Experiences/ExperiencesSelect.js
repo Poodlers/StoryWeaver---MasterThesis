@@ -15,8 +15,9 @@ export default function ExperiencesSelect(props) {
 
   useEffect(() => {
     repo
-      .getProjects()
+      .getExportedProjects()
       .then((projects) => {
+        console.log(projects);
         setProjects(projects);
         setComponentState(ComponentState.LOADED);
       })
@@ -146,6 +147,7 @@ export default function ExperiencesSelect(props) {
                 key={project.id}
                 onClick={() => {
                   setExperience(project.id);
+                  localStorage.setItem("storyId", project.id);
                 }}
                 sx={{
                   display: "flex",

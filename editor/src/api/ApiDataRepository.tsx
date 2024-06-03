@@ -132,11 +132,18 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
 
     public saveProject = async (projectTitle: any, nodes: any, edges: any, characters: any, maps: any): Promise<any> => {
         const instance = this.createInstance();
-
-        try{
+        const exported =  localStorage.getItem('exported') == 'true';
+        const experienceName = localStorage.getItem('experienceName');
+        const experienceDescription = localStorage.getItem('experienceDescription');
+        const experienceTags = JSON.parse(localStorage.getItem('experienceTags') || '[]'); 
+        try{ 
             const result = await instance.post(`${BASE_URL}/save`, {
                 storyId : localStorage.getItem('storyId'),
                 projectTitle : projectTitle,
+                exported : exported,
+                experienceName : experienceName,
+                description : experienceDescription,
+                tags : experienceTags,
                 nodes: nodes,
                 edges: edges,
                 characters : characters,

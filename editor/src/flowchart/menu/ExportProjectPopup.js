@@ -36,11 +36,17 @@ export default function ExportProjectPopup(props) {
   const open = props.open;
   const onClose = props.onClose;
 
-  const [name, setName] = React.useState("Adicione o nome da sua experiência");
-  const [description, setDescription] = React.useState(
-    "Adicione uma descrição breve!"
+  const [name, setName] = React.useState(
+    localStorage.getItem("experienceName") ||
+      "Adicione o nome da sua experiência"
   );
-  const [tags, setTags] = React.useState([]);
+  const [description, setDescription] = React.useState(
+    localStorage.getItem("experienceDescription") ||
+      "Adicione uma descrição breve!"
+  );
+  const [tags, setTags] = React.useState(
+    JSON.parse(localStorage.getItem("experienceTags")) || []
+  );
 
   return (
     <Dialog
@@ -324,6 +330,13 @@ export default function ExportProjectPopup(props) {
                   .exportProject(name, description, tags)
                   .then((res) => {
                     console.log(res);
+                    localStorage.setItem("exported", true);
+                    localStorage.setItem("experienceName", name);
+                    localStorage.setItem("experienceDescription", description);
+                    localStorage.setItem(
+                      "experienceTags",
+                      JSON.stringify(tags)
+                    );
                   })
                   .catch((err) => {
                     console.log(err);

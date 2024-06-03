@@ -130,7 +130,7 @@ export default function QuizNode(props) {
                   marginTop: 70 * index,
                   ...rightNodeHandleStyle,
                 }}
-                id={index.toString()}
+                id={answer}
               />
             </div>
           ))}
