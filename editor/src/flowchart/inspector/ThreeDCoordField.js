@@ -88,6 +88,7 @@ function ThreeDCoordField(props) {
               maxWidth: "50px",
               ".MuiInputBase-root": {
                 borderRadius: 2,
+                px: 1,
                 backgroundColor: "#ffffff",
               },
             }}
@@ -142,6 +143,7 @@ function ThreeDCoordField(props) {
               maxWidth: "50px",
               ".MuiInputBase-root": {
                 borderRadius: 2,
+                px: 1,
                 backgroundColor: "#ffffff",
               },
             }}
@@ -197,6 +199,7 @@ function ThreeDCoordField(props) {
               maxWidth: "50px",
               ".MuiInputBase-root": {
                 borderRadius: 2,
+                px: 1,
                 backgroundColor: "#ffffff",
               },
             }}

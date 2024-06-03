@@ -60,7 +60,7 @@ const ThreeDModelProps = {
     },
     {
       type: InputFieldType.checkbox,
-      label: "AR enabled? ",
+      label: "Permitir AR? ",
       initialValue: false,
       name: "ar",
     },
@@ -142,7 +142,7 @@ const VideoProps = {
     },
     {
       type: InputFieldType.checkbox,
-      label: "AR enabled? ",
+      label: "Permitir AR? ",
       initialValue: false,
       name: "ar",
     },
@@ -183,7 +183,7 @@ const ImageProps = {
   fields: [
     {
       type: InputFieldType.textFieldMultiline,
-      label: "Nome:",
+      label: "Texto:",
       initialValue: "Imagem",
       name: "name",
     },
@@ -217,7 +217,7 @@ const ImageProps = {
     },
     {
       type: InputFieldType.checkbox,
-      label: "AR enabled? ",
+      label: "Permitir AR? ",
       initialValue: false,
       name: "ar",
     },
@@ -244,7 +244,7 @@ const AudioProps = {
   fields: [
     {
       type: InputFieldType.textFieldMultiline,
-      label: "Nome:",
+      label: "Texto:",
       initialValue: "Nome do audio",
       name: "name",
     },
@@ -290,7 +290,7 @@ const TextProps = {
     },
     {
       type: InputFieldType.checkbox,
-      label: "AR enabled? ",
+      label: "Permitir AR? ",
       initialValue: false,
       name: "ar",
     },

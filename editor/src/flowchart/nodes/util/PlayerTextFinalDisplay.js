@@ -7,6 +7,7 @@ export default function PlayerTextFinalDisplay(props) {
   const messageType = props.messageType;
   const style = props.style;
   const icon = props.icon;
+  const titleIcon = props.titleIcon;
   return (
     <Box
       sx={{
@@ -17,25 +18,30 @@ export default function PlayerTextFinalDisplay(props) {
       <Box
         sx={{
           display: messageType ? "block" : "none",
-          backgroundColor: primaryColor,
-          border: "2px solid black",
+          backgroundColor: titleIcon ? "" : primaryColor,
+          border: titleIcon ? "" : "2px solid black",
           borderRadius: "5px",
-          m: 1,
+          m: 0,
+          p: 0,
           width: "60%",
-          textAlign: "center",
+          textAlign: "start",
           mb: 0,
         }}
       >
-        <Typography
-          variant="h6"
-          sx={{
-            fontSize: 14,
-            color: textColor,
-            fontWeight: 500,
-          }}
-        >
-          {messageType}
-        </Typography>
+        {titleIcon ? (
+          titleIcon
+        ) : (
+          <Typography
+            variant="h6"
+            sx={{
+              fontSize: 14,
+              color: textColor,
+              fontWeight: 500,
+            }}
+          >
+            {messageType}
+          </Typography>
+        )}
       </Box>
       <Box
         sx={{

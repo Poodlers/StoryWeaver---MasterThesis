@@ -246,17 +246,10 @@ function Inspector(props) {
         >
           <Icon
             fontSize="inherit"
-            sx={{ color: tertiaryColor, mt: 2, fontSize: "50px !important" }}
+            sx={{ color: "black", mt: 2, fontSize: "50px !important", mb: 2 }}
           >
-            <DeleteOutline fontSize="inherit"></DeleteOutline>
+            delete
           </Icon>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ color: tertiaryColor, mt: 0, fontWeight: "bolder" }}
-          >
-            Apagar
-          </Typography>
         </Box>
       </Box>
     </Box>

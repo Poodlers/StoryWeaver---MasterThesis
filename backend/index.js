@@ -190,6 +190,7 @@ app.delete("/delete/:storyId", async (req, res) => {
   res.send({ success: true });
 });
 
+app.options("/upload", cors()); // enable pre-flight request for upload
 // Handle file upload
 app.post(
   "/upload",

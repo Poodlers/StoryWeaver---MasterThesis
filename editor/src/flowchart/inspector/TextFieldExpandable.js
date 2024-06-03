@@ -98,6 +98,7 @@ function TextFieldExpandable(props) {
                   borderRadius: 0,
                   ".MuiInputBase-root": {
                     borderRadius: 2,
+                    px: 2,
                     backgroundColor: "#ffffff",
                   },
                 }}

@@ -20,7 +20,7 @@ export default function EndNode(props) {
       />
       <Box
         sx={{
-          backgroundColor: "red",
+          backgroundColor: "#B97070",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -30,6 +30,13 @@ export default function EndNode(props) {
           borderRadius: 100,
         }}
       >
+        <Icon
+          sx={{
+            fontSize: "90px !important",
+          }}
+        >
+          flag
+        </Icon>
         <Typography
           variant="h7"
           component="div"
@@ -41,7 +48,7 @@ export default function EndNode(props) {
             fontWeight: "bold",
           }}
         >
-          {"Fim " + id}
+          {id}
         </Typography>
       </Box>
     </>

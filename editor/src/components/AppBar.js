@@ -30,6 +30,7 @@ import { ApiDataRepository } from "../api/ApiDataRepository";
 import ExportProjectPopup from "../flowchart/menu/ExportProjectPopup";
 import { NodeType } from "../models/NodeTypes";
 import { DialogNodeType } from "../models/DialogNodeTypes";
+import { AccountCircle } from "@mui/icons-material";
 
 export default function TopAppBar(props) {
   const repo = ApiDataRepository.getInstance();
@@ -338,11 +339,12 @@ export default function TopAppBar(props) {
               setOpenCharacterMenu(true);
             }}
           >
-            <img
-              src="./assets/character_dialogue_node.png"
-              alt="Add"
-              style={{ width: "50px", height: "50px" }}
-            />
+            <AccountCircle
+              sx={{
+                fontSize: "50px !important",
+                color: "black",
+              }}
+            ></AccountCircle>
           </IconButton>
           <TextField
             aria-autocomplete="off"

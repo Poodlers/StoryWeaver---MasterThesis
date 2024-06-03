@@ -366,7 +366,7 @@ function Flow(props) {
           nodeStrokeWidth={3}
           zoomable
           pannable
-          maskColor={"rgb(240, 240, 240, 0.6)"}
+          maskColor={"rgb(226, 224,214,0.3)"}
           maskStrokeColor={secondaryColor}
         />
         <Controls

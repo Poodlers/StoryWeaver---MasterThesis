@@ -19,7 +19,7 @@ export default function BeginNode(props) {
       />
       <Box
         sx={{
-          backgroundColor: "green",
+          backgroundColor: "#7080B9",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -29,7 +29,10 @@ export default function BeginNode(props) {
           borderRadius: 100,
         }}
       >
-        <Typography
+        {/*
+
+
+<Typography
           variant="h7"
           component="div"
           sx={{
@@ -42,6 +45,15 @@ export default function BeginNode(props) {
         >
           Início
         </Typography>
+          */}
+
+        <Icon
+          sx={{
+            fontSize: "90px !important",
+          }}
+        >
+          start
+        </Icon>
       </Box>
     </>
   );

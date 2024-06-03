@@ -1,4 +1,4 @@
-import { AddCircle, RemoveCircle } from "@mui/icons-material";
+import { AddCircle, DescriptionSharp, RemoveCircle } from "@mui/icons-material";
 import { Icon, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
@@ -26,21 +26,41 @@ function TextFieldMultiline(props) {
         width: "100%",
       }}
     >
-      <Typography
-        variant="h7"
-        component="div"
+      {/*
+       <Box
         sx={{
-          flexGrow: 1,
-          py: 1,
-          color: textColor,
-          m: 0,
-          backgroundColor: primaryColor,
+          display: "flex",
+          flexDirection: "row",
           width: "100%",
+          alignItems: "center",
+          backgroundColor: primaryColor,
         }}
       >
-        {label}
-      </Typography>
+        <Typography
+          variant="h7"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            py: 1,
+            color: textColor,
+            m: 0,
 
+            width: "100%",
+          }}
+        >
+          {label}
+        </Typography>
+      </Box>
+  
+  */}
+      <DescriptionSharp
+        sx={{
+          color: "black",
+          fontSize: "40px !important",
+          px: 2,
+          alignSelf: "start",
+        }}
+      ></DescriptionSharp>
       <TextField
         id="outlined-multiline"
         multiline
@@ -62,6 +82,7 @@ function TextFieldMultiline(props) {
         sx={{
           ".MuiInputBase-root": {
             borderRadius: 2,
+            px: 2,
             backgroundColor: "#ffffff",
             color: "black",
           },
@@ -70,7 +91,7 @@ function TextFieldMultiline(props) {
           px: 2,
           color: "black",
           mx: 2,
-          mt: 2,
+
           width: "90%",
         }}
         onChange={(e) => handleFieldChange(props.data.name, e.target.value)}

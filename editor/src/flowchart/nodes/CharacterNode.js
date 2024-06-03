@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Icon, IconButton, TextField, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 import {
@@ -11,6 +11,7 @@ import {
 } from "../../themes";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
+import DialogBubble from "../../assets/dialog_bubble.svg";
 
 export default function CharacterNode(props) {
   const repo = ApiDataRepository.getInstance();
@@ -19,6 +20,7 @@ export default function CharacterNode(props) {
     props.data.dialog.nodes.filter((nodes) => nodes.type == "endDialogNode") ??
     [];
   const backgroundFileInfo = props.data?.background ?? "";
+  const [sceneName, setSceneName] = React.useState("Imagem");
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
   useEffect(() => {
@@ -49,19 +51,61 @@ export default function CharacterNode(props) {
 
       <Box
         sx={{
-          backgroundColor: primaryColor,
-          borderColor: tertiaryColor,
-          justifyContent: "start",
-          borderWidth: 2,
-          borderStyle: "solid",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-around",
         }}
       >
-        <Typography
-          variant="h6"
-          sx={{ px: 2, fontSize: 20, color: textColor, fontWeight: 500 }}
+        <img
+          src={DialogBubble}
+          style={{
+            width: "50px",
+            height: "50px",
+          }}
+        ></img>
+
+        <TextField
+          id="outlined-basic"
+          variant="outlined"
+          value={sceneName}
+          onChange={(e) => {
+            setSceneName(e.target.value);
+          }}
+          inputProps={{
+            style: {
+              borderRadius: 0,
+              color: "black",
+              height: 40,
+              padding: "0 10px",
+              margin: 0,
+              borderColor: "transparent",
+              borderWidth: 0,
+              fontSize: 20,
+              fontWeight: 500,
+              borderRadius: 10,
+            },
+          }}
+          sx={{
+            flexGrow: 1,
+            py: 0,
+            px: 2,
+            color: textColor,
+
+            borderRadius: 0,
+            ".MuiInputBase-root": {
+              borderRadius: 2,
+            },
+          }}
+        />
+        <IconButton
+          sx={{ color: tertiaryColor }}
+          onClick={() => {
+            props.updateData({ name: sceneName });
+          }}
         >
-          Diálogo
-        </Typography>
+          <Icon sx={{ fontSize: "40px !important" }}>delete</Icon>
+        </IconButton>
       </Box>
       <Box
         sx={{
@@ -72,6 +116,7 @@ export default function CharacterNode(props) {
           backgroundSize: "cover",
           borderColor: tertiaryColor,
           borderWidth: 2,
+          borderRadius: 4,
           borderStyle: "solid",
           display: "flex",
           flexDirection: "column",

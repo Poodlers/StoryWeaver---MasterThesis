@@ -126,6 +126,7 @@ export default function NameMapPopup(props) {
               borderRadius: 0,
               ".MuiInputBase-root": {
                 borderRadius: 2,
+                px: 2,
                 backgroundColor: textColor,
               },
             }}

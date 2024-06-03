@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Icon, IconButton, TextField, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 import {
@@ -11,6 +11,12 @@ import {
 } from "../../themes";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
+import {
+  DescriptionOutlined,
+  DescriptionSharp,
+  MenuBookOutlined,
+  MenuOpenOutlined,
+} from "@mui/icons-material";
 
 export default function ImageNode(props) {
   const repo = ApiDataRepository.getInstance();
@@ -25,6 +31,8 @@ export default function ImageNode(props) {
   const [errorMsg, setErrorMsg] = React.useState(
     "Insira uma imagem no editor!"
   );
+
+  const [sceneName, setSceneName] = React.useState("Imagem");
 
   const [url, setUrl] = React.useState("");
 
@@ -74,21 +82,64 @@ export default function ImageNode(props) {
         position={Position.Left}
         style={leftNodeHandleStyle}
       />
-
       <Box
         sx={{
-          backgroundColor: primaryColor,
-          borderColor: tertiaryColor,
-          borderWidth: 2,
-          borderStyle: "solid",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-around",
         }}
       >
-        <Typography
-          variant="h6"
-          sx={{ px: 2, fontSize: 20, color: textColor, fontWeight: 500 }}
+        <img
+          src="../assets/image_node.png"
+          style={{
+            width: "50px",
+            height: "50px",
+          }}
+        ></img>
+
+        <TextField
+          id="outlined-basic"
+          variant="outlined"
+          value={sceneName}
+          onChange={(e) => {
+            setSceneName(e.target.value);
+          }}
+          inputProps={{
+            style: {
+              borderRadius: 0,
+              color: "black",
+              height: 40,
+              padding: "0 10px",
+              margin: 0,
+              borderColor: "transparent",
+              borderWidth: 0,
+              fontSize: 20,
+              fontWeight: 500,
+              borderRadius: 10,
+            },
+          }}
+          sx={{
+            flexGrow: 1,
+            py: 0,
+            px: 2,
+            color: textColor,
+
+            borderRadius: 0,
+            ".MuiInputBase-root": {
+              borderRadius: 2,
+            },
+          }}
+        />
+
+        <IconButton
+          sx={{ color: tertiaryColor }}
+          onClick={() => {
+            props.updateData({ name: sceneName });
+          }}
         >
-          Imagem
-        </Typography>
+          <Icon sx={{ fontSize: "40px !important" }}>delete</Icon>
+        </IconButton>
       </Box>
       <Box
         sx={{
@@ -98,8 +149,9 @@ export default function ImageNode(props) {
             ? secondaryColor
             : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
           backgroundSize: "cover",
-          borderColor: tertiaryColor,
+          borderColor: "black",
           borderWidth: 2,
+          borderRadius: 4,
           borderStyle: "solid",
           display: "flex",
           flexDirection: "column",
@@ -109,7 +161,11 @@ export default function ImageNode(props) {
           minHeight: "677px",
         }}
       >
-        <PlayerTextFinalDisplay text={title} messageType={"Mensagem"} />
+        <PlayerTextFinalDisplay
+          text={title}
+          messageType={"Mensagem"}
+          titleIcon={<DescriptionSharp></DescriptionSharp>}
+        />
 
         <Box
           sx={{
