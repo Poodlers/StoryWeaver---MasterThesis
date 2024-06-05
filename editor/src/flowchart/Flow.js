@@ -215,7 +215,10 @@ function Flow(props) {
           setDialogEdges(data["dialog"].edges);
           setDialogueNodeId(newNodes[i].id);
         }
-
+        if (newNodes[i].type === NodeType.quizNode) {
+          const oldAnswers = newNodes[i].data.answers;
+          const newAnswers = data.answers;
+        }
         newNodes[i].data = data;
         setNodes(newNodes);
         localStorage.setItem("nodes", JSON.stringify(newNodes));

@@ -196,6 +196,7 @@ export default function DialogChoiceNode(props) {
                   style={{
                     marginTop: 40 * index + (1 / answers.length) * 220 + "px",
                     ...rightNodeHandleStyle,
+                    right: "-6px",
                   }}
                   id={index.toString()}
                 />

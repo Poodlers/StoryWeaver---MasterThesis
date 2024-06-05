@@ -65,6 +65,7 @@ export default function DialogNode(props) {
         style={{
           marginTop: 40 + "px",
           ...rightNodeHandleStyle,
+          right: "-7px",
         }}
       />
       <Box

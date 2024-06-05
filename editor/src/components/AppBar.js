@@ -119,7 +119,7 @@ export default function TopAppBar(props) {
         for (let i = 0; i < allAnswers.length; i++) {
           const hasConnection = edges.some(
             (edge) =>
-              edge.source === quizId && edge.sourceHandle === allAnswers[i]
+              edge.source === quizId && edge.sourceHandle === i.toString()
           );
           if (!hasConnection) {
             setAlertMessage(
