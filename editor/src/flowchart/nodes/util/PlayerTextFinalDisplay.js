@@ -37,6 +37,7 @@ export default function PlayerTextFinalDisplay(props) {
               fontSize: 14,
               color: textColor,
               fontWeight: 500,
+              textAlign: "center",
             }}
           >
             {messageType}

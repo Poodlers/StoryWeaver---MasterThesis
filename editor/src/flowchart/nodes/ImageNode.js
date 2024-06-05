@@ -1,6 +1,6 @@
 import { Box, Icon, IconButton, TextField, Typography } from "@mui/material";
 import React, { useEffect } from "react";
-import { Handle, NodeProps, Position } from "reactflow";
+import { Handle, NodeProps, Position, useReactFlow } from "reactflow";
 import {
   leftNodeHandleStyle,
   rightNodeHandleStyle,
@@ -21,6 +21,30 @@ import {
 export default function ImageNode(props) {
   const repo = ApiDataRepository.getInstance();
   const title = props.data?.name ?? "";
+  const sceneName = props.data?.sceneName ?? "";
+  const reactflow = useReactFlow();
+  const nodeId = props.id;
+  const setSceneName = (sceneName) => {
+    const newNodes = reactflow.getNodes().map((node) => {
+      if (node.id === nodeId) {
+        return { ...node, data: { ...node.data, sceneName: sceneName } };
+      }
+      return node;
+    });
+    reactflow.setNodes(newNodes);
+    localStorage.setItem("nodes", JSON.stringify(newNodes));
+  };
+
+  const deleteNode = () => {
+    const newNodes = reactflow.getNodes().filter((node) => node.id !== nodeId);
+    const newEdges = reactflow
+      .getEdges()
+      .filter((edge) => edge.source !== nodeId && edge.target !== nodeId);
+    reactflow.setNodes(newNodes);
+    reactflow.setEdges(newEdges);
+    localStorage.setItem("nodes", JSON.stringify(newNodes));
+    localStorage.setItem("edges", JSON.stringify(newEdges));
+  };
 
   const isAR = props.data?.ar ?? false;
 
@@ -31,8 +55,6 @@ export default function ImageNode(props) {
   const [errorMsg, setErrorMsg] = React.useState(
     "Insira uma imagem no editor!"
   );
-
-  const [sceneName, setSceneName] = React.useState("Imagem");
 
   const [url, setUrl] = React.useState("");
 
@@ -99,7 +121,7 @@ export default function ImageNode(props) {
         ></img>
 
         <TextField
-          id="outlined-basic"
+          id="scene-name"
           variant="outlined"
           value={sceneName}
           onChange={(e) => {
@@ -133,12 +155,15 @@ export default function ImageNode(props) {
         />
 
         <IconButton
+          id="delete-button"
           sx={{ color: tertiaryColor }}
           onClick={() => {
-            props.updateData({ name: sceneName });
+            deleteNode();
           }}
         >
-          <Icon sx={{ fontSize: "40px !important" }}>delete</Icon>
+          <Icon id="deleteButton" sx={{ fontSize: "40px !important" }}>
+            delete
+          </Icon>
         </IconButton>
       </Box>
       <Box

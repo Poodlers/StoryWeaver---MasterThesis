@@ -89,6 +89,14 @@ export default function VideoNodeDisplay(props) {
         backgroundSize: "cover",
       }}
     >
+      <style>
+        {`
+          video {
+            max-height: 80%;
+          }
+
+          `}
+      </style>
       {componentState === ComponentState.LOADING ? (
         <Typography
           variant="h4"
@@ -149,7 +157,9 @@ export default function VideoNodeDisplay(props) {
             style={{ width: "90%" }}
           />
           <ReactPlayer
-            style={{ marginTop: "10px" }}
+            style={{
+              marginTop: "10px",
+            }}
             onError={(e) => {
               if (fileInfo.inputType == "file") {
                 repo.getFile(fileInfo.filename).then((blob) => {
@@ -177,11 +187,6 @@ export default function VideoNodeDisplay(props) {
           right: 10,
         }}
         onClick={() => {
-          document.querySelectorAll("video").forEach((video) => {
-            video.remove();
-          });
-          document.querySelector("html").classList.remove("a-fullscreen");
-          document.querySelector("body").style.marginTop = "0px !important";
           setNextNode(possibleNextNodes[0]);
         }}
       >

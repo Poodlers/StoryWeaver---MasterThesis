@@ -166,11 +166,6 @@ export default function ImageNodeDisplay(props) {
           right: 10,
         }}
         onClick={() => {
-          const video = document.querySelector("video");
-          if (video) {
-            video.remove();
-          }
-
           setNextNode(possibleNextNodes[0]);
         }}
       >

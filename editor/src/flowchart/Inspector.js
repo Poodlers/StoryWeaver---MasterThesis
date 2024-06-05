@@ -29,6 +29,7 @@ function Inspector(props) {
   const setValues = props.setValue;
   const handleNodeDataChange = props.handleNodeDataChange;
   const handleDelete = props.handleDelete;
+
   const handleFieldChange = (fieldId, value) => {
     setValues({ ...values, [fieldId]: value });
     handleNodeDataChange(

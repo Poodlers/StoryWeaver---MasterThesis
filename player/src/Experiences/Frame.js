@@ -1,6 +1,7 @@
 import React, { Component } from "react";
+import "react-dom";
 
-class Frame extends Component {
+export default class Frame extends Component {
   componentDidMount() {
     this.iframeHead = this.node.contentDocument.head;
     this.iframeRoot = this.node.contentDocument.body;

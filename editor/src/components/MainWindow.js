@@ -78,47 +78,6 @@ export default function MainWindow(props) {
   const [projectTitle, setProjectTitle] = React.useState(
     localStorage.getItem("projectTitle") || "Projeto Exemplo"
   );
-  /*
-  React.useEffect(() => {
-    //check if the saved blobs are still valid
-    let newNodes = [...nodes];
-    newNodes.forEach((node) => {
-      if (
-        (node.type === NodeType.imageNode ||
-          node.type === NodeType.videoNode) &&
-        node.data.file.inputType === "file"
-      ) {
-        fetch(node.data.file.blob)
-          .then((response) => {
-            console.log(response);
-            if (!response.ok || response.blob.length === 0) {
-              repo
-                .getFile(node.data.file.filename)
-                .then((blob) => {
-                  node.data.file.blob = URL.createObjectURL(blob);
-                })
-                .catch((e) => {
-                  console.log("Error fetching the blob from the server");
-                });
-            }
-          })
-          .catch((e) => {
-            console.log("Replacing the blob with the file from the server");
-            repo
-              .getFile(node.data.file.filename)
-              .then((blob) => {
-                node.data.file.blob = URL.createObjectURL(blob);
-              })
-              .catch((e) => {
-                console.log("Error fetching the blob from the server");
-              });
-          });
-      }
-    });
-    setNodes(newNodes);
-    localStorage.setItem("nodes", JSON.stringify(nodes));
-  }, []);
-  */
 
   React.useEffect(() => {
     if (!mountMap) {
@@ -253,10 +212,33 @@ export default function MainWindow(props) {
   const addNode = (nodeType, nodeProps) => {
     const newNode = {
       id: uuid(),
-      position: { x: 0, y: 0 },
+      position: {
+        x: nodes[nodes.length - 1].position.x + 470,
+        y: nodes[nodes.length - 1].position.y,
+      },
       data: generateInspectorProps(nodeProps),
       type: nodeType,
     };
+    if (newNode.data.sceneName)
+      newNode.data.sceneName =
+        "Cena " +
+        (nodes.filter(
+          (node) =>
+            node.type !== NodeType.beginNode && node.type !== NodeType.endNode
+        ).length +
+          1);
+    if (localStorage.getItem("scenes")) {
+      const scenes = JSON.parse(localStorage.getItem("scenes"));
+      scenes[newNode.id] = newNode.data.sceneName;
+      localStorage.setItem("scenes", JSON.stringify(scenes));
+    } else {
+      localStorage.setItem(
+        "scenes",
+        JSON.stringify({
+          [newNode.id]: newNode.data.sceneName,
+        })
+      );
+    }
 
     setNodes([...nodes, newNode]);
     localStorage.setItem("nodes", JSON.stringify([...nodes, newNode]));
@@ -305,7 +287,7 @@ export default function MainWindow(props) {
   };
   const addDialogueNode = (nodeType, nodeProps) => {
     if (!(nodeType in DialogNodeType)) return;
-    console.log("add dialogue node", nodeType, "to", dialogueNodeId);
+
     const newNode = {
       id: (dialogNodes.length + 1).toString(),
       position: { x: 0, y: 0 },

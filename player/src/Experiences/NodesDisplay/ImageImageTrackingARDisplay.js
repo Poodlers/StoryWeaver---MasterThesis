@@ -10,12 +10,16 @@ export default function ImageImageTrackingARDisplay(props) {
   return (
     <a-scene
       vr-mode-ui="enabled: false;"
-      renderer="antialias: true; alpha: true; precision: medium;"
-      embedded
       arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+      renderer="antialias: true; alpha: true; precision: medium;"
     >
       <a-assets>
-        <img id="image" src={src} preload="auto" crossOrigin="anonymous" />
+        <img
+          id="imageToLoad"
+          src={src}
+          preload="auto"
+          crossOrigin="anonymous"
+        />
       </a-assets>
       <a-nft
         type="nft"
@@ -29,14 +33,7 @@ export default function ImageImageTrackingARDisplay(props) {
         smoothTolerance=".01"
         smoothThreshold="5"
       >
-        <a-image
-          src="#image"
-          position={position.x + " " + position.y + " " + "-10"}
-          rotation={rotation.x + " " + rotation.y + " " + rotation.z}
-          scale={scale.x + " " + scale.y + " " + scale.z}
-          width="500"
-          height="500"
-        ></a-image>
+        <a-box src="#imageToLoad" scale="200 1 200" position="0 10 0"></a-box>
       </a-nft>
       <a-entity camera></a-entity>
     </a-scene>

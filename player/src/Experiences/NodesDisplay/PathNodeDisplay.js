@@ -60,6 +60,7 @@ export default function PathNodeDisplay(props) {
     ComponentState.LOADING
   );
 
+  const intervalID = React.useRef([]);
   const setNextNode = props.setNextNode;
 
   useEffect(() => {
@@ -67,25 +68,28 @@ export default function PathNodeDisplay(props) {
     repo
       .getMapPlaceCoords(destination.map, destination.place)
       .then((coords) => {
-        setInterval(() => {
-          navigator.geolocation.getCurrentPosition((position) => {
-            const currentCoords = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
-            const distance = distanceInKmBetweenEarthCoordinates(
-              currentCoords.lat,
-              currentCoords.lng,
-              coords.lat,
-              coords.lng
-            );
-            setDistance(distance * 1000);
-            console.log("Distance (m): " + distance * 1000);
-            if (distance * 1000 < tolerance) {
-              setIsOnDestination(true);
-            }
-          });
-        }, 3000);
+        intervalID.current.push(
+          setInterval(() => {
+            navigator.geolocation.getCurrentPosition((position) => {
+              const currentCoords = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              };
+              const distance = distanceInKmBetweenEarthCoordinates(
+                currentCoords.lat,
+                currentCoords.lng,
+                coords.lat,
+                coords.lng
+              );
+              setDistance(distance * 1000);
+              console.log("Distance (m): " + distance * 1000);
+              if (distance * 1000 < tolerance) {
+                setIsOnDestination(true);
+              }
+            });
+          }, 3000)
+        );
+
         setComponentState(ComponentState.LOADED);
       })
       .catch((error) => {
@@ -183,6 +187,10 @@ export default function PathNodeDisplay(props) {
               right: 10,
             }}
             onClick={() => {
+              intervalID.current.forEach((id) => {
+                clearInterval(id);
+              });
+
               setNextNode(possibleNextNodes[0]);
             }}
           >

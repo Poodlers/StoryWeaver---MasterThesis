@@ -19,6 +19,7 @@ import {
   TextReader,
   ZipReader,
 } from "@zip.js/zip.js";
+import Frame from "react-frame-component";
 import ImageTrackingBasedARDisplay from "./ImageTrackingBasedARDisplay";
 import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
 const { FS } = fs;
@@ -144,29 +145,38 @@ export default function ThreeDModelDisplay(props) {
           />
         )
       ) : (
-        <a-scene embedded>
-          {modelType == ThreeDModelTypes.gltf ? (
-            <a-entity
-              gltf-model={fileURL}
-              scale={scale.x + " " + scale.y + " " + scale.z}
-              position={position.x + " " + position.y + " " + position.z}
-              rotation={rotation.x + " " + rotation.y + " " + rotation.z}
-            ></a-entity>
-          ) : (
-            <a-entity
-              obj-model={
-                "obj: " +
-                fileURL +
-                "; " +
-                "mtl: " +
-                fileURL.replace(".obj", ".mtl") +
-                ";"
-              }
-              scale={scale.x + " " + scale.y + " " + scale.z}
-              position={position.x + " " + position.y + " " + position.z}
-            ></a-entity>
-          )}
-        </a-scene>
+        <Frame
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          initialContent='<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
+      </head><body><div></div></body></html>'
+        >
+          <a-scene>
+            {modelType == ThreeDModelTypes.gltf ? (
+              <a-entity
+                gltf-model={fileURL}
+                scale={scale.x + " " + scale.y + " " + scale.z}
+                position={position.x + " " + position.y + " " + position.z}
+                rotation={rotation.x + " " + rotation.y + " " + rotation.z}
+              ></a-entity>
+            ) : (
+              <a-entity
+                obj-model={
+                  "obj: " +
+                  fileURL +
+                  "; " +
+                  "mtl: " +
+                  fileURL.replace(".obj", ".mtl") +
+                  ";"
+                }
+                scale={scale.x + " " + scale.y + " " + scale.z}
+                position={position.x + " " + position.y + " " + position.z}
+              ></a-entity>
+            )}
+          </a-scene>
+        </Frame>
       )}
       <ButtonBase
         sx={{
@@ -177,9 +187,6 @@ export default function ThreeDModelDisplay(props) {
           right: 10,
         }}
         onClick={() => {
-          const video = document.querySelector("video");
-          if (video) video.remove();
-
           setNextNode(possibleNextNodes[0]);
         }}
       >

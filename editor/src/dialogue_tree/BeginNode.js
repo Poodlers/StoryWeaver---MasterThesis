@@ -15,7 +15,7 @@ export default function BeginNode(props) {
       <Handle
         type="source"
         position={Position.Right}
-        style={rightNodeHandleStyle}
+        style={{ ...rightNodeHandleStyle, right: "-4px" }}
       />
       <Box
         sx={{
@@ -29,24 +29,6 @@ export default function BeginNode(props) {
           borderRadius: 100,
         }}
       >
-        {/*
-
-
-<Typography
-          variant="h7"
-          component="div"
-          sx={{
-            color: textColor,
-            textAlign: "center",
-            m: "0 auto",
-            fontSize: 30,
-            fontWeight: "bold",
-          }}
-        >
-          Início
-        </Typography>
-          */}
-
         <Icon
           sx={{
             fontSize: "90px !important",

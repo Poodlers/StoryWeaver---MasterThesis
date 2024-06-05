@@ -235,6 +235,7 @@ function Flow(props) {
       }}
     >
       <ReactFlow
+        minZoom={0.3}
         onMouseMove={(event) => {
           if (event.target.closest(".audio-player-container")) {
             setPannable(false);
@@ -284,6 +285,7 @@ function Flow(props) {
           if (node.type != NodeType.audioNode) {
             setPannable(true);
           }
+
           if (selectedNode != undefined && node.id != selectedNode.id) {
             // the node is changing, save the current inspector data
             if (selectedNode.type == NodeType.characterNode) {
@@ -306,7 +308,11 @@ function Flow(props) {
               }
             }
           }
-
+          if (
+            event.target.id == "deleteButton" ||
+            event.target.id == "scene-name"
+          )
+            return;
           setSelectedNode(node);
           let inspecProps = undefined;
           switch (node.type) {

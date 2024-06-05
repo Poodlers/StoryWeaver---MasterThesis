@@ -9,6 +9,12 @@ const ThreeDModelProps = {
   nodeType: "Cena 3D",
   fields: [
     {
+      type: InputFieldType.hidden,
+      label: "",
+      initialValue: "Cena ",
+      name: "sceneName",
+    },
+    {
       type: InputFieldType.textField,
       label: "Modelo:",
       initialValue: "Modelo 3D",
@@ -96,6 +102,12 @@ const QuizProps = {
   nodeType: "Cena Quiz",
   fields: [
     {
+      type: InputFieldType.hidden,
+      label: "",
+      initialValue: "Cena ",
+      name: "sceneName",
+    },
+    {
       type: InputFieldType.textFieldMultiline,
       label: "Pergunta:",
       initialValue: "Pergunta",
@@ -120,6 +132,12 @@ const QuizProps = {
 const VideoProps = {
   nodeType: "Cena Vídeo",
   fields: [
+    {
+      type: InputFieldType.hidden,
+      label: "",
+      initialValue: "Cena ",
+      name: "sceneName",
+    },
     {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
@@ -182,6 +200,12 @@ const ImageProps = {
   nodeType: "Cena Imagem",
   fields: [
     {
+      type: InputFieldType.hidden,
+      label: "",
+      initialValue: "Cena ",
+      name: "sceneName",
+    },
+    {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
       initialValue: "Imagem",
@@ -243,6 +267,12 @@ const AudioProps = {
   nodeType: "Cena Áudio",
   fields: [
     {
+      type: InputFieldType.hidden,
+      label: "",
+      initialValue: "Cena ",
+      name: "sceneName",
+    },
+    {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
       initialValue: "Nome do audio",
@@ -275,6 +305,12 @@ const AudioProps = {
 const TextProps = {
   nodeType: "Cena Texto",
   fields: [
+    {
+      type: InputFieldType.hidden,
+      label: "",
+      initialValue: "Cena ",
+      name: "sceneName",
+    },
     {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
@@ -329,6 +365,12 @@ const TextProps = {
 const PathProps = {
   nodeType: "Caminho",
   fields: [
+    {
+      type: InputFieldType.hidden,
+      label: "",
+      initialValue: "Cena ",
+      name: "sceneName",
+    },
     {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
@@ -449,6 +491,12 @@ const defaultDialogEdges = [];
 const CharacterProps = {
   nodeType: "Cena Diálogo",
   fields: [
+    {
+      type: InputFieldType.hidden,
+      label: "",
+      initialValue: "Cena ",
+      name: "sceneName",
+    },
     {
       type: InputFieldType.textField,
       label: "Nome:",

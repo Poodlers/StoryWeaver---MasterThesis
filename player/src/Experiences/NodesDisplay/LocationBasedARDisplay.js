@@ -4,6 +4,7 @@ import { ApiDataRepository } from "../../api/ApiDataRepository";
 import { ComponentState } from "../../models/ComponentState";
 import { AREntityTypes } from "../../models/AREntityTypes";
 import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
+import Frame from "react-frame-component";
 
 export default function LocationBasedARDisplay(props) {
   const repo = ApiDataRepository.getInstance();
@@ -50,7 +51,20 @@ export default function LocationBasedARDisplay(props) {
       ) : componentState === ComponentState.ERROR ? (
         <div>Error loading map</div>
       ) : (
-        <div>
+        <Frame
+          style={{
+            width: "100%",
+            height: "90vh",
+          }}
+          initialContent='<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
+      <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+      <script
+        type="text/javascript"
+        src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"
+      ></script>
+      <script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+      </head><body><div></div></body></html>'
+        >
           <a-scene
             vr-mode-ui="enabled: false"
             arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
@@ -166,7 +180,7 @@ export default function LocationBasedARDisplay(props) {
               </>
             ) : null}
           </a-scene>
-        </div>
+        </Frame>
       )}
     </Box>
   );

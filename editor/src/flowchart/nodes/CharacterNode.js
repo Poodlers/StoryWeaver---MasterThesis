@@ -1,6 +1,6 @@
 import { Box, Icon, IconButton, TextField, Typography } from "@mui/material";
 import React, { useEffect } from "react";
-import { Handle, NodeProps, Position } from "reactflow";
+import { Handle, NodeProps, Position, useReactFlow } from "reactflow";
 import {
   leftNodeHandleStyle,
   rightNodeHandleStyle,
@@ -20,8 +20,33 @@ export default function CharacterNode(props) {
     props.data.dialog.nodes.filter((nodes) => nodes.type == "endDialogNode") ??
     [];
   const backgroundFileInfo = props.data?.background ?? "";
-  const [sceneName, setSceneName] = React.useState("Imagem");
+
   const [backgroundURL, setBackgroundURL] = React.useState("");
+
+  const sceneName = props.data?.sceneName ?? "Imagem";
+  const reactflow = useReactFlow();
+  const nodeId = props.id;
+  const setSceneName = (sceneName) => {
+    const newNodes = reactflow.getNodes().map((node) => {
+      if (node.id === nodeId) {
+        return { ...node, data: { ...node.data, sceneName: sceneName } };
+      }
+      return node;
+    });
+    reactflow.setNodes(newNodes);
+    localStorage.setItem("nodes", JSON.stringify(newNodes));
+  };
+
+  const deleteNode = () => {
+    const newNodes = reactflow.getNodes().filter((node) => node.id !== nodeId);
+    const newEdges = reactflow
+      .getEdges()
+      .filter((edge) => edge.source !== nodeId && edge.target !== nodeId);
+    reactflow.setNodes(newNodes);
+    reactflow.setEdges(newEdges);
+    localStorage.setItem("nodes", JSON.stringify(newNodes));
+    localStorage.setItem("edges", JSON.stringify(newEdges));
+  };
 
   useEffect(() => {
     if (backgroundFileInfo.filename == "") {
@@ -66,7 +91,7 @@ export default function CharacterNode(props) {
         ></img>
 
         <TextField
-          id="outlined-basic"
+          id="scene-name"
           variant="outlined"
           value={sceneName}
           onChange={(e) => {
@@ -98,13 +123,16 @@ export default function CharacterNode(props) {
             },
           }}
         />
+
         <IconButton
           sx={{ color: tertiaryColor }}
           onClick={() => {
-            props.updateData({ name: sceneName });
+            deleteNode();
           }}
         >
-          <Icon sx={{ fontSize: "40px !important" }}>delete</Icon>
+          <Icon id="deleteButton" sx={{ fontSize: "40px !important" }}>
+            delete
+          </Icon>
         </IconButton>
       </Box>
       <Box
@@ -114,7 +142,7 @@ export default function CharacterNode(props) {
               ? secondaryColor
               : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
           backgroundSize: "cover",
-          borderColor: tertiaryColor,
+          borderColor: "black",
           borderWidth: 2,
           borderRadius: 4,
           borderStyle: "solid",
