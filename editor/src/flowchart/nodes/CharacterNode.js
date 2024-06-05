@@ -12,6 +12,7 @@ import {
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 import DialogBubble from "../../assets/dialog_bubble.svg";
+import { DescriptionSharp } from "@mui/icons-material";
 
 export default function CharacterNode(props) {
   const repo = ApiDataRepository.getInstance();
@@ -154,10 +155,26 @@ export default function CharacterNode(props) {
           minHeight: "677px",
         }}
       >
+        <Icon
+          sx={{
+            color: textColor,
+            fontSize: "50px !important",
+            position: "absolute",
+            bottom: 5,
+            right: 20,
+          }}
+        >
+          {"landscape"}
+        </Icon>
         <PlayerTextFinalDisplay
           text={title}
           messageType={"Diálogo"}
           style={{ mb: 2 }}
+          titleIcon={
+            <DescriptionSharp
+              sx={{ color: textColor, fontSize: "40px !important" }}
+            ></DescriptionSharp>
+          }
         />
 
         <Box

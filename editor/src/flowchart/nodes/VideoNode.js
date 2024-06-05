@@ -12,6 +12,7 @@ import ReactPlayer from "react-player";
 import React, { useEffect } from "react";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
+import { DescriptionSharp } from "@mui/icons-material";
 
 export default function VideoNode(props) {
   const repo = ApiDataRepository.getInstance();
@@ -178,7 +179,26 @@ export default function VideoNode(props) {
           minHeight: "677px",
         }}
       >
-        <PlayerTextFinalDisplay text={title} messageType={"Mensagem"} />
+        <Icon
+          sx={{
+            color: textColor,
+            fontSize: "50px !important",
+            position: "absolute",
+            bottom: 5,
+            right: 20,
+          }}
+        >
+          {isAR ? "view_in_ar" : "landscape"}
+        </Icon>
+        <PlayerTextFinalDisplay
+          text={title}
+          messageType={"Mensagem"}
+          titleIcon={
+            <DescriptionSharp
+              sx={{ color: textColor, fontSize: "40px !important" }}
+            ></DescriptionSharp>
+          }
+        />
         <Box
           sx={{
             width: "100%",
@@ -219,20 +239,33 @@ export default function VideoNode(props) {
               Erro ao carregar o vídeo!
             </Typography>
           ) : null}
+          <div style={{ position: "relative" }}>
+            <ReactPlayer
+              style={{
+                display: error ? "none" : "block",
+                width: "375px",
+              }}
+              onReady={() => setError(false)}
+              onError={(e) => {}}
+              url={url}
+              width={"100%"}
+              controls={true}
+              playing={false}
+              muted={false}
+            />
 
-          <ReactPlayer
-            style={{
-              display: error ? "none" : "block",
-              width: "375px",
-            }}
-            onReady={() => setError(false)}
-            onError={(e) => {}}
-            url={url}
-            width={"100%"}
-            controls={true}
-            playing={false}
-            muted={false}
-          />
+            <Icon
+              sx={{
+                color: textColor,
+                fontSize: "50px !important",
+                position: "absolute",
+                top: 20,
+                right: 0,
+              }}
+            >
+              videocam
+            </Icon>
+          </div>
         </Box>
       </Box>
 

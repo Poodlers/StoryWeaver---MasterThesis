@@ -17,32 +17,33 @@ export default function PlayerTextFinalDisplay(props) {
     >
       <Box
         sx={{
-          display: messageType ? "block" : "none",
-          backgroundColor: titleIcon ? "" : primaryColor,
-          border: titleIcon ? "" : "2px solid black",
+          display: messageType ? "flex" : "none",
+          backgroundColor: primaryColor,
+          border: "2px solid black",
           borderRadius: "5px",
-          m: 0,
+          mr: 5,
           p: 0,
-          width: "60%",
+
           textAlign: "start",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "row",
           mb: 0,
         }}
       >
-        {titleIcon ? (
-          titleIcon
-        ) : (
-          <Typography
-            variant="h6"
-            sx={{
-              fontSize: 14,
-              color: textColor,
-              fontWeight: 500,
-              textAlign: "center",
-            }}
-          >
-            {messageType}
-          </Typography>
-        )}
+        {titleIcon}
+        <Typography
+          variant="h6"
+          sx={{
+            fontSize: 16,
+            px: 2,
+            color: textColor,
+            fontWeight: 500,
+            textAlign: "center",
+          }}
+        >
+          {messageType}
+        </Typography>
       </Box>
       <Box
         sx={{

@@ -8,6 +8,7 @@ import {
   tertiaryColor,
   textColor,
 } from "../../themes";
+import Frame from "react-frame-component";
 import React, { useEffect } from "react";
 import {
   BlobReader,
@@ -17,13 +18,11 @@ import {
   ZipReader,
 } from "@zip.js/zip.js";
 
-import "aframe";
-
-import { Entity, Scene } from "aframe-react";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import { ComponentState } from "../../models/ComponentState";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
+import { DescriptionSharp } from "@mui/icons-material";
 
 const { FS } = fs;
 
@@ -36,7 +35,7 @@ export default function ThreeDModelNode(props) {
   const isAR = props.data?.ar ?? false;
   const scale = props.data?.scale ?? { x: 1, y: 1, z: 1 };
   const position = props.data?.position ?? { x: 0, y: 0, z: 0 };
-
+  const rotation = props.data?.rotation ?? { x: 0, y: 0, z: 0 };
   const backgroundFileInfo = props.data?.background ?? "";
   const [fileURL, setFileURL] = React.useState("");
 
@@ -71,8 +70,6 @@ export default function ThreeDModelNode(props) {
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
-  const [canLookAround, setCanLookAround] = React.useState(false);
-
   useEffect(() => {
     if (backgroundFileInfo.filename == "") {
       setBackgroundURL("");
@@ -103,20 +100,6 @@ export default function ThreeDModelNode(props) {
       setComponentState(ComponentState.LOADED);
     });
   }, [fileInfo]);
-
-  document.onkeydown = function (evt) {
-    evt = evt || window.event;
-    var isEscape = false;
-    if ("key" in evt) {
-      isEscape = evt.key === "Escape" || evt.key === "Esc";
-    } else {
-      isEscape = evt.keyCode === 27;
-    }
-    if (isEscape) {
-      setCanLookAround(false);
-      console.log("Can't look around");
-    }
-  };
 
   return (
     <>
@@ -207,67 +190,90 @@ export default function ThreeDModelNode(props) {
           minHeight: "677px",
         }}
       >
-        <PlayerTextFinalDisplay text={name} messageType={"Mensagem"} />
+        <Icon
+          sx={{
+            color: textColor,
+            fontSize: "50px !important",
+            position: "absolute",
+            bottom: 5,
+            right: 20,
+          }}
+        >
+          {isAR ? "view_in_ar" : "landscape"}
+        </Icon>
+        <PlayerTextFinalDisplay
+          text={name}
+          messageType={"Mensagem"}
+          titleIcon={
+            <DescriptionSharp
+              sx={{ color: textColor, fontSize: "40px !important" }}
+            ></DescriptionSharp>
+          }
+        />
 
         <Box
           sx={{
             width: "100%",
             height: "100%",
+            position: "relative",
           }}
         >
+          <Icon
+            sx={{
+              color: textColor,
+              fontSize: "50px !important",
+              position: "absolute",
+              zIndex: "1000",
+              top: 0,
+              right: 0,
+            }}
+          >
+            view_in_ar
+          </Icon>
           {fileURL == "" ? (
             <PlayerTextFinalDisplay
               text={"Nenhum modelo 3D selecionado."}
               style={{ mt: 2, px: 2 }}
             />
           ) : (
-            <Scene>
-              {document
-                .querySelector(".a-enter-vr-button")
-                ?.addEventListener("click", () => {
-                  setCanLookAround(true);
-                  console.log("Can look around");
-                })}
-
-              <Entity
-                geometry={{ primitive: "box" }}
-                material={{ color: "red" }}
-                position={{ x: 0, y: 0, z: -5 }}
-              />
-              {modelType == ThreeDModelTypes.gltf ? (
-                <Entity
-                  gltf-model={"url(" + fileURL + ")"}
-                  position={position}
-                  scale={scale}
-                />
-              ) : (
-                <Entity
-                  obj-model={
-                    "obj: url(" +
-                    fileURL +
-                    "); mtl: url(" +
-                    fileURL.replace(".obj", ".mtl") +
-                    ");"
-                  }
-                  position={position}
-                  scale={scale}
-                />
-              )}
-
-              <Entity text={{ value: "Hello, WebVR!" }} />
-              <a-camera
-                camera="fov: 80;"
-                id="camera"
-                position="0 1.6 16"
-                look-controls={
-                  "enabled:false; reverseMouseDrag:false; touchEnabled: false;"
-                }
-              ></a-camera>
-            </Scene>
+            <Frame
+              style={{
+                width: "95%",
+                height: "90vh",
+                border: "none",
+                borderRadius: 4,
+                zIndex: 1000,
+              }}
+              initialContent='<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
+        </head><body><div></div></body></html>'
+            >
+              <a-scene>
+                {modelType == ThreeDModelTypes.gltf ? (
+                  <a-entity
+                    gltf-model={fileURL}
+                    scale={scale.x + " " + scale.y + " " + scale.z}
+                    position={position.x + " " + position.y + " " + position.z}
+                    rotation={rotation.x + " " + rotation.y + " " + rotation.z}
+                  ></a-entity>
+                ) : (
+                  <a-entity
+                    obj-model={
+                      "obj: " +
+                      fileURL +
+                      "; " +
+                      "mtl: " +
+                      fileURL.replace(".obj", ".mtl") +
+                      ";"
+                    }
+                    scale={scale.x + " " + scale.y + " " + scale.z}
+                    position={position.x + " " + position.y + " " + position.z}
+                  ></a-entity>
+                )}
+              </a-scene>
+            </Frame>
           )}
         </Box>
       </Box>
-
       <Handle
         type="source"
         position={Position.Right}

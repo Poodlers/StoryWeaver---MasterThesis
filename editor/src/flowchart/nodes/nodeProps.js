@@ -15,14 +15,16 @@ const ThreeDModelProps = {
       name: "sceneName",
     },
     {
-      type: InputFieldType.textField,
-      label: "Modelo:",
+      type: InputFieldType.textFieldMultiline,
+      label: "Texto:",
+      icon: "description",
       initialValue: "Modelo 3D",
       name: "name",
     },
     {
       type: InputFieldType.file_select,
       label: "Fundo:",
+      icon: "landscape",
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "background",
       acceptedType: FileTypesInput.Image,
@@ -30,6 +32,7 @@ const ThreeDModelProps = {
     {
       type: InputFieldType.file_select,
       label: "Ficheiro:",
+      icon: "view_in_ar",
       initialValue: {
         inputType: "url",
         filename: "",
@@ -110,12 +113,14 @@ const QuizProps = {
     {
       type: InputFieldType.textFieldMultiline,
       label: "Pergunta:",
+      icon: "description",
       initialValue: "Pergunta",
       name: "question",
     },
     {
       type: InputFieldType.file_select,
       label: "Fundo:",
+      icon: "landscape",
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "background",
       acceptedType: FileTypesInput.Image,
@@ -141,12 +146,14 @@ const VideoProps = {
     {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
+      icon: "description",
       initialValue: "Nome do video",
       name: "name",
     },
     {
       type: InputFieldType.file_select,
       label: "Fundo:",
+      icon: "landscape",
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "background",
       acceptedType: FileTypesInput.Image,
@@ -154,6 +161,7 @@ const VideoProps = {
     {
       type: InputFieldType.file_select,
       label: "Ficheiro:",
+      icon: "videocam",
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "file",
       acceptedType: FileTypesInput.Video,
@@ -208,12 +216,14 @@ const ImageProps = {
     {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
+      icon: "description",
       initialValue: "Imagem",
       name: "name",
     },
     {
       type: InputFieldType.file_select,
       label: "Fundo:",
+      icon: "landscape",
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "background",
       acceptedType: FileTypesInput.Image,
@@ -221,9 +231,17 @@ const ImageProps = {
     {
       type: InputFieldType.file_select,
       label: "Ficheiro:",
+      icon: "add_photo_alternate",
       initialValue: { inputType: "file", filename: "", blob: null },
       name: "file",
       acceptedType: FileTypesInput.Image,
+    },
+
+    {
+      type: InputFieldType.checkbox,
+      label: "Permitir AR? ",
+      initialValue: false,
+      name: "ar",
     },
     {
       type: InputFieldType.threeDCoord,
@@ -238,12 +256,6 @@ const ImageProps = {
       conditional: "ar",
       initialValue: { x: 1, y: 1, z: 1 },
       name: "scale",
-    },
-    {
-      type: InputFieldType.checkbox,
-      label: "Permitir AR? ",
-      initialValue: false,
-      name: "ar",
     },
     {
       type: InputFieldType.select_location,
@@ -275,12 +287,14 @@ const AudioProps = {
     {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
+      icon: "description",
       initialValue: "Nome do audio",
       name: "name",
     },
     {
       type: InputFieldType.file_select,
       label: "Fundo:",
+      icon: "landscape",
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "background",
       acceptedType: FileTypesInput.Image,
@@ -295,6 +309,7 @@ const AudioProps = {
     {
       type: InputFieldType.file_select,
       label: "Ficheiro:",
+      icon: "volume_up",
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "file",
       acceptedType: FileTypesInput.Audio,
@@ -315,11 +330,13 @@ const TextProps = {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
       initialValue: "Texto exemplo",
+      icon: "description",
       name: "text",
     },
     {
       type: InputFieldType.file_select,
       label: "Fundo:",
+      icon: "landscape",
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "background",
       acceptedType: FileTypesInput.Image,
@@ -375,11 +392,13 @@ const PathProps = {
       type: InputFieldType.textFieldMultiline,
       label: "Texto:",
       initialValue: "Nome do caminho",
+      icon: "description",
       name: "name",
     },
     {
       type: InputFieldType.file_select,
       label: "Fundo:",
+      icon: "landscape",
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "background",
       acceptedType: FileTypesInput.Image,
@@ -498,14 +517,16 @@ const CharacterProps = {
       name: "sceneName",
     },
     {
-      type: InputFieldType.textField,
+      type: InputFieldType.textFieldMultiline,
       label: "Nome:",
+      icon: "description",
       initialValue: "Nome do Diálogo",
       name: "name",
     },
     {
       type: InputFieldType.file_select,
       label: "Fundo:",
+      icon: "landscape",
       initialValue: { inputType: "url", filename: "", blob: null },
       name: "background",
       acceptedType: FileTypesInput.Image,

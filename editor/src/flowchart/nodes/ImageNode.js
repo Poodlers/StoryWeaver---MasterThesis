@@ -186,10 +186,25 @@ export default function ImageNode(props) {
           minHeight: "677px",
         }}
       >
+        <Icon
+          sx={{
+            color: textColor,
+            fontSize: "50px !important",
+            position: "absolute",
+            bottom: 5,
+            right: 20,
+          }}
+        >
+          {isAR ? "view_in_ar" : "landscape"}
+        </Icon>
         <PlayerTextFinalDisplay
           text={title}
           messageType={"Mensagem"}
-          titleIcon={<DescriptionSharp></DescriptionSharp>}
+          titleIcon={
+            <Icon sx={{ color: textColor, fontSize: "40px !important" }}>
+              description
+            </Icon>
+          }
         />
 
         <Box
@@ -210,36 +225,52 @@ export default function ImageNode(props) {
               {errorMsg}
             </Typography>
           ) : null}
-
-          <img
-            onLoad={() => {
-              setError(false);
-            }}
-            onError={(e) => {
-              // if blob is not valid, fetch the image from the server
-              if (fileInfo.inputType == "file") {
-                repo
-                  .getFile(fileInfo.filename)
-                  .then((blob) => {
-                    e.target.src = URL.createObjectURL(blob);
-                  })
-                  .catch((e) => {
-                    setError(true);
-                    setErrorMsg("Erro ao carregar a imagem!");
-                  });
-              } else {
-                setError(true);
-                setErrorMsg("Insira uma imagem no editor!");
-              }
-            }}
-            src={url}
+          <div
             style={{
-              width: "auto",
-              height: "200px",
-              padding: 10,
-              display: error ? "none" : "block",
+              position: "relative",
             }}
-          />
+          >
+            <img
+              onLoad={() => {
+                setError(false);
+              }}
+              onError={(e) => {
+                // if blob is not valid, fetch the image from the server
+                if (fileInfo.inputType == "file") {
+                  repo
+                    .getFile(fileInfo.filename)
+                    .then((blob) => {
+                      e.target.src = URL.createObjectURL(blob);
+                    })
+                    .catch((e) => {
+                      setError(true);
+                      setErrorMsg("Erro ao carregar a imagem!");
+                    });
+                } else {
+                  setError(true);
+                  setErrorMsg("Insira uma imagem no editor!");
+                }
+              }}
+              src={url}
+              style={{
+                width: "auto",
+                height: "200px",
+                padding: 10,
+                display: error ? "none" : "block",
+              }}
+            />
+            <Icon
+              sx={{
+                color: textColor,
+                fontSize: "50px !important",
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+              }}
+            >
+              add_photo_alternate
+            </Icon>
+          </div>
         </Box>
       </Box>
 

@@ -12,6 +12,7 @@ import {
 } from "../../themes";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
+import { DescriptionSharp } from "@mui/icons-material";
 
 var BASE64_MARKER = ";base64,";
 
@@ -190,10 +191,26 @@ export default function AudioNode(props) {
           minHeight: "677px",
         }}
       >
+        <Icon
+          sx={{
+            color: textColor,
+            fontSize: "50px !important",
+            position: "absolute",
+            bottom: 5,
+            right: 20,
+          }}
+        >
+          {"landscape"}
+        </Icon>
         <PlayerTextFinalDisplay
           text={title}
           messageType="Texto"
           style={{ mb: 2 }}
+          titleIcon={
+            <DescriptionSharp
+              sx={{ color: textColor, fontSize: "40px !important" }}
+            ></DescriptionSharp>
+          }
         />
 
         <Box
@@ -215,7 +232,12 @@ export default function AudioNode(props) {
               Insira um audio no inspetor!
             </Typography>
           ) : null}
-          <div className="audio-player-container">
+          <div
+            className="audio-player-container"
+            style={{
+              position: "relative",
+            }}
+          >
             <AudioPlayer
               src={url}
               id="inline-timeline"
@@ -246,6 +268,17 @@ export default function AudioNode(props) {
                 "& .MuiIconButton-root": { color: "#fff" },
               }}
             />
+            <Icon
+              sx={{
+                color: textColor,
+                fontSize: "50px !important",
+                position: "absolute",
+                top: 0,
+                right: 0,
+              }}
+            >
+              volume_up
+            </Icon>
           </div>
         </Box>
       </Box>

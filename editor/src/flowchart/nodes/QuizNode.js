@@ -11,6 +11,7 @@ import {
 import React, { useEffect } from "react";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
+import { DescriptionSharp } from "@mui/icons-material";
 
 export default function QuizNode(props) {
   const repo = ApiDataRepository.getInstance();
@@ -152,10 +153,26 @@ export default function QuizNode(props) {
           minHeight: "677px",
         }}
       >
+        <Icon
+          sx={{
+            color: textColor,
+            fontSize: "50px !important",
+            position: "absolute",
+            bottom: 5,
+            right: 20,
+          }}
+        >
+          {"landscape"}
+        </Icon>
         <PlayerTextFinalDisplay
           text={question}
           messageType="Pergunta"
           style={{ mb: 2 }}
+          titleIcon={
+            <DescriptionSharp
+              sx={{ color: textColor, fontSize: "40px !important" }}
+            ></DescriptionSharp>
+          }
         />
 
         <Box
@@ -170,9 +187,9 @@ export default function QuizNode(props) {
             variant="h6"
             sx={{
               px: 3,
-              fontSize: 15,
+              fontSize: 22,
               color: textColor,
-              fontWeight: 400,
+              fontWeight: 600,
             }}
           >
             Respostas

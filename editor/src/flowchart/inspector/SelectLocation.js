@@ -22,7 +22,7 @@ import { ApiDataRepository } from "../../api/ApiDataRepository";
 function SelectLocationField(props) {
   const repo = ApiDataRepository.getInstance();
   const label = props.data.label;
-  const conditional = props.conditional ? props.conditional : true;
+  const conditional = props.conditional;
   const style = props.style;
   const value = props.value;
 

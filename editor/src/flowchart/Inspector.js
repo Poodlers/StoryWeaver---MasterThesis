@@ -83,7 +83,7 @@ function Inspector(props) {
           component="div"
           sx={{ flexGrow: 1, py: 1, px: 2, color: "white", m: 0 }}
         >
-          {props.data.nodeType}
+          {props.value.sceneName}
         </Typography>
         <IconButton
           onClick={() => setInspectorData(undefined)}

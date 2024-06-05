@@ -257,6 +257,7 @@ function Flow(props) {
         nodesDraggable={pannable}
         onPaneClick={(event) => {
           setInspectorProps(undefined);
+
           if (selectedNode != undefined) {
             // the node is changing, save the current inspector data
             if (selectedNode.type == NodeType.characterNode) {
@@ -311,8 +312,10 @@ function Flow(props) {
           if (
             event.target.id == "deleteButton" ||
             event.target.id == "scene-name"
-          )
+          ) {
+            setSelectedNode(undefined);
             return;
+          }
           setSelectedNode(node);
           let inspecProps = undefined;
           switch (node.type) {

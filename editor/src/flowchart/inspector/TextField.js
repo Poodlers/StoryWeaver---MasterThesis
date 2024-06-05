@@ -1,4 +1,4 @@
-import { TextField, Typography } from "@mui/material";
+import { Icon, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
 import {
@@ -10,6 +10,7 @@ import {
 
 function TextFieldInspector(props) {
   const label = props.data.label;
+  const icon = props.data.icon;
   const style = props.style;
   const value = props.value;
   const handleFieldChange = props.onChange;
@@ -32,41 +33,62 @@ function TextFieldInspector(props) {
       >
         {label}
       </Typography>
-      <TextField
-        inputProps={{
-          style: {
-            borderRadius: 0,
-            color: "black",
-            height: 40,
-            padding: 0,
-            margin: 0,
-            borderColor: "transparent",
-            borderWidth: 0,
-            backgroundColor: "#ffffff",
-            borderRadius: 10,
-            textAlign: "start",
-          },
-        }}
+
+      <Box
         sx={{
-          flexGrow: 1,
-          py: 0,
-          px: 1,
-          color: textColor,
-          mx: "10px",
-          borderRadius: 0,
-          ".MuiInputBase-root": {
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Icon
+          sx={{
+            color: "black",
+            fontSize: "40px !important",
             px: 2,
-            borderRadius: 2,
-            backgroundColor: "#ffffff",
-          },
-        }}
-        id="outlined-basic"
-        variant="outlined"
-        value={value}
-        onChange={(event) => {
-          handleFieldChange(props.data.name, event.target.value);
-        }}
-      />
+            alignSelf: "start",
+          }}
+        >
+          {icon}
+        </Icon>
+
+        <TextField
+          inputProps={{
+            style: {
+              borderRadius: 0,
+              color: "black",
+              height: 40,
+              padding: 0,
+              margin: 0,
+              borderColor: "transparent",
+              borderWidth: 0,
+              backgroundColor: "#ffffff",
+              borderRadius: 10,
+              textAlign: "start",
+            },
+          }}
+          sx={{
+            flexGrow: 1,
+            py: 0,
+            px: 1,
+            color: textColor,
+            mx: "10px",
+            borderRadius: 0,
+            ".MuiInputBase-root": {
+              px: 2,
+              borderRadius: 2,
+              backgroundColor: "#ffffff",
+            },
+          }}
+          id="outlined-basic"
+          variant="outlined"
+          value={value}
+          onChange={(event) => {
+            handleFieldChange(props.data.name, event.target.value);
+          }}
+        />
+      </Box>
     </Box>
   );
 }

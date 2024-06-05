@@ -11,6 +11,7 @@ import {
 
 function TextFieldMultiline(props) {
   const label = props.data.label;
+  const icon = props.data.icon;
   const style = props.style;
   const value = props.value;
   const handleFieldChange = props.onChange;
@@ -26,16 +27,27 @@ function TextFieldMultiline(props) {
         width: "100%",
       }}
     >
-      {/*
-       <Box
+      <Box
         sx={{
           display: "flex",
+          position: "relative",
           flexDirection: "row",
           width: "100%",
           alignItems: "center",
+          justifyContent: "center",
           backgroundColor: primaryColor,
         }}
       >
+        <Icon
+          sx={{
+            color: textColor,
+            position: "absolute",
+            left: 12,
+            fontSize: "35px !important",
+          }}
+        >
+          {icon}
+        </Icon>
         <Typography
           variant="h7"
           component="div"
@@ -44,23 +56,14 @@ function TextFieldMultiline(props) {
             py: 1,
             color: textColor,
             m: 0,
-
+            textAlign: "center",
             width: "100%",
           }}
         >
           {label}
         </Typography>
       </Box>
-  
-  */}
-      <DescriptionSharp
-        sx={{
-          color: "black",
-          fontSize: "40px !important",
-          px: 2,
-          alignSelf: "start",
-        }}
-      ></DescriptionSharp>
+
       <TextField
         id="outlined-multiline"
         multiline

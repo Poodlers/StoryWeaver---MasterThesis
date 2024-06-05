@@ -1,5 +1,5 @@
 import { AttachFileOutlined, CloseOutlined } from "@mui/icons-material";
-import { Checkbox, TextField, Typography } from "@mui/material";
+import { Checkbox, Icon, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { MuiFileInput } from "mui-file-input";
 import React from "react";
@@ -23,6 +23,7 @@ async function getFileNamesFromZip(fileBlob) {
 
 function FileSelectField(props) {
   const repo = ApiDataRepository.getInstance();
+  const icon = props.data.icon;
   const label = props.data.label;
   const generateMarkerFiles = props.generateMarkerFiles;
   const style = props.style;
@@ -41,26 +42,42 @@ function FileSelectField(props) {
         ...style,
       }}
     >
-      <Typography
-        onClick={() => setInputMethod("file")}
-        variant="h7"
-        component="div"
+      <Box
         sx={{
-          flexGrow: 1,
+          position: "relative",
           width: "100%",
-          py: 1,
-          px: 2,
-          color: textColor,
-          mb: 2,
-          justifySelf: "start",
-          justifyContent: "start",
-          textAlign: "center",
-          backgroundColor: primaryColor,
         }}
       >
-        {label}
-      </Typography>
-
+        <Icon
+          sx={{
+            color: textColor,
+            position: "absolute",
+            left: 12,
+            fontSize: "35px !important",
+          }}
+        >
+          {icon}
+        </Icon>
+        <Typography
+          onClick={() => setInputMethod("file")}
+          variant="h7"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            width: "100%",
+            py: 1,
+            px: 2,
+            color: textColor,
+            mb: 2,
+            justifySelf: "start",
+            justifyContent: "start",
+            textAlign: "center",
+            backgroundColor: primaryColor,
+          }}
+        >
+          {label}
+        </Typography>
+      </Box>
       <Box
         sx={{
           display: "flex",
