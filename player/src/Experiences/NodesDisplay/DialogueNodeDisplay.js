@@ -63,7 +63,14 @@ export default function DialogueNodeDisplay(props) {
     setComponentState(ComponentState.LOADED);
   }, [dialogTree]);
 
+  const [backgroundColor, setBackgroundColor] = React.useState("#000000");
+
   useEffect(() => {
+    if (backgroundFileInfo.inputType == "color") {
+      setBackgroundColor(backgroundFileInfo.color);
+      setBackgroundURL("");
+      return;
+    }
     if (backgroundFileInfo.filename == "") {
       setBackgroundURL("");
       return;
@@ -117,8 +124,8 @@ export default function DialogueNodeDisplay(props) {
         alignItems: "center",
         background:
           backgroundURL == ""
-            ? secondaryColor
-            : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            ? backgroundColor
+            : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
         backgroundSize: "cover",
       }}
     >

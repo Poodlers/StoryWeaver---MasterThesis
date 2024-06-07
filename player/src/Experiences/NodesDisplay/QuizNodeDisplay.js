@@ -26,7 +26,14 @@ export default function QuizNodeDisplay(props) {
   const setNextNode = props.setNextNode;
   const experienceName = props.experienceName;
 
+  const [backgroundColor, setBackgroundColor] = React.useState("#000000");
+
   useEffect(() => {
+    if (backgroundFileInfo.inputType == "color") {
+      setBackgroundColor(backgroundFileInfo.color);
+      setBackgroundURL("");
+      return;
+    }
     if (backgroundFileInfo.filename == "") {
       setBackgroundURL("");
       return;
@@ -56,8 +63,8 @@ export default function QuizNodeDisplay(props) {
         alignItems: "center",
         background:
           backgroundURL == ""
-            ? secondaryColor
-            : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            ? backgroundColor
+            : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
         backgroundSize: "cover",
       }}
     >
