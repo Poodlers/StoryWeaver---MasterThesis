@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import ReactFlow, {
   Controls,
   Background,
@@ -35,25 +35,16 @@ import TextNode from "./nodes/TextNode";
 import PathNode from "./nodes/PathNode";
 import BeginNode from "../dialogue_tree/BeginNode";
 import EndNode from "../dialogue_tree/EndNode";
+import { findRemovedIndex } from "../data/utils";
 
 const nodeColor = (node) => {
   switch (node.type) {
-    case NodeType.quizNode:
-      return "#6ede87";
-    case NodeType.videoNode:
-      return "#6865A5";
-    case NodeType.imageNode:
-      return "#ff0072";
-    case NodeType.threeDModelNode:
-      return "#ff0072";
-    case NodeType.characterNode:
-      return "#ff0072";
-    case NodeType.pathNode:
-      return "#ff0072";
-    case NodeType.textNode:
-      return "#ff0072";
+    case NodeType.beginNode:
+      return "#7080B9";
+    case NodeType.endNode:
+      return "#B97070";
     default:
-      return "#ff0072";
+      return "#5F6F52";
   }
 };
 
@@ -63,6 +54,7 @@ function Flow(props) {
 
   const [inspectorProps, setInspectorProps] = useState(undefined);
   const [pannable, setPannable] = useState(true);
+  const edgeUpdateSuccessful = useRef(true);
   const {
     nodes,
     edges,
@@ -123,6 +115,7 @@ function Flow(props) {
         ) {
           return els;
         }
+        edgeUpdateSuccessful.current = true;
         localStorage.setItem(
           "edges",
           JSON.stringify(updateEdge(oldEdge, newConnection, els))
@@ -131,6 +124,18 @@ function Flow(props) {
       }),
     []
   );
+
+  const onEdgeUpdateStart = useCallback(() => {
+    edgeUpdateSuccessful.current = false;
+  }, []);
+
+  const onEdgeUpdateEnd = useCallback((_, edge) => {
+    if (!edgeUpdateSuccessful.current) {
+      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+    }
+
+    edgeUpdateSuccessful.current = true;
+  }, []);
 
   const onNodesChange = useCallback(
     (changes) =>
@@ -218,6 +223,40 @@ function Flow(props) {
         if (newNodes[i].type === NodeType.quizNode) {
           const oldAnswers = newNodes[i].data.answers;
           const newAnswers = data.answers;
+
+          //case answer is deleted
+          if (oldAnswers.length > newAnswers.length) {
+            const removedIndex = findRemovedIndex(oldAnswers, newAnswers);
+            const newEdges = edges.filter(
+              (edge) =>
+                !(
+                  edge.source == newNodes[i].id &&
+                  edge.sourceHandle == oldAnswers[removedIndex]
+                )
+            );
+            setEdges(newEdges);
+
+            localStorage.setItem("edges", JSON.stringify(newEdges));
+          } else if (oldAnswers.length == newAnswers.length) {
+            for (let i = 0; i < newAnswers.length; i++) {
+              if (oldAnswers[i] !== newAnswers[i]) {
+                const newEdges = edges.map((edge) => {
+                  if (edge.source == id && edge.sourceHandle == oldAnswers[i]) {
+                    return {
+                      ...edge,
+                      sourceHandle: newAnswers[i],
+                    };
+                  }
+
+                  return edge;
+                });
+                setEdges(newEdges);
+
+                localStorage.setItem("edges", JSON.stringify(newEdges));
+                break;
+              }
+            }
+          }
         }
         newNodes[i].data = data;
         setNodes(newNodes);
@@ -232,13 +271,15 @@ function Flow(props) {
       style={{
         display: "flex",
         flexDirection: "row",
-        height: "85vh",
+        height: "84vh",
         width: "100%",
         margin: "0 auto",
       }}
     >
       <ReactFlow
         minZoom={0.3}
+        onEdgeUpdateStart={onEdgeUpdateStart}
+        onEdgeUpdateEnd={onEdgeUpdateEnd}
         onMouseMove={(event) => {
           if (event.target.closest(".audio-player-container")) {
             setPannable(false);

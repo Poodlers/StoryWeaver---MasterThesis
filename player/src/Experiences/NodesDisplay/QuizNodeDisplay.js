@@ -80,9 +80,8 @@ export default function QuizNodeDisplay(props) {
               possibleNextNodes.find(
                 (node) =>
                   node.id ==
-                  outGoingEdges.find(
-                    (edge) => edge.sourceHandle == index.toString()
-                  ).target
+                  outGoingEdges.find((edge) => edge.sourceHandle == answer)
+                    .target
               )
             );
           }}

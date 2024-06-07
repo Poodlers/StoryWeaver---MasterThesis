@@ -48,7 +48,7 @@ run().catch(console.dir);
 
 const app = express();
 // Enable CORS
-app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -72,6 +72,7 @@ const storage = multer.diskStorage({
 // Initialize multer middleware
 const upload = multer({ storage: storage });
 
+app.use(cors());
 // Serve static files from the uploads directory
 app.use("/files", express.static(path.join(__dirname, "files")));
 
@@ -190,12 +191,15 @@ app.delete("/delete/:storyId", async (req, res) => {
   res.send({ success: true });
 });
 
-app.options("/upload", cors()); // enable pre-flight request for upload
 // Handle file upload
 app.post(
   "/upload",
   upload.fields([{ name: "file" }, { name: "projectID" }]),
   (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "content-type");
+
     res.json({ success: true });
   }
 );
@@ -259,6 +263,9 @@ app.get("/generateMarker/:storyID/:filename", async (req, res) => {
   });
 
   worker.on("message", (data) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "content-type");
     res.status(200).send(data);
   });
   worker.on("error", (msg) => {
@@ -301,6 +308,9 @@ app.get("/files/:storyID/:filename", (req, res) => {
   // Set the appropriate content type based on the file extension
   const contentType = getContentType(filename);
   res.setHeader("Content-Type", contentType);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Headers", "content-type");
 
   // Serve the file from the 'uploads' directory
   res.sendFile(path.join(__dirname, "files", storyID, filename), (err) => {

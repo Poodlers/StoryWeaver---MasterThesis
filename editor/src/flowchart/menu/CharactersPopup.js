@@ -216,38 +216,31 @@ export default function CharactersPopup(props) {
                 </Grid>
               );
             })}
-          </Grid>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ fontSize: "30px !important", m: "0 auto" }}
-            onClick={() => {
-              setOpenCreateCharacter(true);
-              setSelectedCharacter(undefined);
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ fontSize: "30px !important", m: "0 auto" }}
+              onClick={() => {
+                setOpenCreateCharacter(true);
+                setSelectedCharacter(undefined);
               }}
             >
-              <AddCircleOutline
-                sx={{ fontSize: "50px !important", color: primaryColor }}
-              ></AddCircleOutline>
-              <Typography
-                variant="h7"
-                component="div"
-                sx={{ fontSize: 20, color: primaryColor }}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
               >
-                Criar personagem
-              </Typography>
-            </Box>
-          </IconButton>
+                <AddCircleOutline
+                  sx={{ fontSize: "50px !important", color: primaryColor }}
+                ></AddCircleOutline>
+              </Box>
+            </IconButton>
+          </Grid>
         </Box>
       </Box>
     </Dialog>

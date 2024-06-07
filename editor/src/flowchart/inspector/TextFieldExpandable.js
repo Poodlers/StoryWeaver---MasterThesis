@@ -57,6 +57,7 @@ function TextFieldExpandable(props) {
               sx={{
                 display: "flex",
                 flexDirection: "row",
+                mt: 2,
                 alignItems: "center",
                 justifyContent: "space-between",
               }}
@@ -76,6 +77,7 @@ function TextFieldExpandable(props) {
                 Resposta {index + 1}
               </Typography>
               <TextField
+                fullWidth
                 inputProps={{
                   style: {
                     borderRadius: 0,
@@ -114,7 +116,7 @@ function TextFieldExpandable(props) {
                 }}
               />
               <Icon
-                sx={{ color: textColor, cursor: "pointer" }}
+                sx={{ color: textColor, cursor: "pointer", flexGrow: 0 }}
                 onClick={() => {
                   handleFieldChange(props.data.name, [
                     ...value.slice(0, index),
@@ -131,7 +133,7 @@ function TextFieldExpandable(props) {
         <Icon
           sx={{ color: textColor, cursor: "pointer" }}
           onClick={() => {
-            handleFieldChange(props.data.name, [...value, ""]);
+            handleFieldChange(props.data.name, [...value, "Nova Resposta"]);
           }}
         >
           <AddCircle> </AddCircle>

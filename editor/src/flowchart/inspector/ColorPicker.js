@@ -3,8 +3,10 @@ import { Box } from "@mui/system";
 import React from "react";
 import { SketchPicker } from "react-color";
 import { textColor } from "../../themes";
+import { ApiDataRepository } from "../../api/ApiDataRepository";
 
 function ColorPicker(props) {
+  const repo = ApiDataRepository.getInstance();
   const label = props.data.label;
   const style = props.style;
   const value = props.value;
@@ -55,7 +57,7 @@ function ColorPicker(props) {
             width: "36px",
             height: "14px",
             borderRadius: "2px",
-            backgroundColor: value,
+            backgroundColor: value.color,
           }}
         />
       </div>
@@ -67,9 +69,18 @@ function ColorPicker(props) {
             }}
           />
           <SketchPicker
-            color={value}
+            color={value.color}
             onChange={(color) => {
-              handleFieldChange(props.data.name, color.hex);
+              if (value.inputType == "file") {
+                repo.deleteFile(value.filename).catch((error) => {
+                  console.error(error);
+                });
+              }
+              handleFieldChange(props.data.name, {
+                ...value,
+                inputType: "color",
+                color: color.hex,
+              });
             }}
           />
         </div>

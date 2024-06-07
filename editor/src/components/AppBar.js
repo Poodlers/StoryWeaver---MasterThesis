@@ -84,9 +84,7 @@ export default function TopAppBar(props) {
 
       if (!hasIncomingConnection) {
         setAlertMessage(
-          `O nó "${
-            node.data.name ? node.data.name : node.data.id
-          }" não tem ligações de entrada!`
+          `O nó "${node.data.sceneName}" não tem ligações de entrada!`
         );
         setDisplayAlert(true);
         return false;
@@ -119,7 +117,7 @@ export default function TopAppBar(props) {
         for (let i = 0; i < allAnswers.length; i++) {
           const hasConnection = edges.some(
             (edge) =>
-              edge.source === quizId && edge.sourceHandle === i.toString()
+              edge.source === quizId && edge.sourceHandle === allAnswers[i]
           );
           if (!hasConnection) {
             setAlertMessage(
@@ -135,7 +133,9 @@ export default function TopAppBar(props) {
           node.type === NodeType.endNode;
 
         if (!hasOutgoingConnection) {
-          setAlertMessage(`O nó "${node.id}" não tem ligações de saída!`);
+          setAlertMessage(
+            `O nó "${node.data.sceneName}" não tem ligações de saída!`
+          );
           setDisplayAlert(true);
           return false;
         }
@@ -342,7 +342,7 @@ export default function TopAppBar(props) {
             <AccountCircle
               sx={{
                 fontSize: "50px !important",
-                color: "black",
+                color: secondaryColor,
               }}
             ></AccountCircle>
           </IconButton>
@@ -386,15 +386,19 @@ export default function TopAppBar(props) {
               }
             }}
             sx={{
-              backgroundColor: tertiaryColor,
-              color: textColor,
-              fontSize: "20px",
               p: 2,
               borderRadius: 3,
               m: 1,
             }}
           >
-            Exportar
+            <Icon
+              sx={{
+                color: secondaryColor,
+                fontSize: "40px !important",
+              }}
+            >
+              send_to_mobile
+            </Icon>
           </ButtonBase>
         </Toolbar>
       </AppBar>

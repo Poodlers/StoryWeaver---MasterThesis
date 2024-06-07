@@ -69,8 +69,13 @@ export default function ThreeDModelNode(props) {
   };
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
-
+  const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
   useEffect(() => {
+    if (backgroundFileInfo.inputType == "color") {
+      setBackgroundURL("");
+      setBackgroundColor(backgroundFileInfo.color);
+      return;
+    }
     if (backgroundFileInfo.filename == "") {
       setBackgroundURL("");
       return;
@@ -90,6 +95,11 @@ export default function ThreeDModelNode(props) {
   }, [backgroundFileInfo]);
 
   useEffect(() => {
+    if (fileInfo.filename == "") {
+      setFileURL("");
+      setComponentState(ComponentState.LOADED);
+      return;
+    }
     if (fileInfo.inputType === "url") {
       setFileURL(fileInfo.filename);
       setComponentState(ComponentState.LOADED);
@@ -175,8 +185,8 @@ export default function ThreeDModelNode(props) {
           background: isAR
             ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
             : backgroundURL == ""
-            ? secondaryColor
-            : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            ? backgroundColor
+            : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
           backgroundSize: "cover",
           borderColor: "black",
           borderWidth: 2,
@@ -238,10 +248,11 @@ export default function ThreeDModelNode(props) {
           ) : (
             <Frame
               style={{
-                width: "95%",
-                height: "90vh",
-                border: "none",
+                width: "365px",
+                minHeight: "600px",
                 borderRadius: 4,
+                borderColor: "black",
+                borderWidth: 2,
                 zIndex: 1000,
               }}
               initialContent='<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>

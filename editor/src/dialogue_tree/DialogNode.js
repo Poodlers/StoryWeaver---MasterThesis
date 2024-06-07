@@ -90,6 +90,7 @@ export default function DialogNode(props) {
             />
           ) : null}
           <IconButton
+            id="audioButton"
             sx={{ display: audioSrc ? "block" : "none" }}
             onClick={() => {
               if (audioSrc) {
@@ -102,6 +103,7 @@ export default function DialogNode(props) {
             }}
           >
             <Icon
+              id="audioButton"
               sx={{
                 fontSize: "35px !important",
               }}

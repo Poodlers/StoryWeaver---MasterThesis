@@ -66,7 +66,7 @@ function FileSelectField(props) {
             flexGrow: 1,
             width: "100%",
             py: 1,
-            px: 2,
+
             color: textColor,
             mb: 2,
             justifySelf: "start",
@@ -94,7 +94,7 @@ function FileSelectField(props) {
           sx={{
             flexGrow: 1,
             py: 1,
-            px: 2,
+            px: 1,
             color: textColor,
             m: 0,
             justifySelf: "start",
@@ -180,11 +180,13 @@ function FileSelectField(props) {
                   width: "100%",
                   backgroundColor: "#ffffff",
                   color: "black",
-                  overflow: "hidden",
                   textAlign: "center",
                 },
                 ".MuiFileInput-Typography-size-text": {
                   color: "black",
+                },
+                ".MuiInputAdornment-root": {
+                  visibility: "visible !important",
                 },
                 ".MuiFileInput-ClearIconButton": {
                   color: "black",
@@ -198,10 +200,22 @@ function FileSelectField(props) {
               sx: { color: "black" },
               children: <CloseOutlined fontSize="small" />,
             }}
-            hideSizeText={false}
             getInputText={(value) => (value ? value : "Select a file")}
             onChange={(file) => {
-              if (file === null) return;
+              if (file === null) {
+                if (value.inputType == "file") {
+                  repo.deleteFile(value.filename).catch((error) => {
+                    console.error(error);
+                  });
+                }
+                handleFieldChange(props.data.name, {
+                  ...value,
+                  blob: undefined,
+                  filename: "",
+                  inputType: "file",
+                });
+                return;
+              }
               const fileID = uuid();
               const fileName = fileID + file.name;
               file = new File([file], fileName, { type: file.type });
@@ -254,7 +268,9 @@ function FileSelectField(props) {
                       }
                     });
                   } else {
+                    console.log("File uploaded");
                     handleFieldChange(props.data.name, {
+                      ...value,
                       blob: urlObj,
                       filename: fileName,
                       inputType: "file",

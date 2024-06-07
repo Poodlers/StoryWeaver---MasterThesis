@@ -31,9 +31,11 @@ COPY --link . .
 # Final stage for app image
 FROM base
 
+RUN mkdir /app/files
+
 # Copy built application
 COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
+EXPOSE 8080
 CMD [ "node", "index.js" ]

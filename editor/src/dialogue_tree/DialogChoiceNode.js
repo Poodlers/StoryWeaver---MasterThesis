@@ -91,6 +91,7 @@ export default function DialogChoiceNode(props) {
             }}
           >
             <Icon
+              id="audioButton"
               sx={{
                 fontSize: "35px !important",
               }}

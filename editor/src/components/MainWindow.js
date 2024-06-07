@@ -26,6 +26,7 @@ import { DialogNodeType } from "../models/DialogNodeTypes";
 import { ApiDataRepository } from "../api/ApiDataRepository";
 import { narrator } from "../data/narrator";
 import { v4 as uuid } from "uuid";
+import { findRemovedIndex } from "../data/utils";
 
 const generateInspectorProps = (props) => {
   return props.fields.reduce(
@@ -274,7 +275,56 @@ export default function MainWindow(props) {
     localStorage.setItem("maps", JSON.stringify(newMaps));
   };
 
-  const changeOneNode = (nodeId, newData) => {
+  const changeOneNode = (nodeId, newData, oldEndData) => {
+    const oldNode = nodes.find((node) => node.id === nodeId);
+    if (oldNode.type === NodeType.characterNode) {
+      const oldDialogNodesEndsNames = oldNode.data.dialog.nodes
+        .filter((node) => node.type === DialogNodeType.endDialogNode)
+        .map((node) => node.data.id);
+      const newDialogNodesEndsNames = newData.nodes
+        .filter((node) => node.type === DialogNodeType.endDialogNode)
+        .map((node) => node.data.id);
+      if (oldDialogNodesEndsNames.length > newDialogNodesEndsNames.length) {
+        const removedIndex = findRemovedIndex(
+          oldDialogNodesEndsNames,
+          newDialogNodesEndsNames
+        );
+        const newEdges = edges.filter(
+          (edge) =>
+            !(
+              edge.source == nodeId &&
+              edge.sourceHandle == oldDialogNodesEndsNames[removedIndex]
+            )
+        );
+        setEdges(newEdges);
+
+        localStorage.setItem("edges", JSON.stringify(newEdges));
+      } else if (
+        oldDialogNodesEndsNames.length == newDialogNodesEndsNames.length &&
+        oldEndData
+      ) {
+        const newDialogEndName = newData.nodes.find(
+          (node) => node.id == oldEndData.changedId
+        ).data.id;
+
+        const oldEndName = oldEndData.oldEndName;
+
+        const newEdges = edges.map((edge) => {
+          if (edge.source == nodeId && edge.sourceHandle == oldEndName) {
+            return {
+              ...edge,
+              sourceHandle: newDialogEndName,
+            };
+          }
+
+          return edge;
+        });
+        setEdges(newEdges);
+        console.log(newEdges);
+        localStorage.setItem("edges", JSON.stringify(newEdges));
+      }
+    }
+
     const newNodes = nodes.map((node) => {
       if (node.id === nodeId) {
         return { ...node, data: { ...node.data, dialog: newData } };

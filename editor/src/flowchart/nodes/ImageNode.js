@@ -60,7 +60,13 @@ export default function ImageNode(props) {
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
+  const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
   useEffect(() => {
+    if (backgroundFileInfo.inputType == "color") {
+      setBackgroundURL("");
+      setBackgroundColor(backgroundFileInfo.color);
+      return;
+    }
     if (backgroundFileInfo.filename == "") {
       setBackgroundURL("");
       return;
@@ -171,8 +177,8 @@ export default function ImageNode(props) {
           background: isAR
             ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
             : backgroundURL == ""
-            ? secondaryColor
-            : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            ? backgroundColor
+            : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
           backgroundSize: "cover",
           borderColor: "black",
           borderWidth: 2,

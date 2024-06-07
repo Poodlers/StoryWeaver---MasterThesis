@@ -1,5 +1,10 @@
 import { Box, Icon, IconButton, TextField, Typography } from "@mui/material";
-import { Handle, Position, useReactFlow } from "reactflow";
+import {
+  Handle,
+  Position,
+  useReactFlow,
+  useUpdateNodeInternals,
+} from "reactflow";
 import {
   leftNodeHandleStyle,
   rightNodeHandleStyle,
@@ -22,9 +27,14 @@ export default function QuizNode(props) {
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
   const reactflow = useReactFlow();
-
+  const updateNodeInternals = useUpdateNodeInternals();
   const sceneName = props.data?.sceneName ?? "Imagem";
   const nodeId = props.id;
+
+  useEffect(() => {
+    updateNodeInternals(nodeId);
+  }, [answers]);
+
   const setSceneName = (sceneName) => {
     const newNodes = reactflow.getNodes().map((node) => {
       if (node.id === nodeId) {
@@ -47,7 +57,13 @@ export default function QuizNode(props) {
     localStorage.setItem("edges", JSON.stringify(newEdges));
   };
 
+  const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
   useEffect(() => {
+    if (backgroundFileInfo.inputType == "color") {
+      setBackgroundURL("");
+      setBackgroundColor(backgroundFileInfo.color);
+      return;
+    }
     if (backgroundFileInfo.filename == "") {
       setBackgroundURL("");
       return;
@@ -138,8 +154,8 @@ export default function QuizNode(props) {
         sx={{
           background:
             backgroundURL == ""
-              ? secondaryColor
-              : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+              ? backgroundColor
+              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
           backgroundSize: "cover",
           borderColor: "black",
           borderWidth: 2,
@@ -213,7 +229,7 @@ export default function QuizNode(props) {
                   marginTop: 70 * index,
                   ...rightNodeHandleStyle,
                 }}
-                id={`${index}`}
+                id={`${answer}`}
               />
             </div>
           ))}

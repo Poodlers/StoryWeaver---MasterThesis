@@ -42,17 +42,6 @@ function TextFieldInspector(props) {
           justifyContent: "center",
         }}
       >
-        <Icon
-          sx={{
-            color: "black",
-            fontSize: "40px !important",
-            px: 2,
-            alignSelf: "start",
-          }}
-        >
-          {icon}
-        </Icon>
-
         <TextField
           inputProps={{
             style: {

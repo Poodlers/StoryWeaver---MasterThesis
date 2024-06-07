@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import ReactFlow, {
   Controls,
   Background,
@@ -38,6 +38,7 @@ const nodeColor = (node) => {
 };
 
 function DialogueTree(props) {
+  const edgeUpdateSuccessful = useRef(true);
   const [selectedNode, setSelectedNode] = useState(undefined);
   const [inspectorData, setInspectorData] = useState({});
   const [inspectorProps, setInspectorProps] = useState(undefined);
@@ -85,6 +86,7 @@ function DialogueTree(props) {
         ) {
           return els;
         }
+        edgeUpdateSuccessful.current = true;
         applyChanges(nodeId, {
           nodes: nodes,
           edges: updateEdge(oldEdge, newConnection, els),
@@ -93,6 +95,18 @@ function DialogueTree(props) {
       }),
     []
   );
+
+  const onEdgeUpdateStart = useCallback(() => {
+    edgeUpdateSuccessful.current = false;
+  }, []);
+
+  const onEdgeUpdateEnd = useCallback((_, edge) => {
+    if (!edgeUpdateSuccessful.current) {
+      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+    }
+
+    edgeUpdateSuccessful.current = true;
+  }, []);
 
   const onNodesChange = useCallback(
     (changes) =>
@@ -145,9 +159,16 @@ function DialogueTree(props) {
     let newNodes = [...nodes];
     for (let i = 0; i < newNodes.length; i++) {
       if (newNodes[i].id == id) {
+        const oldData = newNodes[i].data;
+
         newNodes[i].data = data;
+        applyChanges(
+          nodeId,
+          { nodes: newNodes, edges: edges },
+          { oldEndName: oldData.id, changedId: id }
+        );
         setNodes(newNodes);
-        applyChanges(nodeId, { nodes: newNodes, edges: edges });
+
         break;
       }
     }
@@ -164,6 +185,8 @@ function DialogueTree(props) {
       }}
     >
       <ReactFlow
+        onEdgeUpdateStart={onEdgeUpdateStart}
+        onEdgeUpdateEnd={onEdgeUpdateEnd}
         onPaneClick={(event) => {
           setInspectorProps(undefined);
           if (selectedNode != undefined) {
@@ -207,6 +230,9 @@ function DialogueTree(props) {
             }
           }
 
+          if (event.target.id == "audioButton") {
+            return;
+          }
           setSelectedNode(node);
           let inspecProps = undefined;
           switch (node.type) {
@@ -276,6 +302,7 @@ function DialogueTree(props) {
         handleDelete={handleDelete}
         setValue={setInspectorData}
         data={inspectorProps}
+        setData={setInspectorProps}
       ></Inspector>
     </div>
   );

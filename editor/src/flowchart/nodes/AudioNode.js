@@ -33,11 +33,13 @@ export default function AudioNode(props) {
   const repo = ApiDataRepository.getInstance();
   const title = props.data?.name ?? "";
   const fileInfo = props.data?.file ?? "";
-  const audioColor = props.data?.color ?? "#000000";
+  const audioColor = props.data?.color.color ?? "#000000";
+
   const backgroundFileInfo = props.data?.background ?? "";
 
   const [error, setError] = React.useState(false);
   const [url, setUrl] = React.useState("");
+  const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
@@ -67,6 +69,11 @@ export default function AudioNode(props) {
   };
 
   useEffect(() => {
+    if (backgroundFileInfo.inputType == "color") {
+      setBackgroundURL("");
+      setBackgroundColor(backgroundFileInfo.color);
+      return;
+    }
     if (backgroundFileInfo.filename == "") {
       setBackgroundURL("");
       return;
@@ -176,8 +183,8 @@ export default function AudioNode(props) {
         sx={{
           background:
             backgroundURL == ""
-              ? secondaryColor
-              : `${secondaryColor} url(${backgroundURL}) no-repeat center center  fixed`,
+              ? backgroundColor
+              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
           backgroundSize: "cover",
           borderColor: "black",
           borderWidth: 2,

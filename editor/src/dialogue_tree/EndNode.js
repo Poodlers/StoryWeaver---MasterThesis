@@ -32,7 +32,7 @@ export default function EndNode(props) {
       >
         <Icon
           sx={{
-            fontSize: "90px !important",
+            fontSize: "70px !important",
           }}
         >
           flag
@@ -44,7 +44,8 @@ export default function EndNode(props) {
             color: textColor,
             textAlign: "center",
             m: "0 auto",
-            fontSize: 30,
+            px: 2,
+            fontSize: 24,
             fontWeight: "bold",
           }}
         >
