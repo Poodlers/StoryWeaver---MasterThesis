@@ -218,10 +218,12 @@ export default function ImageNode(props) {
         >
           {isAR ? "view_in_ar" : "landscape"}
         </Icon>
-        <CharacterIconDisplay
-          characterName={character.name}
-          characterFilepath={characterFilepath}
-        />
+        {title == "" ? null : (
+          <CharacterIconDisplay
+            characterName={character.name}
+            characterFilepath={characterFilepath}
+          />
+        )}
         <PlayerTextFinalDisplay
           text={title}
           messageType={"Mensagem"}

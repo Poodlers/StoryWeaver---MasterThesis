@@ -203,10 +203,13 @@ export default function PathNode(props) {
         >
           {"landscape"}
         </Icon>
-        <CharacterIconDisplay
-          characterName={character.name}
-          characterFilepath={characterFilepath}
-        />
+
+        {pathName == "" ? null : (
+          <CharacterIconDisplay
+            characterName={character.name}
+            characterFilepath={characterFilepath}
+          />
+        )}
         <PlayerTextFinalDisplay
           style={{ width: "90%" }}
           text={pathName}

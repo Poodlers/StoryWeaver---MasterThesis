@@ -202,10 +202,12 @@ export default function QuizNode(props) {
         >
           {"landscape"}
         </Icon>
-        <CharacterIconDisplay
-          characterName={character.name}
-          characterFilepath={characterFilepath}
-        />
+        {question == "" ? null : (
+          <CharacterIconDisplay
+            characterName={character.name}
+            characterFilepath={characterFilepath}
+          />
+        )}
         <PlayerTextFinalDisplay
           text={question}
           messageType="Pergunta"

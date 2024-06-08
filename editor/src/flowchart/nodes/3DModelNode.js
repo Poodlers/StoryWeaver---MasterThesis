@@ -232,11 +232,13 @@ export default function ThreeDModelNode(props) {
         >
           {isAR ? "view_in_ar" : "landscape"}
         </Icon>
+        {name == "" ? null : (
+          <CharacterIconDisplay
+            characterName={character.name}
+            characterFilepath={characterFilepath}
+          />
+        )}
 
-        <CharacterIconDisplay
-          characterName={character.name}
-          characterFilepath={characterFilepath}
-        />
         <PlayerTextFinalDisplay
           style={{ mt: 0 }}
           text={name}

@@ -182,10 +182,12 @@ export default function TextNode(props) {
           minHeight: "677px",
         }}
       >
-        <CharacterIconDisplay
-          characterName={character.name}
-          characterFilepath={characterFilepath}
-        />
+        {text == "" ? null : (
+          <CharacterIconDisplay
+            characterName={character.name}
+            characterFilepath={characterFilepath}
+          />
+        )}
         <Icon
           sx={{
             color: textColor,

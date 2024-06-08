@@ -230,10 +230,12 @@ export default function AudioNode(props) {
         >
           {"landscape"}
         </Icon>
-        <CharacterIconDisplay
-          characterName={character.name}
-          characterFilepath={characterFilepath}
-        />
+        {title == "" ? null : (
+          <CharacterIconDisplay
+            characterName={character.name}
+            characterFilepath={characterFilepath}
+          />
+        )}
         <PlayerTextFinalDisplay
           text={title}
           messageType="Texto"
