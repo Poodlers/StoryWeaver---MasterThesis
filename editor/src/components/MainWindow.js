@@ -29,6 +29,17 @@ import { v4 as uuid } from "uuid";
 import { findRemovedIndex, generateInspectorProps } from "../data/utils";
 import { defaultNodes } from "../data/defaultNodes";
 
+const defaultNarrator = {
+  id: 0,
+  name: "Narrador",
+  description: "O narrador da história",
+  image: {
+    inputType: "url",
+    filename: "../assets/character_dialogue_node.png",
+    blob: null,
+  },
+};
+
 const initialNodes = JSON.parse(
   localStorage.getItem("nodes") || JSON.stringify(defaultNodes)
 );
@@ -68,6 +79,32 @@ export default function MainWindow(props) {
   React.useEffect(() => {
     let newNodes = [...nodes];
     for (let i = 0; i < newNodes.length; i++) {
+      if (newNodes[i].type == NodeType.characterNode) {
+        const dialogNodesWithCharacter = newNodes[i].data.dialog.nodes.filter(
+          (node) =>
+            node.type == DialogNodeType.dialogNode ||
+            node.type == DialogNodeType.dialogChoiceNode
+        );
+        for (let j = 0; j < dialogNodesWithCharacter.length; j++) {
+          const characterInNode = dialogNodesWithCharacter[j].data.character;
+          const characterLocal = characters.find(
+            (character) => character.id === characterInNode.id
+          );
+          if (characterLocal) {
+            dialogNodesWithCharacter[j].data.character = characterLocal;
+          } else {
+            dialogNodesWithCharacter[j].data.character = {
+              name: "Personagem não encontrado",
+              image: {
+                inputType: "url",
+                filename: "./assets/caution_sign.svg",
+              },
+            };
+          }
+        }
+        console.log(dialogNodesWithCharacter);
+      }
+
       if (newNodes[i].data && newNodes[i].data.character) {
         const character = characters.find(
           (character) => character.id === newNodes[i].data.character.id
@@ -151,7 +188,11 @@ export default function MainWindow(props) {
     localStorage.removeItem("experienceTags");
     localStorage.removeItem("storyId");
     localStorage.setItem("projectTitle", "Adicone um título ao projeto");
-    localStorage.setItem("characters", JSON.stringify([narrator]));
+    narrator.id = 0;
+    narrator.name = defaultNarrator.name;
+    narrator.description = defaultNarrator.description;
+    narrator.image = defaultNarrator.image;
+    localStorage.setItem("characters", JSON.stringify([defaultNarrator]));
     try {
       const response = await repo.saveProject(
         "Adicone um título ao projeto",

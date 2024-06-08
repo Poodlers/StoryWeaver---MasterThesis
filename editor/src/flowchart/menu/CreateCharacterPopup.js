@@ -39,7 +39,6 @@ export default function CreateCharacterPopup(props) {
       narrator.name = name;
       narrator.description = description;
       narrator.image = sprite;
-      console.log(narrator);
     }
   }, [name, description, sprite]);
 
