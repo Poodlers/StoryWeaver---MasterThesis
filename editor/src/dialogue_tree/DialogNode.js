@@ -10,10 +10,11 @@ import {
   textColor,
 } from "../themes";
 import { ApiDataRepository } from "../api/ApiDataRepository";
+import { narrator } from "../data/narrator";
 
 export default function DialogNode(props) {
   const repo = ApiDataRepository.getInstance();
-  const character = props.data?.character ?? "";
+  const character = props.data?.character ?? narrator;
   const text = props.data?.text ?? "";
   const audio = props.data?.audio ?? "";
   const [filepath, setFilepath] = React.useState("");
@@ -68,11 +69,7 @@ export default function DialogNode(props) {
           right: "-7px",
         }}
       />
-      <Box
-        sx={{
-          backgroundColor: textColor,
-        }}
-      >
+      <Box>
         <Box
           sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
         >

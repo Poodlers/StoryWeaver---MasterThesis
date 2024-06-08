@@ -17,6 +17,8 @@ import React, { useEffect } from "react";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 import { DescriptionSharp } from "@mui/icons-material";
+import CharacterIconDisplay from "./util/CharacterIconDisplay";
+import { narrator } from "../../data/narrator";
 
 export default function QuizNode(props) {
   const repo = ApiDataRepository.getInstance();
@@ -32,6 +34,7 @@ export default function QuizNode(props) {
   const nodeId = props.id;
 
   useEffect(() => {
+    console.log("Updating node internals");
     updateNodeInternals(nodeId);
   }, [answers]);
 
@@ -81,6 +84,25 @@ export default function QuizNode(props) {
         });
     }
   }, [backgroundFileInfo]);
+
+  const character = props.data?.character ?? narrator;
+  const [characterFilepath, setCharacterFilepath] = React.useState("");
+  useEffect(() => {
+    if (character && character.image.inputType === "file") {
+      repo
+        .getFilePath(character.image.filename)
+        .then((filepath) => {
+          console.log(filepath);
+          setCharacterFilepath(filepath);
+        })
+        .catch(() => {
+          console.log("Error loading character image");
+          setCharacterFilepath("../assets/character_dialogue_node.png");
+        });
+    } else {
+      setCharacterFilepath(character.image.filename);
+    }
+  }, [character]);
 
   return (
     <>
@@ -180,6 +202,10 @@ export default function QuizNode(props) {
         >
           {"landscape"}
         </Icon>
+        <CharacterIconDisplay
+          characterName={character.name}
+          characterFilepath={characterFilepath}
+        />
         <PlayerTextFinalDisplay
           text={question}
           messageType="Pergunta"
@@ -219,17 +245,23 @@ export default function QuizNode(props) {
           }}
         >
           {answers.map((answer, index) => (
-            <div key={index}>
+            <div
+              key={index}
+              style={{
+                position: "relative",
+              }}
+            >
               <PlayerTextFinalDisplay style={{ mb: 2 }} text={answer} />
 
               <Handle
                 type="source"
                 position={Position.Right}
                 style={{
-                  marginTop: 70 * index,
+                  position: "absolute",
                   ...rightNodeHandleStyle,
+                  right: -5,
                 }}
-                id={`${answer}`}
+                id={`${index}`}
               />
             </div>
           ))}

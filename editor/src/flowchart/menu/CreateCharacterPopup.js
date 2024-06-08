@@ -18,6 +18,8 @@ import {
   textColor,
 } from "../../themes";
 import FileSelectField from "../inspector/FileSelect.js";
+import { v4 as uuid } from "uuid";
+import { narrator } from "../../data/narrator";
 
 export default function CreateCharacterPopup(props) {
   const open = props.open;
@@ -31,6 +33,15 @@ export default function CreateCharacterPopup(props) {
     filename: "",
     blob: null,
   });
+
+  React.useEffect(() => {
+    if (selectedCharacter && selectedCharacter.id === 0) {
+      narrator.name = name;
+      narrator.description = description;
+      narrator.image = sprite;
+      console.log(narrator);
+    }
+  }, [name, description, sprite]);
 
   React.useEffect(() => {
     if (selectedCharacter) {
@@ -95,7 +106,7 @@ export default function CreateCharacterPopup(props) {
               borderBottomColor: secondaryColor,
             }}
           >
-            NOVO PERSONAGEM
+            {selectedCharacter ? "EDITAR PERSONAGEM" : "NOVA PERSONAGEM"}
           </Typography>
 
           <Icon
@@ -279,9 +290,7 @@ export default function CreateCharacterPopup(props) {
             <ButtonBase
               onClick={() => {
                 onClose({
-                  id: selectedCharacter
-                    ? selectedCharacter.id
-                    : characters.length + 1,
+                  id: selectedCharacter ? selectedCharacter.id : uuid(),
                   name: name,
                   description: description,
                   image: sprite,

@@ -26,29 +26,8 @@ import { DialogNodeType } from "../models/DialogNodeTypes";
 import { ApiDataRepository } from "../api/ApiDataRepository";
 import { narrator } from "../data/narrator";
 import { v4 as uuid } from "uuid";
-import { findRemovedIndex } from "../data/utils";
-
-const generateInspectorProps = (props) => {
-  return props.fields.reduce(
-    (obj, field) => ({ ...obj, [field.name]: field.initialValue }),
-    {}
-  );
-};
-
-const defaultNodes = [
-  {
-    id: "0",
-    position: { x: 0, y: 0 },
-    data: undefined,
-    type: NodeType.beginNode,
-  },
-  {
-    id: "5",
-    position: { x: 400, y: 100 },
-    data: generateInspectorProps(EndDialogProps),
-    type: NodeType.endNode,
-  },
-];
+import { findRemovedIndex, generateInspectorProps } from "../data/utils";
+import { defaultNodes } from "../data/defaultNodes";
 
 const initialNodes = JSON.parse(
   localStorage.getItem("nodes") || JSON.stringify(defaultNodes)
@@ -77,7 +56,7 @@ export default function MainWindow(props) {
   const [dialogueNodeId, setDialogueNodeId] = React.useState(null);
 
   const [projectTitle, setProjectTitle] = React.useState(
-    localStorage.getItem("projectTitle") || "Projeto Exemplo"
+    localStorage.getItem("projectTitle") || "Adicone um título ao projeto"
   );
 
   React.useEffect(() => {
@@ -85,6 +64,29 @@ export default function MainWindow(props) {
       setMountMap(true);
     }
   }, [mountMap]);
+
+  React.useEffect(() => {
+    let newNodes = [...nodes];
+    for (let i = 0; i < newNodes.length; i++) {
+      if (newNodes[i].data && newNodes[i].data.character) {
+        const character = characters.find(
+          (character) => character.id === newNodes[i].data.character.id
+        );
+        if (character) {
+          newNodes[i].data.character = character;
+        } else {
+          newNodes[i].data.character = {
+            name: "Personagem não encontrado",
+            image: {
+              inputType: "url",
+              filename: "./assets/caution_sign.svg",
+            },
+          };
+        }
+      }
+    }
+    setNodes(newNodes);
+  }, [characters]);
 
   const handleLoadLocal = () => {
     // read NODES and EDGES from file
@@ -277,6 +279,7 @@ export default function MainWindow(props) {
 
   const changeOneNode = (nodeId, newData, oldEndData) => {
     const oldNode = nodes.find((node) => node.id === nodeId);
+
     if (oldNode.type === NodeType.characterNode) {
       const oldDialogNodesEndsNames = oldNode.data.dialog.nodes
         .filter((node) => node.type === DialogNodeType.endDialogNode)
@@ -356,6 +359,7 @@ export default function MainWindow(props) {
     <>
       <TopAppBar
         nodes={nodes}
+        selectedMap={selectedMap}
         edges={edges}
         characters={characters}
         setCharacters={setCharacters}
@@ -463,6 +467,7 @@ export default function MainWindow(props) {
 
         {displayedWindow === "História" ? (
           <Flow
+            characters={characters}
             setWindows={setWindows}
             changeDisplayedWindow={changeDisplayedWindow}
             windows={windows}

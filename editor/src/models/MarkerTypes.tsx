@@ -7,6 +7,7 @@ enum MarkerTypes {
     exit = 'exit',
     painting = 'painting',
     sculpture = 'sculpture',
+    other = 'other',
 }
 
 const possibleMarkers =[
@@ -28,7 +29,7 @@ const possibleMarkers =[
     {
         name: 'Entrada',
         type: MarkerTypes.entrance,
-        image: 'entrada.svg',
+        image: 'entrance.png',
     },
     {
         name: 'Saída',
@@ -50,6 +51,11 @@ const possibleMarkers =[
         type: MarkerTypes.artifact,
         image: 'artefacto.svg',
     },
+    {
+        name: 'Outro',
+        type: MarkerTypes.other,
+        image: 'info.svg',
+    }
     
 ]
 

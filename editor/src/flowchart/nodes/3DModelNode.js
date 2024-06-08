@@ -23,6 +23,8 @@ import { ComponentState } from "../../models/ComponentState";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
 import { DescriptionSharp } from "@mui/icons-material";
+import { narrator } from "../../data/narrator";
+import CharacterIconDisplay from "./util/CharacterIconDisplay";
 
 const { FS } = fs;
 
@@ -70,6 +72,25 @@ export default function ThreeDModelNode(props) {
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
   const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
+  const character = props.data?.character ?? narrator;
+  const [characterFilepath, setCharacterFilepath] = React.useState("");
+  useEffect(() => {
+    if (character && character.image.inputType === "file") {
+      repo
+        .getFilePath(character.image.filename)
+        .then((filepath) => {
+          console.log(filepath);
+          setCharacterFilepath(filepath);
+        })
+        .catch(() => {
+          console.log("Error loading character image");
+          setCharacterFilepath("../assets/character_dialogue_node.png");
+        });
+    } else {
+      setCharacterFilepath(character.image.filename);
+    }
+  }, [character]);
+
   useEffect(() => {
     if (backgroundFileInfo.inputType == "color") {
       setBackgroundURL("");
@@ -211,7 +232,13 @@ export default function ThreeDModelNode(props) {
         >
           {isAR ? "view_in_ar" : "landscape"}
         </Icon>
+
+        <CharacterIconDisplay
+          characterName={character.name}
+          characterFilepath={characterFilepath}
+        />
         <PlayerTextFinalDisplay
+          style={{ mt: 0 }}
           text={name}
           messageType={"Mensagem"}
           titleIcon={
@@ -249,7 +276,7 @@ export default function ThreeDModelNode(props) {
             <Frame
               style={{
                 width: "365px",
-                minHeight: "600px",
+                minHeight: "460px",
                 borderRadius: 4,
                 borderColor: "black",
                 borderWidth: 2,

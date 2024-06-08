@@ -213,6 +213,7 @@ export default function CharacterNode(props) {
               <div
                 key={index}
                 style={{
+                  position: "relative",
                   width: "100%",
                   height: "100%",
                 }}
@@ -222,8 +223,10 @@ export default function CharacterNode(props) {
                   type="source"
                   position={Position.Right}
                   style={{
-                    marginTop: 70 * index + 20,
+                    position: "absolute",
                     ...rightNodeHandleStyle,
+                    right: -5,
+                    top: 25,
                   }}
                   id={node.data.id}
                 />

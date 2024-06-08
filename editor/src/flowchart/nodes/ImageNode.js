@@ -11,12 +11,8 @@ import {
 } from "../../themes";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
-import {
-  DescriptionOutlined,
-  DescriptionSharp,
-  MenuBookOutlined,
-  MenuOpenOutlined,
-} from "@mui/icons-material";
+import { narrator } from "../../data/narrator";
+import CharacterIconDisplay from "./util/CharacterIconDisplay";
 
 export default function ImageNode(props) {
   const repo = ApiDataRepository.getInstance();
@@ -84,6 +80,25 @@ export default function ImageNode(props) {
         });
     }
   }, [backgroundFileInfo]);
+
+  const character = props.data?.character ?? narrator;
+  const [characterFilepath, setCharacterFilepath] = React.useState("");
+  useEffect(() => {
+    if (character && character.image.inputType === "file") {
+      repo
+        .getFilePath(character.image.filename)
+        .then((filepath) => {
+          console.log(filepath);
+          setCharacterFilepath(filepath);
+        })
+        .catch(() => {
+          console.log("Error loading character image");
+          setCharacterFilepath("../assets/character_dialogue_node.png");
+        });
+    } else {
+      setCharacterFilepath(character.image.filename);
+    }
+  }, [character]);
 
   useEffect(() => {
     if (fileInfo.filename == "") {
@@ -203,6 +218,10 @@ export default function ImageNode(props) {
         >
           {isAR ? "view_in_ar" : "landscape"}
         </Icon>
+        <CharacterIconDisplay
+          characterName={character.name}
+          characterFilepath={characterFilepath}
+        />
         <PlayerTextFinalDisplay
           text={title}
           messageType={"Mensagem"}
@@ -226,7 +245,7 @@ export default function ImageNode(props) {
           {error || fileInfo.filename == "" ? (
             <Typography
               variant="h6"
-              sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 500 }}
+              sx={{ px: 3, fontSize: 20, color: textColor, fontWeight: 500 }}
             >
               {errorMsg}
             </Typography>
@@ -240,27 +259,13 @@ export default function ImageNode(props) {
               onLoad={() => {
                 setError(false);
               }}
-              onError={(e) => {
-                // if blob is not valid, fetch the image from the server
-                if (fileInfo.inputType == "file") {
-                  repo
-                    .getFile(fileInfo.filename)
-                    .then((blob) => {
-                      e.target.src = URL.createObjectURL(blob);
-                    })
-                    .catch((e) => {
-                      setError(true);
-                      setErrorMsg("Erro ao carregar a imagem!");
-                    });
-                } else {
-                  setError(true);
-                  setErrorMsg("Insira uma imagem no editor!");
-                }
-              }}
+              onError={(e) => {}}
               src={url}
               style={{
-                width: "auto",
-                height: "200px",
+                width: "90%",
+                height: "auto",
+                maxHeight: "400px",
+                margin: "0 auto",
                 padding: 10,
                 display: error ? "none" : "block",
               }}

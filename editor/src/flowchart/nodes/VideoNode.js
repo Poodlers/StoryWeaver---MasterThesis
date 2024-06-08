@@ -13,6 +13,8 @@ import React, { useEffect } from "react";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 import { DescriptionSharp } from "@mui/icons-material";
+import { narrator } from "../../data/narrator";
+import CharacterIconDisplay from "./util/CharacterIconDisplay";
 
 export default function VideoNode(props) {
   const repo = ApiDataRepository.getInstance();
@@ -41,6 +43,25 @@ export default function VideoNode(props) {
     reactflow.setNodes(newNodes);
     localStorage.setItem("nodes", JSON.stringify(newNodes));
   };
+
+  const character = props.data?.character ?? narrator;
+  const [characterFilepath, setCharacterFilepath] = React.useState("");
+  useEffect(() => {
+    if (character && character.image.inputType === "file") {
+      repo
+        .getFilePath(character.image.filename)
+        .then((filepath) => {
+          console.log(filepath);
+          setCharacterFilepath(filepath);
+        })
+        .catch(() => {
+          console.log("Error loading character image");
+          setCharacterFilepath("../assets/character_dialogue_node.png");
+        });
+    } else {
+      setCharacterFilepath(character.image.filename);
+    }
+  }, [character]);
 
   const deleteNode = () => {
     const newNodes = reactflow.getNodes().filter((node) => node.id !== nodeId);
@@ -190,12 +211,17 @@ export default function VideoNode(props) {
             color: textColor,
             fontSize: "50px !important",
             position: "absolute",
+            zIndex: 99,
             bottom: 5,
             right: 20,
           }}
         >
           {isAR ? "view_in_ar" : "landscape"}
         </Icon>
+        <CharacterIconDisplay
+          characterName={character.name}
+          characterFilepath={characterFilepath}
+        />
         <PlayerTextFinalDisplay
           text={title}
           messageType={"Mensagem"}

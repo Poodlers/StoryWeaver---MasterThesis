@@ -41,7 +41,7 @@ export default function CharacterDialogueDisplay(props) {
       }}
     >
       <img
-        src={character.image.filename}
+        src={characterImg}
         alt={character.name}
         style={{
           width: "100px",

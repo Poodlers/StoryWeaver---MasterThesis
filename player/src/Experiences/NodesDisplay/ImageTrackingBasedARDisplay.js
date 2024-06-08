@@ -8,6 +8,7 @@ import VideoImageTrackingARDisplay from "./VideoImageTrackingARDisplay";
 import ImageImageTrackingARDisplay from "./ImageImageTrackingARDisplay";
 import ThreeDModelImageTrackingDisplay from "./ThreeDModelImageTrackingDisplay";
 import Frame from "react-frame-component";
+import TextImageTrackingARDisplay from "./TextImageTrackingARDisplay";
 
 export default function ImageTrackingBasedARDisplay(props) {
   const repo = ApiDataRepository.getInstance();
@@ -17,7 +18,7 @@ export default function ImageTrackingBasedARDisplay(props) {
   const rotation = props.rotation;
   const scale = props.scale;
   const src = props.src;
-  const additionalFiles = props.additionalFiles;
+
   const [componentState, setComponentState] = React.useState(
     ComponentState.LOADING
   );
@@ -70,8 +71,7 @@ export default function ImageTrackingBasedARDisplay(props) {
         <script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
         </head><body><div></div></body></html>'
         >
-          {entityType === AREntityTypes.ThreeDModel ? null : entityType ===
-            AREntityTypes.Video ? (
+          {entityType == AREntityTypes.Video ? (
             <VideoImageTrackingARDisplay
               src={src}
               markerSrc={imageDescriptorsPath}
@@ -79,7 +79,7 @@ export default function ImageTrackingBasedARDisplay(props) {
               rotation={rotation}
               scale={scale}
             ></VideoImageTrackingARDisplay>
-          ) : AREntityTypes.Image ? (
+          ) : entityType == AREntityTypes.Image ? (
             <ImageImageTrackingARDisplay
               src={src}
               markerSrc={imageDescriptorsPath}
@@ -87,7 +87,7 @@ export default function ImageTrackingBasedARDisplay(props) {
               rotation={rotation}
               scale={scale}
             ></ImageImageTrackingARDisplay>
-          ) : AREntityTypes.ThreeDModel ? (
+          ) : entityType == AREntityTypes.ThreeDModel ? (
             <ThreeDModelImageTrackingDisplay
               src={src}
               markerSrc={imageDescriptorsPath}
@@ -95,7 +95,17 @@ export default function ImageTrackingBasedARDisplay(props) {
               rotation={rotation}
               scale={scale}
             ></ThreeDModelImageTrackingDisplay>
-          ) : null}
+          ) : entityType == AREntityTypes.Text ? (
+            <TextImageTrackingARDisplay
+              text={name}
+              markerSrc={imageDescriptorsPath}
+              position={position}
+              rotation={rotation}
+              scale={scale}
+            ></TextImageTrackingARDisplay>
+          ) : (
+            <div>Not supported</div>
+          )}
         </Frame>
       )}
     </Box>

@@ -2,7 +2,7 @@ import { AttachFileOutlined, CloseOutlined } from "@mui/icons-material";
 import { Checkbox, Icon, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { MuiFileInput } from "mui-file-input";
-import React from "react";
+import React, { useEffect } from "react";
 import { FileTypesInput } from "../../models/FileTypesInput";
 import {
   primaryColor,
@@ -29,7 +29,19 @@ function FileSelectField(props) {
   const style = props.style;
   const value = props.value;
   const [inputMethod, setInputMethod] = React.useState(value.inputType);
+  const [inputText, setInputText] = React.useState(
+    value.filename == "" ? "Selecione um ficheiro" : value.filename
+  );
   const handleFieldChange = props.onChange;
+
+  useEffect(() => {
+    setInputText(
+      value.filename == "" || value.inputType == "url"
+        ? "Selecione um ficheiro"
+        : value.filename
+    );
+    setInputMethod(value.inputType);
+  }, [value]);
 
   return (
     <Box
@@ -197,12 +209,13 @@ function FileSelectField(props) {
             typeof="file"
             clearIconButtonProps={{
               title: "Remove",
-              sx: { color: "black" },
+              sx: { color: "black", zIndex: 99 },
               children: <CloseOutlined fontSize="small" />,
             }}
-            getInputText={(value) => (value ? value : "Select a file")}
+            getInputText={(value) => inputText}
             onChange={(file) => {
               if (file === null) {
+                setInputText("Selecione um ficheiro");
                 if (value.inputType == "file") {
                   repo.deleteFile(value.filename).catch((error) => {
                     console.error(error);
@@ -216,7 +229,9 @@ function FileSelectField(props) {
                 });
                 return;
               }
+              setInputText("A carregar...");
               const fileID = uuid();
+              const originalFileName = file.name;
               const fileName = fileID + file.name;
               file = new File([file], fileName, { type: file.type });
               if (value.inputType == "file" && value.filename != fileName) {
@@ -268,7 +283,6 @@ function FileSelectField(props) {
                       }
                     });
                   } else {
-                    console.log("File uploaded");
                     handleFieldChange(props.data.name, {
                       ...value,
                       blob: urlObj,
@@ -287,6 +301,7 @@ function FileSelectField(props) {
                         console.error(error);
                       });
                   }
+                  setInputText(originalFileName);
                 })
                 .catch((error) => {
                   console.error(error);

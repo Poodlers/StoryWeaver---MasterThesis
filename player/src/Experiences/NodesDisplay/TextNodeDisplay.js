@@ -18,24 +18,39 @@ import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 
 export default function VideoNodeDisplay(props) {
   const repo = ApiDataRepository.getInstance();
-  const videoNode = props.node;
-  const title = videoNode.data.name;
-  const fileInfo = videoNode.data.file;
-  const possibleNextNodes = props.possibleNextNodes;
-  const [url, setUrl] = React.useState("");
-  const setNextNode = props.setNextNode;
-  const experienceName = props.experienceName;
-  const ARTypeInfo = videoNode.data.ar_type;
-  const isAR = videoNode.data.ar;
-  const position = videoNode.data.position;
-  const scale = videoNode.data.scale;
+  const textNode = props.node;
+  const text = textNode.data.text;
 
-  const backgroundFileInfo = videoNode.data.background;
+  const character = textNode.data.character;
+  const possibleNextNodes = props.possibleNextNodes;
+
+  const setNextNode = props.setNextNode;
+
+  const ARTypeInfo = textNode.data.ar_type;
+  const isAR = textNode.data.ar;
+  const position = textNode.data.position;
+  const scale = textNode.data.scale;
+
+  const backgroundFileInfo = textNode.data.background;
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
   const [componentState, setComponentState] = React.useState(
     ComponentState.LOADING
   );
+  const [characterImg, setCharacterImg] = React.useState("");
+
+  useEffect(() => {
+    if (character.image.filename == "") {
+      return;
+    }
+    if (character.image.inputType == "url") {
+      setCharacterImg(character.image.filename);
+    } else {
+      repo.getFilePath(character.image.filename).then((url) => {
+        setCharacterImg(url);
+      });
+    }
+  }, [character]);
 
   const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
 
@@ -63,23 +78,6 @@ export default function VideoNodeDisplay(props) {
     }
   }, [backgroundFileInfo]);
 
-  useEffect(() => {
-    if (fileInfo.inputType == "file") {
-      repo
-        .getFilePath(fileInfo.filename)
-        .then((path) => {
-          setUrl(path);
-          console.log("Video URL: " + path);
-          setComponentState(ComponentState.LOADED);
-        })
-        .catch((error) => {
-          setComponentState(ComponentState.ERROR);
-        });
-    } else {
-      setUrl(fileInfo.filename);
-    }
-  }, []);
-
   return (
     <Box
       sx={{
@@ -96,14 +94,6 @@ export default function VideoNodeDisplay(props) {
         backgroundSize: "cover",
       }}
     >
-      <style>
-        {`
-          video {
-            max-height: 80%;
-          }
-
-          `}
-      </style>
       {componentState === ComponentState.LOADING ? (
         <Typography
           variant="h4"
@@ -133,57 +123,29 @@ export default function VideoNodeDisplay(props) {
       ) : isAR ? (
         ARTypeInfo.trigger_mode === ARTriggerMode.GPSCoords ? (
           <LocationBasedARDisplay
-            name={title}
-            src={fileInfo.filename}
+            name={text}
             map={ARTypeInfo.map}
             place={ARTypeInfo.place}
             tolerance={ARTypeInfo.tolerance}
             position={position}
             scale={scale}
-            entityType={AREntityTypes.Video}
+            entityType={AREntityTypes.Text}
           />
         ) : (
           <ImageTrackingBasedARDisplay
-            name={title}
+            name={text}
             markerSrc={
               ARTypeInfo.trigger_mode == ARTriggerMode.QRCode
                 ? ARTypeInfo.qr_code
                 : ARTypeInfo.image.filename
             }
-            src={url}
             position={position}
             scale={scale}
-            entityType={AREntityTypes.Video}
+            entityType={AREntityTypes.Text}
           />
         )
       ) : (
-        <>
-          <PlayerTextFinalDisplay
-            text={title}
-            messageType={"Vídeo"}
-            style={{ width: "90%" }}
-          />
-          <ReactPlayer
-            style={{
-              marginTop: "10px",
-            }}
-            onError={(e) => {
-              if (fileInfo.inputType == "file") {
-                repo.getFile(fileInfo.filename).then((blob) => {
-                  setUrl(URL.createObjectURL(blob));
-                });
-              } else {
-                setComponentState(ComponentState.ERROR);
-              }
-            }}
-            url={url}
-            width={"90%"}
-            height={"auto"}
-            controls={true}
-            playing={false}
-            muted={false}
-          />
-        </>
+        <PlayerTextFinalDisplay text={text} />
       )}
       <ButtonBase
         sx={{

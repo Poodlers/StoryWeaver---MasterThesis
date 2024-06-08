@@ -23,6 +23,7 @@ import {
   DialogProps,
   EndDialogProps,
 } from "../flowchart/nodes/nodeProps";
+import { findRemovedIndex } from "../data/utils";
 
 const nodeColor = (node) => {
   switch (node.type) {
@@ -161,6 +162,25 @@ function DialogueTree(props) {
       if (newNodes[i].id == id) {
         const oldData = newNodes[i].data;
 
+        if (newNodes[i].type == DialogNodeType.dialogChoiceNode) {
+          const oldAnswers = oldData.answers;
+          const newAnswers = data.answers;
+
+          //case answer is deleted
+          if (oldAnswers.length > newAnswers.length) {
+            const removedIndex = findRemovedIndex(oldAnswers, newAnswers);
+            const newEdges = edges.filter(
+              (edge) =>
+                !(
+                  edge.source == newNodes[i].id &&
+                  edge.sourceHandle == removedIndex
+                )
+            );
+            console.log(newEdges);
+
+            setEdges(newEdges);
+          }
+        }
         newNodes[i].data = data;
         applyChanges(
           nodeId,
@@ -207,8 +227,8 @@ function DialogueTree(props) {
           selectedNode
             ? selectedNode.type === DialogNodeType.beginDialogNode
               ? ""
-              : "Delete"
-            : "Delete"
+              : "Backspace"
+            : "Backspace"
         }
         onNodesDelete={(nodeToDelete) => {
           handleDelete(nodeToDelete[0].id);

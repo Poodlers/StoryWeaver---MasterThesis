@@ -12,11 +12,14 @@ import React, { useEffect } from "react";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 import { DescriptionSharp } from "@mui/icons-material";
+import CharacterIconDisplay from "./util/CharacterIconDisplay";
+import { narrator } from "../../data/narrator";
 
 export default function TextNode(props) {
   const repo = ApiDataRepository.getInstance();
   const text = props.data?.text ?? "";
   const isAR = props.data?.ar ?? false;
+  const character = props.data?.character ?? narrator;
   const backgroundFileInfo = props.data?.background ?? "";
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
@@ -46,6 +49,22 @@ export default function TextNode(props) {
     localStorage.setItem("edges", JSON.stringify(newEdges));
   };
   const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
+
+  const [characterFilepath, setCharacterFilepath] = React.useState("");
+  useEffect(() => {
+    if (character && character.image.inputType === "file") {
+      repo
+        .getFilePath(character.image.filename)
+        .then((filepath) => {
+          setCharacterFilepath(filepath);
+        })
+        .catch(() =>
+          setCharacterFilepath("../assets/character_dialogue_node.png")
+        );
+    } else {
+      setCharacterFilepath(character.image.filename);
+    }
+  }, [character]);
   useEffect(() => {
     if (backgroundFileInfo.inputType == "color") {
       setBackgroundURL("");
@@ -163,6 +182,10 @@ export default function TextNode(props) {
           minHeight: "677px",
         }}
       >
+        <CharacterIconDisplay
+          characterName={character.name}
+          characterFilepath={characterFilepath}
+        />
         <Icon
           sx={{
             color: textColor,

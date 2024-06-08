@@ -37,7 +37,7 @@ export default function ImageNodeDisplay(props) {
     ComponentState.LOADING
   );
 
-  const [backgroundColor, setBackgroundColor] = React.useState("#000000");
+  const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
 
   useEffect(() => {
     if (backgroundFileInfo.inputType == "color") {

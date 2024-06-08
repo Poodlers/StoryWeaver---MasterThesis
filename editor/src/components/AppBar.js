@@ -39,7 +39,7 @@ export default function TopAppBar(props) {
   const characters = props.characters;
   const nodes = props.nodes;
   const edges = props.edges;
-
+  const selectedMap = props.selectedMap;
   const [displayAlert, setDisplayAlert] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState("");
   const [severity, setSeverity] = React.useState("error");
@@ -84,7 +84,9 @@ export default function TopAppBar(props) {
 
       if (!hasIncomingConnection) {
         setAlertMessage(
-          `O nó "${node.data.sceneName}" não tem ligações de entrada!`
+          `A cena "${
+            node.data.sceneName ? node.data.sceneName : node.data.id
+          }" não tem ligações de entrada!`
         );
         setDisplayAlert(true);
         return false;
@@ -109,6 +111,53 @@ export default function TopAppBar(props) {
             return false;
           }
         }
+
+        //check that the nodes inside the dialog all have connections
+        const allDialogNodes = node.data.dialog.nodes;
+        const allDialogEdges = node.data.dialog.edges;
+        for (let dialogNode of allDialogNodes) {
+          const hasIncomingConnection =
+            allDialogEdges.some((edge) => edge.target === dialogNode.id) ||
+            dialogNode.type === DialogNodeType.beginDialogNode;
+
+          if (!hasIncomingConnection) {
+            setAlertMessage(
+              `O diálogo "${dialogName}" tem problemas de ligação!`
+            );
+            setDisplayAlert(true);
+            return false;
+          }
+          if (dialogNode.type == DialogNodeType.dialogChoiceNode) {
+            //check that every answer has a connection
+            const allAnswers = dialogNode.data.answers;
+            const dialogId = dialogNode.id;
+            const dialogQuestion = dialogNode.data.prompt;
+            for (let i = 0; i < allAnswers.length; i++) {
+              const hasConnection = allDialogEdges.some(
+                (edge) =>
+                  edge.source === dialogId && edge.sourceHandle === i.toString()
+              );
+              if (!hasConnection) {
+                setAlertMessage(
+                  `[${dialogName}]A resposta "${allAnswers[i]}" na pergunta ${dialogQuestion} não tem ligação!"`
+                );
+                setDisplayAlert(true);
+                return false;
+              }
+            }
+          }
+          const hasOutgoingConnection =
+            allDialogEdges.some((edge) => edge.source === dialogNode.id) ||
+            dialogNode.type === DialogNodeType.endDialogNode;
+
+          if (!hasOutgoingConnection) {
+            setAlertMessage(
+              `O diálogo "${dialogName}" tem problemas de ligação!`
+            );
+            setDisplayAlert(true);
+            return false;
+          }
+        }
       } else if (node.type === NodeType.quizNode) {
         const allAnswers = node.data.answers;
         //check that every question has a connection
@@ -117,7 +166,7 @@ export default function TopAppBar(props) {
         for (let i = 0; i < allAnswers.length; i++) {
           const hasConnection = edges.some(
             (edge) =>
-              edge.source === quizId && edge.sourceHandle === allAnswers[i]
+              edge.source === quizId && edge.sourceHandle === i.toString()
           );
           if (!hasConnection) {
             setAlertMessage(
@@ -134,7 +183,9 @@ export default function TopAppBar(props) {
 
         if (!hasOutgoingConnection) {
           setAlertMessage(
-            `O nó "${node.data.sceneName}" não tem ligações de saída!`
+            `A cena "${
+              node.data.sceneName ? node.data.sceneName : node.data.id
+            }" não tem ligações de saída!`
           );
           setDisplayAlert(true);
           return false;
@@ -243,8 +294,7 @@ export default function TopAppBar(props) {
             >
               Novo
             </MenuItem>
-
-            <MenuItem
+            {/* <MenuItem
               onClick={() => {
                 handleSaveLocal();
                 handleClose();
@@ -259,7 +309,8 @@ export default function TopAppBar(props) {
               }}
             >
               Carregar Localmente
-            </MenuItem>
+            </MenuItem> */}
+
             <MenuItem
               onClick={() => {
                 setDisplayAlert(true);
@@ -291,6 +342,12 @@ export default function TopAppBar(props) {
             aria-label="menu"
             sx={{ mr: 2, fontSize: "30px !important" }}
             onClick={() => {
+              if (
+                currentWindow === "Mapa" &&
+                selectedMap.progressionState != "name-given"
+              )
+                return;
+
               setOpenAddNode(true);
             }}
           >

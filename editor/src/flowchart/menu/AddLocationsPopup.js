@@ -95,7 +95,7 @@ export default function AddLocationsPopup(props) {
                 >
                   <img
                     src={"./assets/" + marker.image}
-                    sx={{ width: 50, height: 50 }}
+                    style={{ width: 50, height: 50 }}
                   ></img>
                   <Typography
                     variant="h7"

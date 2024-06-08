@@ -63,7 +63,7 @@ export default function DialogueNodeDisplay(props) {
     setComponentState(ComponentState.LOADED);
   }, [dialogTree]);
 
-  const [backgroundColor, setBackgroundColor] = React.useState("#000000");
+  const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
 
   useEffect(() => {
     if (backgroundFileInfo.inputType == "color") {

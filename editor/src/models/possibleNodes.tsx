@@ -39,20 +39,20 @@ export const possibleNodes =[
         image: 'text_node.png',
     },
     {
-        name: '3D Model',
+        name: 'Modelo 3D',
         type: NodeType.threeDModelNode,
         props: ThreeDModelProps,
         image: 'three_d_model_node.png',
     },
     {
-        name: 'Path',
+        name: 'Caminho',
         type: NodeType.pathNode,
         props: PathProps,
         image: 'path_node.png',
 
     },
     {
-        name: 'Character Dialogue',
+        name: 'Diálogo',
         type: NodeType.characterNode,
         props: CharacterProps,
         image: 'character_dialogue_node.png'

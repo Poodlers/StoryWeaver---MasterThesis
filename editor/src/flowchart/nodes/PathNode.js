@@ -12,6 +12,8 @@ import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 import { ApiDataRepository } from "../../api/ApiDataRepository";
 import React, { useEffect } from "react";
 import { DescriptionSharp } from "@mui/icons-material";
+import { narrator } from "../../data/narrator";
+import CharacterIconDisplay from "./util/CharacterIconDisplay";
 
 export default function PathNode(props) {
   const repo = ApiDataRepository.getInstance();
@@ -55,6 +57,24 @@ export default function PathNode(props) {
     localStorage.setItem("edges", JSON.stringify(newEdges));
   };
 
+  const character = props.data?.character ?? narrator;
+  const [characterFilepath, setCharacterFilepath] = React.useState("");
+  useEffect(() => {
+    if (character && character.image.inputType === "file") {
+      repo
+        .getFilePath(character.image.filename)
+        .then((filepath) => {
+          console.log(filepath);
+          setCharacterFilepath(filepath);
+        })
+        .catch(() => {
+          console.log("Error loading character image");
+          setCharacterFilepath("../assets/character_dialogue_node.png");
+        });
+    } else {
+      setCharacterFilepath(character.image.filename);
+    }
+  }, [character]);
   const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
   useEffect(() => {
     if (backgroundFileInfo.inputType == "color") {
@@ -183,6 +203,10 @@ export default function PathNode(props) {
         >
           {"landscape"}
         </Icon>
+        <CharacterIconDisplay
+          characterName={character.name}
+          characterFilepath={characterFilepath}
+        />
         <PlayerTextFinalDisplay
           style={{ width: "90%" }}
           text={pathName}

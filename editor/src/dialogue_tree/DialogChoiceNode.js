@@ -1,6 +1,6 @@
 import { Box, Icon, IconButton, Typography } from "@mui/material";
-import React from "react";
-import { Handle, Position } from "reactflow";
+import React, { useEffect } from "react";
+import { Handle, Position, useUpdateNodeInternals } from "reactflow";
 import {
   leftNodeHandleStyle,
   rightNodeHandleStyle,
@@ -10,17 +10,22 @@ import {
   textColor,
 } from "../themes";
 import { ApiDataRepository } from "../api/ApiDataRepository";
+import { narrator } from "../data/narrator";
 
 export default function DialogChoiceNode(props) {
   const repo = ApiDataRepository.getInstance();
-  const character = props.data?.character ?? undefined;
+  const character = props.data?.character ?? narrator;
   const question = props.data?.prompt ?? "";
   const answers = props.data?.answers ?? ["Empty"];
+
   const audio = props.data?.audio ?? "";
   const [filepath, setFilepath] = React.useState("");
-
+  const updateNodeInternals = useUpdateNodeInternals();
   const [audioSrc, setAudioSrc] = React.useState(undefined);
 
+  useEffect(() => {
+    updateNodeInternals(props.id);
+  }, [answers]);
   React.useEffect(() => {
     if (audio.filename == "") {
       setAudioSrc(undefined);
@@ -149,6 +154,7 @@ export default function DialogChoiceNode(props) {
                 fontSize: 20,
                 color: textColor,
                 fontWeight: 200,
+                whiteSpace: "pre-wrap",
               }}
             >
               {question}
@@ -178,7 +184,12 @@ export default function DialogChoiceNode(props) {
             }}
           >
             {answers.map((answer, index) => (
-              <div key={index}>
+              <div
+                key={index}
+                style={{
+                  position: "relative",
+                }}
+              >
                 <Typography
                   variant="h6"
                   sx={{
@@ -195,7 +206,7 @@ export default function DialogChoiceNode(props) {
                   type="source"
                   position={Position.Right}
                   style={{
-                    marginTop: 40 * index + (1 / answers.length) * 220 + "px",
+                    position: "absolute",
                     ...rightNodeHandleStyle,
                     right: "-6px",
                   }}

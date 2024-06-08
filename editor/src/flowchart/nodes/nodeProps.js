@@ -15,6 +15,12 @@ const ThreeDModelProps = {
       name: "sceneName",
     },
     {
+      type: [InputFieldType.multiple_choice],
+      label: "Personagem:",
+      initialValue: narrator,
+      name: "character",
+    },
+    {
       type: [InputFieldType.textFieldMultiline],
       label: "Texto:",
       icon: "description",
@@ -116,6 +122,12 @@ const QuizProps = {
       name: "sceneName",
     },
     {
+      type: [InputFieldType.multiple_choice],
+      label: "Personagem:",
+      initialValue: narrator,
+      name: "character",
+    },
+    {
       type: [InputFieldType.textFieldMultiline],
       label: "Pergunta:",
       icon: "description",
@@ -152,6 +164,12 @@ const VideoProps = {
       label: "",
       initialValue: "Cena ",
       name: "sceneName",
+    },
+    {
+      type: [InputFieldType.multiple_choice],
+      label: "Personagem:",
+      initialValue: narrator,
+      name: "character",
     },
     {
       type: [InputFieldType.textFieldMultiline],
@@ -227,6 +245,12 @@ const ImageProps = {
       label: "",
       initialValue: "Cena ",
       name: "sceneName",
+    },
+    {
+      type: [InputFieldType.multiple_choice],
+      label: "Personagem:",
+      initialValue: narrator,
+      name: "character",
     },
     {
       type: [InputFieldType.textFieldMultiline],
@@ -305,10 +329,16 @@ const AudioProps = {
       name: "sceneName",
     },
     {
+      type: [InputFieldType.multiple_choice],
+      label: "Personagem:",
+      initialValue: narrator,
+      name: "character",
+    },
+    {
       type: [InputFieldType.textFieldMultiline],
       label: "Texto:",
       icon: "description",
-      initialValue: "Nome do audio",
+      initialValue: "Texto exemplo",
       name: "name",
     },
     {
@@ -350,6 +380,12 @@ const TextProps = {
       label: "",
       initialValue: "Cena ",
       name: "sceneName",
+    },
+    {
+      type: [InputFieldType.multiple_choice],
+      label: "Personagem:",
+      initialValue: narrator,
+      name: "character",
     },
     {
       type: [InputFieldType.textFieldMultiline],
@@ -419,9 +455,15 @@ const PathProps = {
       name: "sceneName",
     },
     {
+      type: [InputFieldType.multiple_choice],
+      label: "Personagem:",
+      initialValue: narrator,
+      name: "character",
+    },
+    {
       type: [InputFieldType.textFieldMultiline],
       label: "Texto:",
-      initialValue: "Nome do caminho",
+      initialValue: "Texto do caminho",
       icon: "description",
       name: "name",
     },
@@ -490,7 +532,7 @@ const DialogChoiceProps = {
       name: "character",
     },
     {
-      type: [InputFieldType.textField],
+      type: [InputFieldType.textFieldMultiline],
       label: "Pergunta:",
       initialValue: "Texto",
       name: "prompt",
@@ -527,7 +569,7 @@ const defaultDialogNodes = [
   {
     id: "1",
     position: { x: 0, y: 0 },
-    data: undefined,
+    data: narrator,
     type: DialogNodeType.beginDialogNode,
   },
   {

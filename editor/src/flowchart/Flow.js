@@ -67,6 +67,7 @@ function Flow(props) {
     setDialogNodes,
     setDialogEdges,
     setDialogueNodeId,
+    characters,
   } = props;
 
   const nodeTypes = useMemo(
@@ -231,31 +232,12 @@ function Flow(props) {
               (edge) =>
                 !(
                   edge.source == newNodes[i].id &&
-                  edge.sourceHandle == oldAnswers[removedIndex]
+                  edge.sourceHandle == removedIndex
                 )
             );
             setEdges(newEdges);
 
             localStorage.setItem("edges", JSON.stringify(newEdges));
-          } else if (oldAnswers.length == newAnswers.length) {
-            for (let i = 0; i < newAnswers.length; i++) {
-              if (oldAnswers[i] !== newAnswers[i]) {
-                const newEdges = edges.map((edge) => {
-                  if (edge.source == id && edge.sourceHandle == oldAnswers[i]) {
-                    return {
-                      ...edge,
-                      sourceHandle: newAnswers[i],
-                    };
-                  }
-
-                  return edge;
-                });
-                setEdges(newEdges);
-
-                localStorage.setItem("edges", JSON.stringify(newEdges));
-                break;
-              }
-            }
           }
         }
         newNodes[i].data = data;
@@ -291,8 +273,8 @@ function Flow(props) {
           selectedNode
             ? selectedNode.type === NodeType.beginNode
               ? ""
-              : "Delete"
-            : "Delete"
+              : "Backspace"
+            : "Backspace"
         }
         onNodesDelete={(nodeToDelete) => {
           handleDelete(nodeToDelete[0].id);
@@ -440,6 +422,7 @@ function Flow(props) {
         />
       </ReactFlow>
       <Inspector
+        characters={characters}
         value={inspectorData}
         nodeId={selectedNode ? selectedNode.id : undefined}
         handleNodeDataChange={handleNodeDataChange}

@@ -36,7 +36,7 @@ export default function AudioNodeDisplay(props) {
 
   const setNextNode = props.setNextNode;
 
-  const [backgroundColor, setBackgroundColor] = React.useState("#000000");
+  const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
 
   useEffect(() => {
     if (backgroundFileInfo.inputType == "color") {
