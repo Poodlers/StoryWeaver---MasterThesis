@@ -217,11 +217,14 @@ export default function MapWindow(props) {
                 addNewMap();
               }}
             >
-              <img
-                src="./assets/add_symbol.png"
-                alt="Mapa 1"
-                style={{ width: "50px", height: "50px" }}
-              />
+              <Icon
+                sx={{
+                  color: secondaryColor,
+                  fontSize: "50px !important",
+                }}
+              >
+                add
+              </Icon>
             </IconButton>
             <Box
               sx={{
@@ -254,11 +257,15 @@ export default function MapWindow(props) {
                 <DeleteOutline fontSize="inherit"></DeleteOutline>
               </Icon>
             </Box>
+
             <Typography
               variant="h7"
               component="div"
               sx={{
                 py: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 px: 2,
                 flexGrow: 1,
                 color: secondaryColor,
@@ -267,11 +274,21 @@ export default function MapWindow(props) {
                 textAlign: "center",
               }}
             >
-              {selectedMap != null && selectedMap.anchors.length < 2
-                ? "Selecione pelo menos dois pontos (de preferência em cantos opostos) e preencha as coordenadas de latitude e longitude."
-                : selectedMap.progressionState != "name-given"
-                ? "Verifique que os pontos contêm as coordenadas corretas e pressione em 'Continuar'."
-                : "Clique no '+' para adicionar um novo ponto."}
+              {selectedMap != null && selectedMap.anchors.length < 2 ? (
+                "Selecione pelo menos dois pontos (de preferência em cantos opostos) e preencha as coordenadas de latitude e longitude."
+              ) : selectedMap.progressionState != "name-given" ? (
+                "Verifique que os pontos contêm as coordenadas corretas e pressione em 'Continuar'."
+              ) : (
+                <p>
+                  Clique no
+                  <img
+                    style={{ height: "50px", width: "50px" }}
+                    src="/assets/add_symbol.png"
+                    alt="Warning!"
+                  />{" "}
+                  para adicionar locais ao mapa.
+                </p>
+              )}
             </Typography>
 
             {selectedMap.progressionState == "name-given" ? null : (

@@ -38,6 +38,9 @@ export default function TopAppBar(props) {
   const projectTitle = props.projectTitle;
   const characters = props.characters;
   const nodes = props.nodes;
+  const nonBeginAndEndNodes = nodes.filter(
+    (node) => node.type !== NodeType.beginNode && node.type !== NodeType.endNode
+  );
   const edges = props.edges;
   const selectedMap = props.selectedMap;
   const [displayAlert, setDisplayAlert] = React.useState(false);
@@ -340,7 +343,10 @@ export default function TopAppBar(props) {
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2, fontSize: "30px !important" }}
+            sx={{
+              mr: 2,
+              fontSize: "30px !important",
+            }}
             onClick={() => {
               if (
                 currentWindow === "Mapa" &&
@@ -354,7 +360,17 @@ export default function TopAppBar(props) {
             <img
               src="./assets/add_symbol.png"
               alt="Add"
-              style={{ width: "50px", height: "50px" }}
+              style={{
+                width: "50px",
+                height: "50px",
+
+                animationIterationCount: "infinite",
+                animationName:
+                  nonBeginAndEndNodes.length == 0 && currentWindow == "História"
+                    ? "twinkle-1"
+                    : "",
+                animationDuration: "2s",
+              }}
             />
           </IconButton>
           {currentWindow === "História" ? (

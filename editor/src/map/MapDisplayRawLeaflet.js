@@ -22,7 +22,8 @@ export default function MapDisplayRawLeaflet(props) {
   const setMaps = props.setMapsState;
   const width = mapInfo.mapSize.width;
   const height = mapInfo.mapSize.height;
-  const wh = [width, height];
+  const wh = [height, width];
+  console.log(wh);
   const origin = [0, 0];
   const bounds = [origin, wh];
   const mapContainer = useRef();
@@ -95,7 +96,6 @@ export default function MapDisplayRawLeaflet(props) {
                 ((dx / r_earth) * (180 / Math.PI)) /
                   Math.cos((anchors[0].coords.lat * Math.PI) / 180),
             };
-
           }
         }
         return anchor;
