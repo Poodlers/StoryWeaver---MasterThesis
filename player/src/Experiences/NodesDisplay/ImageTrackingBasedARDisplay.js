@@ -59,8 +59,12 @@ export default function ImageTrackingBasedARDisplay(props) {
       ) : (
         <Frame
           style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
             width: "100%",
-            height: "90vh",
+            height: "100%",
+            zIndex: -1,
           }}
           initialContent='<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
         <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>

@@ -18,6 +18,7 @@ import ThreeDModelDisplay from "./NodesDisplay/ThreeDModelDisplay";
 import DialogueNodeDisplay from "./NodesDisplay/DialogueNodeDisplay";
 import AudioNodeDisplay from "./NodesDisplay/AudioNodeDisplay";
 import PathNodeDisplay from "./NodesDisplay/PathNodeDisplay";
+import TextNodeDisplay from "./NodesDisplay/TextNodeDisplay";
 
 export default function ExperiencePlay(props) {
   const repo = ApiDataRepository.getInstance();
@@ -167,6 +168,12 @@ export default function ExperiencePlay(props) {
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
         ></PathNodeDisplay>
+      ) : currentNode.type == NodeType.textNode ? (
+        <TextNodeDisplay
+          node={currentNode}
+          possibleNextNodes={nextNodes}
+          setNextNode={setCurrentNode}
+        ></TextNodeDisplay>
       ) : (
         <Box>
           <p>Node type not supported</p>

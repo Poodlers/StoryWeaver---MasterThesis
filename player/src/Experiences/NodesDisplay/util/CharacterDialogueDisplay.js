@@ -1,6 +1,7 @@
 import {
   Box,
   ButtonBase,
+  Icon,
   IconButton,
   TextField,
   Typography,
@@ -8,6 +9,7 @@ import {
 import React, { useEffect } from "react";
 import { ApiDataRepository } from "../../../api/ApiDataRepository";
 import Typewriter from "./TypeWriter";
+import { primaryColor, secondaryColor, tertiaryColor } from "../../../themes";
 
 export default function CharacterDialogueDisplay(props) {
   const repo = ApiDataRepository.getInstance();
@@ -15,7 +17,7 @@ export default function CharacterDialogueDisplay(props) {
   const dialogue = props.dialogue;
   const setNextDialogueNode = props.setNextDialogueNode;
   const [characterImg, setCharacterImg] = React.useState("");
-
+  const [skipToEnd, setSkipToEnd] = React.useState(false);
   useEffect(() => {
     if (character.image.filename == "") {
       return;
@@ -33,13 +35,39 @@ export default function CharacterDialogueDisplay(props) {
     <Box
       sx={{
         width: "100%",
-        height: "100%",
+        minHeight: "80vh",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        position: "relative",
       }}
     >
+      <IconButton
+        sx={{
+          display: skipToEnd ? "none" : "",
+          position: "fixed",
+          bottom: 75,
+          right: "15px",
+          backgroundColor: secondaryColor,
+          borderColor: primaryColor,
+          borderWidth: 2,
+          borderStyle: "solid",
+
+          "&:hover": {
+            backgroundColor: primaryColor,
+            borderColor: secondaryColor,
+            color: secondaryColor + " !important",
+            borderWidth: 2,
+            borderStyle: "solid",
+          },
+        }}
+        onClick={() => setSkipToEnd(true)}
+      >
+        <Icon color="inherit" sx={{ fontSize: "40px !important" }}>
+          skip_next
+        </Icon>
+      </IconButton>
       <img
         src={characterImg}
         alt={character.name}
@@ -56,7 +84,6 @@ export default function CharacterDialogueDisplay(props) {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-
           backgroundColor: "white",
           border: "2px solid black",
           borderRadius: "5px",
@@ -75,7 +102,8 @@ export default function CharacterDialogueDisplay(props) {
         >
           <Typewriter
             text={dialogue}
-            delay={200}
+            delay={100}
+            skipToEnd={skipToEnd}
             onComplete={() => {
               setTimeout(() => {
                 setNextDialogueNode();

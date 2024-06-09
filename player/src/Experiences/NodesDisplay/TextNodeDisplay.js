@@ -15,8 +15,10 @@ import { AREntityTypes } from "../../models/AREntityTypes";
 import { ARTriggerMode } from "../../models/ARTriggerModes";
 import ImageTrackingBasedARDisplay from "./ImageTrackingBasedARDisplay";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
+import GoToNextSlideButton from "./util/GoToNextSlideButton";
+import Typewriter from "./util/TypeWriter";
 
-export default function VideoNodeDisplay(props) {
+export default function TextNodeDisplay(props) {
   const repo = ApiDataRepository.getInstance();
   const textNode = props.node;
   const text = textNode.data.text;
@@ -34,9 +36,7 @@ export default function VideoNodeDisplay(props) {
   const backgroundFileInfo = textNode.data.background;
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
-  const [componentState, setComponentState] = React.useState(
-    ComponentState.LOADING
-  );
+
   const [characterImg, setCharacterImg] = React.useState("");
 
   useEffect(() => {
@@ -87,6 +87,7 @@ export default function VideoNodeDisplay(props) {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        overflow: "hidden",
         background:
           backgroundURL == ""
             ? backgroundColor
@@ -94,33 +95,7 @@ export default function VideoNodeDisplay(props) {
         backgroundSize: "cover",
       }}
     >
-      {componentState === ComponentState.LOADING ? (
-        <Typography
-          variant="h4"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          Loading...
-        </Typography>
-      ) : componentState === ComponentState.ERROR ? (
-        <Typography
-          variant="h4"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          Error loading
-        </Typography>
-      ) : isAR ? (
+      {isAR ? (
         ARTypeInfo.trigger_mode === ARTriggerMode.GPSCoords ? (
           <LocationBasedARDisplay
             name={text}
@@ -145,22 +120,47 @@ export default function VideoNodeDisplay(props) {
           />
         )
       ) : (
-        <PlayerTextFinalDisplay text={text} />
+        <>
+          <img
+            src={characterImg}
+            alt={character.name}
+            style={{
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+              border: "2px solid black",
+            }}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "white",
+              border: "2px solid black",
+              borderRadius: "5px",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                px: 3,
+                py: 1,
+                fontSize: 20,
+                color: "black",
+                fontWeight: 200,
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              <Typewriter text={text} delay={100} />
+            </Typography>
+          </Box>
+        </>
       )}
-      <ButtonBase
-        sx={{
-          backgroundColor: backgroundColor,
-          color: textColor,
-          position: "absolute",
-          bottom: "11vh",
-          right: 10,
-        }}
-        onClick={() => {
-          setNextNode(possibleNextNodes[0]);
-        }}
-      >
-        <Typography variant="h4">Avançar</Typography>
-      </ButtonBase>
+      <GoToNextSlideButton
+        possibleNextNodes={possibleNextNodes}
+        setNextNode={setNextNode}
+      />
     </Box>
   );
 }

@@ -24,8 +24,6 @@ export default function DialogueNodeDisplay(props) {
   const dialogTree = dialogueNode.data.dialog;
   const dialogNodes = dialogTree.nodes;
   const dialogEdges = dialogTree.edges;
-  console.log(dialogNodes);
-  console.log(dialogEdges);
 
   const setNextNode = props.setNextNode;
 
@@ -36,13 +34,11 @@ export default function DialogueNodeDisplay(props) {
 
   const [currentDialogNode, setCurrentDialogNode] = React.useState(undefined);
 
-  console.log(currentDialogNode);
   const findNextDialogueNode = (dialogNode, choice) => {
+    console.log(dialogNode);
     const edgesFromCurrentNode = dialogEdges.find((edge) => {
       if (choice) {
-        return (
-          edge.source == dialogNode.id && edge.sourceHandle == parseInt(choice)
-        );
+        return edge.source == dialogNode.id && edge.sourceHandle == choice;
       } else {
         return edge.source == dialogNode.id;
       }
@@ -57,9 +53,10 @@ export default function DialogueNodeDisplay(props) {
   };
 
   useEffect(() => {
-    setCurrentDialogNode(
-      dialogNodes.find((node) => node.type == DialogNodeType.beginDialogNode)
+    const beginNode = dialogNodes.find(
+      (node) => node.type == DialogNodeType.beginDialogNode
     );
+    setCurrentDialogNode(findNextDialogueNode(beginNode));
     setComponentState(ComponentState.LOADED);
   }, [dialogTree]);
 
@@ -129,53 +126,9 @@ export default function DialogueNodeDisplay(props) {
         backgroundSize: "cover",
       }}
     >
-      {currentDialogNode.type == DialogNodeType.beginDialogNode ? (
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            variant="h4"
-            sx={{
-              color: textColor,
-              backgroundColor: backgroundColor,
-              borderRadius: "5px",
-              padding: "10px",
-              marginBottom: "10px",
-            }}
-          >
-            {"Diálogo"}
-          </Typography>
-
-          <ButtonBase
-            sx={{
-              width: "50%",
-              backgroundColor: backgroundColor,
-              borderRadius: "5px",
-              padding: "10px",
-              marginBottom: "10px",
-            }}
-            onClick={() => {
-              const nextNode = findNextDialogueNode(currentDialogNode);
-              setCurrentDialogNode(nextNode);
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                color: textColor,
-              }}
-            >
-              Avançar
-            </Typography>
-          </ButtonBase>
-        </Box>
-      ) : currentDialogNode.type == DialogNodeType.dialogNode ? (
+      {currentDialogNode.type ==
+      DialogNodeType.beginDialogNode ? null : currentDialogNode.type ==
+        DialogNodeType.dialogNode ? (
         <CharacterDialogueDisplay
           character={currentDialogNode.data.character}
           dialogue={currentDialogNode.data.text}

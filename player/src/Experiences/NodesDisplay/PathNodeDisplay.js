@@ -16,6 +16,8 @@ import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 import { ComponentState } from "../../models/ComponentState";
 import { ARTriggerMode } from "../../models/ARTriggerModes";
+import Typewriter from "./util/TypeWriter";
+import GoToNextSlideButton from "./util/GoToNextSlideButton";
 
 function degreesToRadians(degrees) {
   return (degrees * Math.PI) / 180;
@@ -52,6 +54,8 @@ export default function PathNodeDisplay(props) {
 
   const backgroundFileInfo = pathNode.data.background;
 
+  const character = pathNode.data.character;
+
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
   const [distance, setDistance] = React.useState(0);
@@ -62,6 +66,21 @@ export default function PathNodeDisplay(props) {
 
   const intervalID = React.useRef([]);
   const setNextNode = props.setNextNode;
+
+  const [characterImg, setCharacterImg] = React.useState("");
+
+  useEffect(() => {
+    if (character.image.filename == "") {
+      return;
+    }
+    if (character.image.inputType == "url") {
+      setCharacterImg(character.image.filename);
+    } else {
+      repo.getFilePath(character.image.filename).then((url) => {
+        setCharacterImg(url);
+      });
+    }
+  }, [character]);
 
   useEffect(() => {
     if (destination.trigger_mode != ARTriggerMode.GPSCoords) return;
@@ -169,10 +188,44 @@ export default function PathNodeDisplay(props) {
         </Typography>
       ) : (
         <>
-          <PlayerTextFinalDisplay
-            text={name}
-            messageType={"Caminho"}
-          ></PlayerTextFinalDisplay>
+          {name == "" ? null : (
+            <>
+              <img
+                src={characterImg}
+                alt={character.name}
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  borderRadius: "50%",
+                  border: "2px solid black",
+                }}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "white",
+                  border: "2px solid black",
+                  borderRadius: "5px",
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    px: 3,
+                    py: 1,
+                    fontSize: 20,
+                    color: "black",
+                    fontWeight: 200,
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  <Typewriter text={name} delay={100} />
+                </Typography>
+              </Box>
+            </>
+          )}
           {isOnDestination ? (
             <PlayerTextFinalDisplay
               text={"Você chegou ao destino! Pressione o botão para continuar."}
@@ -184,24 +237,15 @@ export default function PathNodeDisplay(props) {
               messageType={"Caminho"}
             ></PlayerTextFinalDisplay>
           )}
-          <ButtonBase
-            sx={{
-              backgroundColor: backgroundColor,
-              color: textColor,
-              position: "absolute",
-              bottom: "10vh",
-              right: 10,
-            }}
-            onClick={() => {
+          <GoToNextSlideButton
+            possibleNextNodes={possibleNextNodes}
+            setNextNode={(node) => {
               intervalID.current.forEach((id) => {
                 clearInterval(id);
               });
-
-              setNextNode(possibleNextNodes[0]);
+              setNextNode(node);
             }}
-          >
-            <Typography variant="h4">Avançar</Typography>
-          </ButtonBase>
+          ></GoToNextSlideButton>
         </>
       )}
     </Box>

@@ -16,13 +16,17 @@ import { ApiDataRepository } from "../../api/ApiDataRepository";
 import PlayerTextFinalDisplay from "./util/PlayerTextFinalDisplay";
 import { ComponentState } from "../../models/ComponentState";
 import AudioPlayer from "mui-audio-player-plus";
+import GoToNextSlideButton from "./util/GoToNextSlideButton";
+import Typewriter from "./util/TypeWriter";
 
 export default function AudioNodeDisplay(props) {
   const repo = ApiDataRepository.getInstance();
   const audioNode = props.node;
   const name = audioNode.data.name;
   const fileInfo = audioNode.data.file;
-  const color = audioNode.data.color;
+  const color = audioNode.data.color.color;
+
+  const character = audioNode.data.character;
 
   const possibleNextNodes = props.possibleNextNodes;
 
@@ -35,6 +39,21 @@ export default function AudioNodeDisplay(props) {
   );
 
   const setNextNode = props.setNextNode;
+
+  const [characterImg, setCharacterImg] = React.useState("");
+
+  useEffect(() => {
+    if (character.image.filename == "") {
+      return;
+    }
+    if (character.image.inputType == "url") {
+      setCharacterImg(character.image.filename);
+    } else {
+      repo.getFilePath(character.image.filename).then((url) => {
+        setCharacterImg(url);
+      });
+    }
+  }, [character]);
 
   const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
 
@@ -122,10 +141,44 @@ export default function AudioNodeDisplay(props) {
         </Typography>
       ) : (
         <>
-          <PlayerTextFinalDisplay
-            text={name}
-            messageType={"Áudio"}
-          ></PlayerTextFinalDisplay>
+          {name == "" ? null : (
+            <>
+              <img
+                src={characterImg}
+                alt={character.name}
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  borderRadius: "50%",
+                  border: "2px solid black",
+                }}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "white",
+                  border: "2px solid black",
+                  borderRadius: "5px",
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    px: 3,
+                    py: 1,
+                    fontSize: 20,
+                    color: "black",
+                    fontWeight: 200,
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  <Typewriter text={name} delay={100} />
+                </Typography>
+              </Box>
+            </>
+          )}
 
           <AudioPlayer
             src={url}
@@ -152,26 +205,17 @@ export default function AudioNodeDisplay(props) {
             containerSx={{
               display: url == "" ? "none" : "block",
               textAlign: "center",
-              backgroundColor: color,
+              backgroundColor: color + " !important",
               p: 1,
+
               "& .MuiSlider-root": { color: "#fff" },
               "& .MuiIconButton-root": { color: "#fff" },
             }}
           />
-          <ButtonBase
-            sx={{
-              backgroundColor: backgroundColor,
-              color: textColor,
-              position: "absolute",
-              bottom: "10vh",
-              right: 10,
-            }}
-            onClick={() => {
-              setNextNode(possibleNextNodes[0]);
-            }}
-          >
-            <Typography variant="h4">Avançar</Typography>
-          </ButtonBase>
+          <GoToNextSlideButton
+            possibleNextNodes={possibleNextNodes}
+            setNextNode={setNextNode}
+          />
         </>
       )}
     </Box>

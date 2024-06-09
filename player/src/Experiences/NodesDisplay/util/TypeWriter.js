@@ -1,17 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-const Typewriter = ({ text, delay, onComplete }) => {
+const Typewriter = ({ text, delay, onComplete, skipToEnd }) => {
   const [currentText, setCurrentText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const timeOut = useRef(null);
+
+  useEffect(() => {
+    if (skipToEnd) {
+      setCurrentText(text);
+      setCurrentIndex(text.length);
+      clearTimeout(timeOut.current);
+    }
+  }, [skipToEnd]);
 
   useEffect(() => {
     if (currentIndex < text.length) {
-      const timeout = setTimeout(() => {
+      timeOut.current = setTimeout(() => {
         setCurrentText((prevText) => prevText + text[currentIndex]);
         setCurrentIndex((prevIndex) => prevIndex + 1);
       }, delay);
 
-      return () => clearTimeout(timeout);
+      return () => clearTimeout(timeOut.current);
     } else if (onComplete) {
       //text has finished typing
       onComplete();

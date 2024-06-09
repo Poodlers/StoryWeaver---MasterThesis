@@ -1,6 +1,7 @@
 import {
   Box,
   ButtonBase,
+  Icon,
   IconButton,
   TextField,
   Typography,
@@ -9,7 +10,12 @@ import React, { useEffect } from "react";
 import { ApiDataRepository } from "../../../api/ApiDataRepository";
 import Typewriter from "./TypeWriter";
 import PlayerTextFinalDisplay from "./PlayerTextFinalDisplay";
-import { primaryColor, textColor } from "../../../themes";
+import {
+  primaryColor,
+  secondaryColor,
+  tertiaryColor,
+  textColor,
+} from "../../../themes";
 
 export default function ChoiceDialogueDisplay(props) {
   const repo = ApiDataRepository.getInstance();
@@ -37,12 +43,38 @@ export default function ChoiceDialogueDisplay(props) {
       sx={{
         width: "100%",
         height: "100%",
+        overflowY: "auto !important",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
       }}
     >
+      <IconButton
+        sx={{
+          display: displayAnswers ? "none" : "",
+          position: "fixed",
+          bottom: 75,
+          right: "15px",
+          backgroundColor: secondaryColor,
+          borderColor: primaryColor,
+          borderWidth: 2,
+          borderStyle: "solid",
+
+          "&:hover": {
+            backgroundColor: primaryColor,
+            borderColor: secondaryColor,
+            color: secondaryColor + " !important",
+            borderWidth: 2,
+            borderStyle: "solid",
+          },
+        }}
+        onClick={() => setDisplayAnswers(true)}
+      >
+        <Icon color="inherit" sx={{ fontSize: "40px !important" }}>
+          skip_next
+        </Icon>
+      </IconButton>
       <img
         src={characterImg}
         alt={character.name}
@@ -78,7 +110,8 @@ export default function ChoiceDialogueDisplay(props) {
         >
           <Typewriter
             text={prompt}
-            delay={200}
+            delay={100}
+            skipToEnd={displayAnswers}
             onComplete={() => setDisplayAnswers(true)}
           />
         </Typography>
@@ -91,6 +124,7 @@ export default function ChoiceDialogueDisplay(props) {
           justifyContent: "center",
           alignItems: "center",
           width: "70%",
+          pb: 10,
         }}
       >
         {answers.map((answer, index) => {

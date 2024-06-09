@@ -53,8 +53,12 @@ export default function LocationBasedARDisplay(props) {
       ) : (
         <Frame
           style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
             width: "100%",
-            height: "90vh",
+            height: "100%",
+            zIndex: -1,
           }}
           initialContent='<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
       <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
@@ -106,16 +110,21 @@ export default function LocationBasedARDisplay(props) {
             ) : entityType === AREntityTypes.Image ? (
               <>
                 <a-assets>
-                  <img id="transpImage" src={src}></img>
+                  <img
+                    id="imageToLoad"
+                    preload="auto"
+                    crossOrigin="anonymous"
+                    src={src}
+                  ></img>
                 </a-assets>
-                <a-image
+                <a-box
+                  src="#imageToLoad"
+                  scale={scale.x + " " + 1 + " " + scale.z}
+                  position={position.x + " " + position.y + " " + position.z}
                   gps-new-entity-place={
                     "latitude: " + coords.lat + ";" + "longitude: " + coords.lng
                   }
-                  width="1"
-                  height="1"
-                  src="#transpImage"
-                ></a-image>
+                ></a-box>
               </>
             ) : entityType === AREntityTypes.ThreeDModel ? (
               threeDModelType === ThreeDModelTypes.gltf ? (
