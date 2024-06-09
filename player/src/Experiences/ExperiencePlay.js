@@ -38,7 +38,7 @@ export default function ExperiencePlay(props) {
       .getProject(projectId)
       .then((project) => {
         setProjectInfo(project);
-
+        console.log(project);
         setCurrentNode(
           project.nodes.find((node) => node.type == NodeType.beginNode)
         );
@@ -54,7 +54,7 @@ export default function ExperiencePlay(props) {
     if (currentNode === undefined) {
       return;
     }
-    console.log(currentNode.type);
+
     setNextNode(currentNode);
   }, [currentNode]);
   const setNextNode = (node) => {

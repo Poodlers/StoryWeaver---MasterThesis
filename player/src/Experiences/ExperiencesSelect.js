@@ -1,8 +1,9 @@
-import { Box, IconButton, TextField, Typography } from "@mui/material";
+import { Box, Icon, IconButton, TextField, Typography } from "@mui/material";
 import React, { useEffect } from "react";
-import { backgroundColor, textColor } from "../themes";
+import { backgroundColor, primaryColor, textColor } from "../themes";
 import { ApiDataRepository } from "../api/ApiDataRepository";
 import { ComponentState } from "../models/ComponentState";
+import ProjectListing from "./ProjectListing";
 
 export default function ExperiencesSelect(props) {
   const repo = ApiDataRepository.getInstance();
@@ -114,7 +115,7 @@ export default function ExperiencesSelect(props) {
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
+          alignItems: "start",
           justifyContent: "center",
           mt: 2,
           px: 3,
@@ -143,38 +144,11 @@ export default function ExperiencesSelect(props) {
         ) : (
           projects.map((project) => {
             return (
-              <Box
+              <ProjectListing
                 key={project.id}
-                onClick={() => {
-                  setExperience(project.id);
-                  localStorage.setItem("storyId", project.id);
-                }}
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  cursor: "pointer",
-                  width: "100%",
-                }}
-              >
-                <img
-                  src={"../assets/play_svg.svg"}
-                  alt={project.title}
-                  style={{
-                    width: "30px",
-                    filter: "brightness(0) saturate(100%)",
-                  }}
-                />
-                <Typography
-                  variant="h5"
-                  sx={{
-                    color: "black",
-                    px: 3,
-                    textAlign: "start",
-                  }}
-                >
-                  {project.title}
-                </Typography>
-              </Box>
+                project={project}
+                setExperience={setExperience}
+              ></ProjectListing>
             );
           })
         )}

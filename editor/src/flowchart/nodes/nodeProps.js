@@ -99,16 +99,6 @@ const ThreeDModelProps = {
       },
       name: "ar_type",
     },
-    {
-      type: [InputFieldType.multichoice_check],
-      label: "Animações:",
-      options: ["Animation1", "Animation2"],
-      initialValue: {
-        Animation1: false,
-        Animation2: false,
-      },
-      name: "animations",
-    },
   ],
 };
 

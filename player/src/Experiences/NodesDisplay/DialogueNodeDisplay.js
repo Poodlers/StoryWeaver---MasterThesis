@@ -114,7 +114,7 @@ export default function DialogueNodeDisplay(props) {
     <Box
       sx={{
         width: "100%",
-        minHeight: "100vh",
+        minHeight: "91vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",

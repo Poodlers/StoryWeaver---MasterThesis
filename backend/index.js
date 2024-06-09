@@ -124,8 +124,8 @@ app.get("/projects/:searchString", async (req, res) => {
   const projects = await client
     .db("projects")
     .collection("story_structures")
-    .find({ title: { $regex: searchString, $options: "i" } })
-    .project({ id: 1, title: 1 })
+    .find({ experienceName: { $regex: searchString, $options: "i" } })
+    .project({ id: 1, title: 1, experienceName: 1, description: 1, tags: 1 })
     .toArray();
   res.send(projects);
 });

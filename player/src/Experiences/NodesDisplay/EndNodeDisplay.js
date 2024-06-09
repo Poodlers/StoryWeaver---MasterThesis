@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import React, { useEffect } from "react";
 import { backgroundColor, textColor } from "../../themes";
+import Typewriter from "./util/TypeWriter";
 
 export default function EndNodeDisplay(props) {
   const endNode = props.node;
@@ -18,22 +19,50 @@ export default function EndNodeDisplay(props) {
     <Box
       sx={{
         width: "100%",
-        height: "100%",
+        minHeight: "91vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
       }}
     >
-      <Typography variant="h4">Obrigado por ter experienciado,</Typography>
-      <Typography variant="h4">{experienceName}</Typography>
-      <Typography variant="h4">Você obteve o fim {endName}</Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+          border: "2px solid black",
+          borderRadius: "5px",
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{
+            px: 3,
+            py: 1,
+            fontSize: 25,
+            color: "black",
+            fontWeight: 200,
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          <Typewriter
+            text={
+              "Obrigado por ter experienciado, \n você obteve o fim " + endName
+            }
+            delay={100}
+          />
+        </Typography>
+      </Box>
 
       <ButtonBase
         sx={{
           mt: 2,
           backgroundColor: backgroundColor,
           color: textColor,
+          borderRadius: "5px",
+          p: 2,
         }}
         onClick={() => {
           setNextNode(undefined);

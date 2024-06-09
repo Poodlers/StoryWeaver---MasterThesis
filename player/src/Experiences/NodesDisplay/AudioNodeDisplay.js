@@ -101,7 +101,7 @@ export default function AudioNodeDisplay(props) {
     <Box
       sx={{
         width: "100%",
-        height: "100vh",
+        height: "91vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -161,6 +161,7 @@ export default function AudioNodeDisplay(props) {
                   backgroundColor: "white",
                   border: "2px solid black",
                   borderRadius: "5px",
+                  mb: 5,
                 }}
               >
                 <Typography

@@ -108,7 +108,7 @@ export default function VideoNodeDisplay(props) {
       <Box
         sx={{
           width: "100%",
-          height: isAR ? "100%" : "100vh",
+          height: isAR ? "100%" : "91vh",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",

@@ -109,7 +109,7 @@ export default function ImageNodeDisplay(props) {
         sx={{
           width: "100%",
           overflow: "hidden",
-          height: isAR ? "100%" : "100vh",
+          height: isAR ? "100%" : "91vh",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",

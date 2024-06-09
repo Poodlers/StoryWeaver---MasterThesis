@@ -148,7 +148,7 @@ export default function PathNodeDisplay(props) {
     <Box
       sx={{
         width: "100%",
-        height: "100vh",
+        height: "91vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",

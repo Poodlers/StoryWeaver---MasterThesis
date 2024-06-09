@@ -27,7 +27,7 @@ const Typewriter = ({ text, delay, onComplete, skipToEnd }) => {
     }
   }, [currentIndex, delay, text]);
 
-  return <span>{currentText}</span>;
+  return <span style={{ whiteSpace: "pre-wrap" }}>{currentText}</span>;
 };
 
 export default Typewriter;

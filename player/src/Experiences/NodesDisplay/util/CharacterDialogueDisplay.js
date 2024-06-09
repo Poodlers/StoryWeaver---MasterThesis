@@ -35,7 +35,7 @@ export default function CharacterDialogueDisplay(props) {
     <Box
       sx={{
         width: "100%",
-        minHeight: "80vh",
+        minHeight: "91vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
