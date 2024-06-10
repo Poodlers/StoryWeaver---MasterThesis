@@ -16,15 +16,68 @@ import {
   tertiaryColor,
   textColor,
 } from "../../../themes";
+import AudioPlayIcon from "./AudioPlayIcon";
 
 export default function ChoiceDialogueDisplay(props) {
   const repo = ApiDataRepository.getInstance();
   const character = props.character;
   const prompt = props.prompt;
   const answers = props.answers;
+  const audio = props.audioSrc;
   const setNextDialogueNode = props.setNextDialogueNode;
   const [characterImg, setCharacterImg] = React.useState("");
   const [displayAnswers, setDisplayAnswers] = React.useState(false);
+
+  const [audioSrc, setAudioSrc] = React.useState(undefined);
+  const [audioPlaying, setAudioPlaying] = React.useState(true);
+
+  React.useEffect(() => {
+    if (audioSrc) {
+      audioSrc.play();
+      audioSrc.addEventListener("ended", () => {
+        setAudioPlaying(false);
+        if (displayAnswers) {
+          //if typewrite is skipped, go to next dialogue node
+          setNextDialogueNode();
+        }
+      });
+    }
+    return () => {
+      if (audioSrc) {
+        audioSrc.removeEventListener("ended", () => {
+          setAudioPlaying(false);
+        });
+      }
+    };
+  }, [audioSrc]);
+
+  React.useEffect(() => {
+    if (!audioSrc) return;
+    if (audioPlaying) {
+      audioSrc.play();
+    } else {
+      audioSrc.pause();
+    }
+  }, [audioPlaying]);
+
+  useEffect(() => {
+    if (audio.filename == "") {
+      return;
+    }
+    if (audio.inputType == "url") {
+      setAudioSrc(new Audio(audio.filename));
+    } else {
+      repo
+        .getFilePath(audio.filename)
+        .then((url) => {
+          setAudioSrc(new Audio(url));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [audio]);
+
   useEffect(() => {
     if (character.image.filename == "") {
       return;
@@ -52,7 +105,6 @@ export default function ChoiceDialogueDisplay(props) {
     >
       <IconButton
         sx={{
-          display: displayAnswers ? "none" : "",
           position: "fixed",
           bottom: 75,
           right: "15px",
@@ -69,12 +121,26 @@ export default function ChoiceDialogueDisplay(props) {
             borderStyle: "solid",
           },
         }}
-        onClick={() => setDisplayAnswers(true)}
+        onClick={() => {
+          if (displayAnswers) {
+            if (audioSrc) {
+              audioSrc.pause();
+            }
+            setNextDialogueNode();
+          }
+          setDisplayAnswers(true);
+        }}
       >
         <Icon color="inherit" sx={{ fontSize: "40px !important" }}>
           skip_next
         </Icon>
       </IconButton>
+      {audioSrc && (
+        <AudioPlayIcon
+          isPlaying={audioPlaying}
+          setIsPlaying={setAudioPlaying}
+        />
+      )}
       <img
         src={characterImg}
         alt={character.name}
@@ -112,7 +178,14 @@ export default function ChoiceDialogueDisplay(props) {
             text={prompt}
             delay={100}
             skipToEnd={displayAnswers}
-            onComplete={() => setDisplayAnswers(true)}
+            onComplete={() => {
+              setDisplayAnswers(true);
+              setTimeout(() => {
+                if (!audioPlaying) {
+                  setNextDialogueNode();
+                }
+              }, 1000);
+            }}
           />
         </Typography>
       </Box>

@@ -111,7 +111,7 @@ export default function ExperiencePlay(props) {
           node={currentNode}
           possibleNextNodes={nextNodes}
           setNextNode={setCurrentNode}
-          experienceName={projectInfo.title}
+          experienceName={projectInfo.experienceName}
         ></BeginNodeDisplay>
       ) : currentNode.type == NodeType.endNode ? (
         <EndNodeDisplay

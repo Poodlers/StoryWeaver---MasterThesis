@@ -132,6 +132,7 @@ export default function DialogueNodeDisplay(props) {
         <CharacterDialogueDisplay
           character={currentDialogNode.data.character}
           dialogue={currentDialogNode.data.text}
+          audioSrc={currentDialogNode.data.audio}
           setNextDialogueNode={() => {
             const nextNode = findNextDialogueNode(currentDialogNode);
             setCurrentDialogNode(nextNode);
@@ -142,6 +143,7 @@ export default function DialogueNodeDisplay(props) {
           character={currentDialogNode.data.character}
           prompt={currentDialogNode.data.prompt}
           answers={currentDialogNode.data.answers}
+          audioSrc={currentDialogNode.data.audio}
           setNextDialogueNode={(choice) => {
             const nextNode = findNextDialogueNode(currentDialogNode, choice);
             setCurrentDialogNode(nextNode);

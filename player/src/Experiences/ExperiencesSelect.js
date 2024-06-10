@@ -29,6 +29,14 @@ export default function ExperiencesSelect(props) {
 
   const searchProjects = async () => {
     setComponentState(ComponentState.LOADING);
+    if (searchString === "") {
+      repo.getExportedProjects().then((projects) => {
+        setProjects(projects);
+        setComponentState(ComponentState.LOADED);
+      });
+      return;
+    }
+
     repo
       .searchProjects(searchString)
       .then((projects) => {
@@ -82,6 +90,7 @@ export default function ExperiencesSelect(props) {
               backgroundColor: textColor,
               borderRadius: 10,
               textAlign: "start",
+              paddingLeft: 15,
             },
           }}
           onSubmit={(event) => {

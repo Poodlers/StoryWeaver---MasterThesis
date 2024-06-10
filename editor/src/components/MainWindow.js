@@ -67,7 +67,7 @@ export default function MainWindow(props) {
   const [dialogueNodeId, setDialogueNodeId] = React.useState(null);
 
   const [projectTitle, setProjectTitle] = React.useState(
-    localStorage.getItem("projectTitle") || "Adicone um título ao projeto"
+    localStorage.getItem("projectTitle") || "Adicione um título ao projeto"
   );
 
   React.useEffect(() => {
@@ -178,7 +178,7 @@ export default function MainWindow(props) {
     setCharacters([narrator]);
     setWindows(["História", "Mapa"]);
     changeDisplayedWindow("História");
-    setProjectTitle("Adicone um título ao projeto");
+    setProjectTitle("Adicione um título ao projeto");
     localStorage.setItem("edges", JSON.stringify([]));
     localStorage.setItem("nodes", JSON.stringify(defaultNodes));
     localStorage.setItem("maps", JSON.stringify([]));
@@ -187,7 +187,7 @@ export default function MainWindow(props) {
     localStorage.setItem("experienceDescription", "");
     localStorage.removeItem("experienceTags");
     localStorage.removeItem("storyId");
-    localStorage.setItem("projectTitle", "Adicone um título ao projeto");
+    localStorage.setItem("projectTitle", "Adicione um título ao projeto");
     narrator.id = 0;
     narrator.name = defaultNarrator.name;
     narrator.description = defaultNarrator.description;

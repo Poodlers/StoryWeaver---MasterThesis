@@ -76,7 +76,7 @@ export default function ProjectListing(props) {
               fontSize: "30px !important",
             }}
           >
-            arrow_drop_down
+            {open ? "expand_less" : "expand_more"}
           </Icon>
         </IconButton>
       </Box>
@@ -86,10 +86,11 @@ export default function ProjectListing(props) {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
+            mb: 2,
           }}
         >
           <Typography
-            variant="h5"
+            variant="h6"
             sx={{
               color: textColor,
               backgroundColor: tertiaryColor,
@@ -103,7 +104,7 @@ export default function ProjectListing(props) {
             Descrição
           </Typography>
           <Typography
-            variant="h5"
+            variant="h7"
             sx={{
               color: "black",
               backgroundColor: textColor,
@@ -126,7 +127,7 @@ export default function ProjectListing(props) {
           }}
         >
           <Typography
-            variant="h5"
+            variant="h6"
             sx={{
               color: textColor,
               backgroundColor: tertiaryColor,
