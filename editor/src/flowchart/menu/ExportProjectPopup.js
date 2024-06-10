@@ -35,6 +35,9 @@ export default function ExportProjectPopup(props) {
   const repo = ApiDataRepository.getInstance();
   const open = props.open;
   const onClose = props.onClose;
+  const setDisplayAlert = props.setDisplayAlert;
+  const setAlertMessage = props.setDisplayMessage;
+  const setSeverity = props.setSeverity;
 
   const [name, setName] = React.useState(
     localStorage.getItem("experienceName") ||
@@ -351,9 +354,19 @@ export default function ExportProjectPopup(props) {
                       "experienceTags",
                       JSON.stringify(tags)
                     );
+                    setSeverity("success");
+                    setAlertMessage(
+                      "Projeto exportado com sucesso! Já pode ser acessado no Story Player!"
+                    );
+                    setDisplayAlert(true);
                   })
                   .catch((err) => {
                     console.log(err);
+                    setSeverity("error");
+                    setAlertMessage(
+                      "Algo deu errado ao exportar o projeto! Tente novamente!"
+                    );
+                    setDisplayAlert(true);
                   });
               }}
               sx={{

@@ -241,6 +241,9 @@ export default function TopAppBar(props) {
           </IconButton>
           <ExportProjectPopup
             open={openExportProjectPopup}
+            setDisplayAlert={setDisplayAlert}
+            setDisplayMessage={setAlertMessage}
+            setSeverity={setSeverity}
             onClose={() => {
               setOpenExportProjectPopup(false);
             }}
