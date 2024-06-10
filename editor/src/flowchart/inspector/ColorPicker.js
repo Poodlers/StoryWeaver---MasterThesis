@@ -18,6 +18,7 @@ function ColorPicker(props) {
       sx={{
         display: "flex",
         width: "100%",
+
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
@@ -42,6 +43,7 @@ function ColorPicker(props) {
       <div
         style={{
           padding: "5px",
+          marginRight: "15px",
           background: "#fff",
           borderRadius: "1px",
           boxShadow: "0 0 0 1px rgba(0,0,0,.1)",

@@ -37,8 +37,8 @@ class App extends Component {
     if(!localStorage.getItem('maps'))  localStorage.setItem("maps", JSON.stringify([]));
     
     if (!localStorage.getItem('projectTitle')) localStorage.setItem("projectTitle", "Adicione um título ao projeto");
-    if (!localStorage.getItem('experienceName')) localStorage.setItem("experienceName", "");
-    if (!localStorage.getItem('experienceDescription')) localStorage.setItem("experienceDescription", "");
+    if (!localStorage.getItem('experienceName')) localStorage.setItem("experienceName", "Adicione o nome da sua experiência");
+    if (!localStorage.getItem('experienceDescription')) localStorage.setItem("experienceDescription",  "Adicione uma descrição breve!");
     if (!localStorage.getItem('experienceTags')) localStorage.setItem("experienceTags", JSON.stringify([]));
 
    

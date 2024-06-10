@@ -5,4 +5,8 @@ export interface Project {
     edges: any;
     characters: any;
     maps: any;
+    description?: string;
+    experienceName? : string;
+    tags?: any[];
+
 }

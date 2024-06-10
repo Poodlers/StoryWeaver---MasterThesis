@@ -252,7 +252,7 @@ function Inspector(props) {
         >
           <Icon
             fontSize="inherit"
-            sx={{ color: "black", mt: 2, fontSize: "50px !important", mb: 2 }}
+            sx={{ color: "black", mt: 2, fontSize: "50px !important", mb: 4 }}
           >
             delete
           </Icon>

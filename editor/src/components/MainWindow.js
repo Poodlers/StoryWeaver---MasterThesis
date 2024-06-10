@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Flow from "../flowchart/Flow";
 import L from "leaflet";
-import { Alert, IconButton, Typography } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import {
   primaryColor,
   secondaryColor,
@@ -10,13 +10,7 @@ import {
   textColor,
 } from "../themes";
 import { NodeType } from "../models/NodeTypes";
-import {
-  EndDialogProps,
-  ImageProps,
-  QuizProps,
-  ThreeDModelProps,
-  VideoProps,
-} from "../flowchart/nodes/nodeProps";
+
 import TopAppBar from "./AppBar";
 import MapWindow from "../map/MapWindow";
 import maps from "../data/maps";
@@ -68,6 +62,18 @@ export default function MainWindow(props) {
 
   const [projectTitle, setProjectTitle] = React.useState(
     localStorage.getItem("projectTitle") || "Adicione um título ao projeto"
+  );
+
+  const [name, setName] = React.useState(
+    localStorage.getItem("experienceName") ||
+      "Adicione o nome da sua experiência"
+  );
+  const [description, setDescription] = React.useState(
+    localStorage.getItem("experienceDescription") ||
+      "Adicione uma descrição breve!"
+  );
+  const [tags, setTags] = React.useState(
+    JSON.parse(localStorage.getItem("experienceTags")) || []
   );
 
   React.useEffect(() => {
@@ -125,32 +131,6 @@ export default function MainWindow(props) {
     setNodes(newNodes);
   }, [characters]);
 
-  const handleLoadLocal = () => {
-    // read NODES and EDGES from file
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = ".json";
-    fileInput.click();
-    fileInput.onchange = (e) => {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = JSON.parse(e.target.result);
-        setNodes(data.nodes);
-        setEdges(data.edges);
-        setMaps(data.maps);
-        setSelectedMap(data.maps.length > 0 ? data.maps[0] : null);
-        setProjectTitle(data.title);
-        localStorage.setItem("edges", JSON.stringify(data.edges));
-        localStorage.setItem("nodes", JSON.stringify(data.nodes));
-        localStorage.setItem("projectTitle", data.title);
-        localStorage.setItem("storyId", data.storyId);
-        localStorage.setItem("maps", JSON.stringify(data.maps));
-      };
-      reader.readAsText(file);
-    };
-  };
-
   const handleLoadServer = (projectId) => {
     if (projectId == undefined) return;
     repo.getProject(projectId).then((data) => {
@@ -162,12 +142,18 @@ export default function MainWindow(props) {
       );
       setProjectTitle(data.title);
       setCharacters(data.characters);
+      setName(data.experienceName);
+      setDescription(data.description);
+      setTags(data.tags);
       localStorage.setItem("edges", JSON.stringify(data.edges));
       localStorage.setItem("nodes", JSON.stringify(data.nodes));
       localStorage.setItem("projectTitle", data.title);
       localStorage.setItem("maps", JSON.stringify(data.maps));
       localStorage.setItem("storyId", projectId);
       localStorage.setItem("characters", JSON.stringify(data.characters));
+      localStorage.setItem("experienceName", data.experienceName);
+      localStorage.setItem("experienceDescription", data.description);
+      localStorage.setItem("experienceTags", JSON.stringify(data.tags));
     });
   };
 
@@ -179,12 +165,21 @@ export default function MainWindow(props) {
     setWindows(["História", "Mapa"]);
     changeDisplayedWindow("História");
     setProjectTitle("Adicione um título ao projeto");
+    setName("Adicione o nome da sua experiência");
+    setDescription("Adicione uma descrição breve!");
+    setTags([]);
     localStorage.setItem("edges", JSON.stringify([]));
     localStorage.setItem("nodes", JSON.stringify(defaultNodes));
     localStorage.setItem("maps", JSON.stringify([]));
     localStorage.setItem("exported", false);
-    localStorage.setItem("experienceName", "");
-    localStorage.setItem("experienceDescription", "");
+    localStorage.setItem(
+      "experienceName",
+      "Adicione o nome da sua experiência"
+    );
+    localStorage.setItem(
+      "experienceDescription",
+      "Adicione uma descrição breve!"
+    );
     localStorage.setItem("experienceTags", JSON.stringify([]));
     localStorage.removeItem("storyId");
     localStorage.setItem("projectTitle", "Adicione um título ao projeto");
@@ -207,33 +202,6 @@ export default function MainWindow(props) {
       console.log(e);
       return false;
     }
-  };
-
-  const handleSaveLocal = () => {
-    //write NODES and EDGES to file
-    //write NODES and EDGES to file
-    const file = new Blob(
-      [
-        JSON.stringify({
-          title: projectTitle,
-          storyId: localStorage.getItem("storyId"),
-          nodes: nodes,
-          edges: edges,
-          maps: mapsState,
-        }),
-      ],
-      {
-        type: "application/json",
-      }
-    );
-    const a = document.createElement("a");
-    const url = URL.createObjectURL(file);
-    a.href = url;
-
-    a.download = "project.json";
-    a.click();
-    URL.revokeObjectURL(url);
-    a.remove();
   };
 
   const handleSaveServer = async () => {
@@ -402,6 +370,12 @@ export default function MainWindow(props) {
   return (
     <>
       <TopAppBar
+        name={name}
+        setName={setName}
+        description={description}
+        setDescription={setDescription}
+        tags={tags}
+        setTags={setTags}
         nodes={nodes}
         selectedMap={selectedMap}
         edges={edges}
@@ -413,8 +387,6 @@ export default function MainWindow(props) {
         addNode={addNode}
         addDialogueNode={addDialogueNode}
         addLocation={addLocation}
-        handleSaveLocal={handleSaveLocal}
-        handleLoadLocal={handleLoadLocal}
         handleSaveServer={handleSaveServer}
         handleLoadServer={handleLoadServer}
         handleNewProject={handleNewProject}

@@ -113,7 +113,7 @@ export default function MapDisplayRawLeaflet(props) {
     const map = L.map(mapContainer.current, {
       crs: L.CRS.Simple,
       attributionControl: false,
-      minZoom: -2,
+      minZoom: -3,
     });
 
     anchors.forEach((anchor) => {
@@ -160,7 +160,7 @@ export default function MapDisplayRawLeaflet(props) {
         padding: 0,
         margin: 0,
         width: "90%",
-        height: "80vh",
+        height: "67vh",
         border: "1px solid black",
       }}
       ref={(el) => (mapContainer.current = el)}

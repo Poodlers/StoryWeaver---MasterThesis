@@ -7,6 +7,7 @@ import entrada from "../assets/entrada.svg";
 import escultura from "../assets/escultura.svg";
 import pintura from "../assets/pintura.svg";
 import saida from "../assets/saida.svg";
+import info from "../assets/info.svg";
 
 const iconAnchor = new L.Icon({
   iconUrl: anchor,
@@ -64,6 +65,13 @@ const iconPintura = new L.Icon({
   iconSize: [32, 45],
 });
 
+const iconOther = new L.Icon({
+  iconUrl: info,
+  iconRetinaUrl: info,
+  popupAnchor: [-0, -0],
+  iconSize: [32, 45],
+});
+
 const MarkerTypeToIcon = {
   anchor: iconAnchor,
   exit: iconSaida,
@@ -73,6 +81,7 @@ const MarkerTypeToIcon = {
   elevator: iconElevador,
   sculpture: iconEscultura,
   painting: iconPintura,
+  other: iconOther,
 };
 
 export {

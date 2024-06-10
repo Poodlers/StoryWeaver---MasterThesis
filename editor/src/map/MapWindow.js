@@ -117,6 +117,13 @@ export default function MapWindow(props) {
         backgroundColor: textColor,
       }}
     >
+      <style>
+        {`
+         body{
+          overflow-y: scroll;
+         }
+        `}
+      </style>
       <NameMapPopup
         open={nameMapPopupOpen}
         onClose={(name) => {
@@ -138,159 +145,188 @@ export default function MapWindow(props) {
       {mapsState.length > 0 && selectedMap != null ? (
         <Box
           sx={{
-            wdith: "100%",
+            width: "100%",
           }}
         >
           <Box
             sx={{
               width: "100%",
+              margin: "auto",
               display: "flex",
-              flexDirection: "row",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "start",
             }}
           >
-            <Select
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    bgcolor: primaryColor,
-                    "& .MuiMenuItem-root": {
-                      padding: 2,
-                    },
-                  },
-                },
-              }}
-              sx={{
-                backgroundColor: primaryColor,
-                color: textColor,
-                fontSize: "20px",
-                m: 2,
-                border: "none",
-                outline: "none",
-                ".MuiSvgIcon-root": {
-                  color: textColor,
-                },
-              }}
-              value={selectedMap}
-              onChange={(e) => {
-                setSelectedMap(e.target.value);
-              }}
-            >
-              {mapsState.map((map) => {
-                return (
-                  <MenuItem
-                    sx={{
-                      color: textColor,
-                      backgroundColor: primaryColor,
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "left",
-                      "&.Mui-selected": {
-                        backgroundColor: secondaryColor,
-                      },
-                      "&.Mui-selected:hover": {
-                        backgroundColor: secondaryColor,
-                      },
-
-                      "&:hover": {
-                        backgroundColor: secondaryColor,
-                      },
-                    }}
-                    key={map.id}
-                    value={map}
-                  >
-                    {map.name}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-            <IconButton
-              sx={{
-                backgroundColor: "transparent",
-                color: textColor,
-                border: "none",
-                outline: "none",
-              }}
-              onClick={() => {
-                addNewMap();
-              }}
-            >
-              <Icon
-                sx={{
-                  color: secondaryColor,
-                  fontSize: "50px !important",
-                }}
-              >
-                add
-              </Icon>
-            </IconButton>
             <Box
               sx={{
-                p: 0,
-                m: 0,
-
-                alignContent: "center !important",
-              }}
-              onClick={() => {
-                //remove the selected map
-                const newMaps = mapsState.filter(
-                  (map) => map.id !== selectedMap.id
-                );
-
-                setMaps(newMaps);
-                setSelectedMap(
-                  newMaps.length > 0 ? newMaps[newMaps.length - 1] : null
-                );
-                localStorage.setItem("maps", JSON.stringify(newMaps));
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "start",
+                width: "90%",
               }}
             >
-              <Icon
-                fontSize="inherit"
+              <Box
                 sx={{
-                  color: tertiaryColor,
-                  cursor: "pointer",
-                  fontSize: "50px !important",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "start",
+                  width: "100%",
+                  flexGrow: 0,
                 }}
               >
-                <DeleteOutline fontSize="inherit"></DeleteOutline>
-              </Icon>
+                <Select
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        bgcolor: primaryColor,
+                        "& .MuiMenuItem-root": {
+                          padding: 2,
+                        },
+                      },
+                    },
+                  }}
+                  sx={{
+                    backgroundColor: primaryColor,
+                    color: textColor,
+                    fontSize: "20px",
+                    m: 2,
+                    border: "none",
+                    outline: "none",
+                    ".MuiSvgIcon-root": {
+                      color: textColor,
+                    },
+                  }}
+                  value={selectedMap}
+                  onChange={(e) => {
+                    setSelectedMap(e.target.value);
+                  }}
+                >
+                  {mapsState.map((map) => {
+                    return (
+                      <MenuItem
+                        sx={{
+                          color: textColor,
+                          backgroundColor: primaryColor,
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "left",
+                          "&.Mui-selected": {
+                            backgroundColor: secondaryColor,
+                          },
+                          "&.Mui-selected:hover": {
+                            backgroundColor: secondaryColor,
+                          },
+
+                          "&:hover": {
+                            backgroundColor: secondaryColor,
+                          },
+                        }}
+                        key={map.id}
+                        value={map}
+                      >
+                        {map.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+                <IconButton
+                  sx={{
+                    backgroundColor: "transparent",
+                    color: textColor,
+                    border: "none",
+                    outline: "none",
+                  }}
+                  onClick={() => {
+                    addNewMap();
+                  }}
+                >
+                  <Icon
+                    sx={{
+                      color: secondaryColor,
+                      fontSize: "50px !important",
+                    }}
+                  >
+                    add
+                  </Icon>
+                </IconButton>
+                <Box
+                  sx={{
+                    p: 0,
+                    m: 0,
+
+                    alignContent: "center !important",
+                  }}
+                  onClick={() => {
+                    //remove the selected map
+                    const newMaps = mapsState.filter(
+                      (map) => map.id !== selectedMap.id
+                    );
+                    repo
+                      .deleteFile(selectedMap.image)
+                      .then((res) => {
+                        console.log("File map deleted: ", res);
+                      })
+                      .catch((err) => {
+                        console.log("Error deleting file map: ", err);
+                      });
+
+                    setMaps(newMaps);
+                    setSelectedMap(
+                      newMaps.length > 0 ? newMaps[newMaps.length - 1] : null
+                    );
+                    localStorage.setItem("maps", JSON.stringify(newMaps));
+                  }}
+                >
+                  <Icon
+                    fontSize="inherit"
+                    sx={{
+                      color: tertiaryColor,
+                      cursor: "pointer",
+                      fontSize: "50px !important",
+                    }}
+                  >
+                    <DeleteOutline fontSize="inherit"></DeleteOutline>
+                  </Icon>
+                </Box>
+              </Box>
+              <Typography
+                variant="h8"
+                component="div"
+                sx={{
+                  py: 1,
+                  display: "flex",
+                  flexGrow: 1,
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  px: 1,
+                  color: secondaryColor,
+                  m: 0,
+                  fontSize: "18px",
+                  textAlign: "center",
+                }}
+              >
+                {selectedMap != null && selectedMap.anchors.length < 2 ? (
+                  "Selecione pelo menos dois pontos (de preferência em cantos opostos) e preencha as coordenadas de latitude e longitude."
+                ) : selectedMap.progressionState != "name-given" ? (
+                  "Verifique que os pontos contêm as coordenadas corretas e pressione em 'Continuar'."
+                ) : (
+                  <p>
+                    Clique no
+                    <img
+                      style={{ height: "50px", width: "50px" }}
+                      src="/assets/add_symbol.png"
+                      alt="Warning!"
+                    />{" "}
+                    para adicionar locais ao mapa.
+                  </p>
+                )}
+              </Typography>
             </Box>
-
-            <Typography
-              variant="h7"
-              component="div"
-              sx={{
-                py: 1,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                px: 2,
-                flexGrow: 1,
-                color: secondaryColor,
-                m: 0,
-                fontSize: "20px",
-                textAlign: "center",
-              }}
-            >
-              {selectedMap != null && selectedMap.anchors.length < 2 ? (
-                "Selecione pelo menos dois pontos (de preferência em cantos opostos) e preencha as coordenadas de latitude e longitude."
-              ) : selectedMap.progressionState != "name-given" ? (
-                "Verifique que os pontos contêm as coordenadas corretas e pressione em 'Continuar'."
-              ) : (
-                <p>
-                  Clique no
-                  <img
-                    style={{ height: "50px", width: "50px" }}
-                    src="/assets/add_symbol.png"
-                    alt="Warning!"
-                  />{" "}
-                  para adicionar locais ao mapa.
-                </p>
-              )}
-            </Typography>
-
             {selectedMap.progressionState == "name-given" ? null : (
               <ButtonBase
                 variant="contained"

@@ -39,17 +39,14 @@ export default function ExportProjectPopup(props) {
   const setAlertMessage = props.setDisplayMessage;
   const setSeverity = props.setSeverity;
 
-  const [name, setName] = React.useState(
-    localStorage.getItem("experienceName") ||
-      "Adicione o nome da sua experiência"
-  );
-  const [description, setDescription] = React.useState(
-    localStorage.getItem("experienceDescription") ||
-      "Adicione uma descrição breve!"
-  );
-  const [tags, setTags] = React.useState(
-    JSON.parse(localStorage.getItem("experienceTags")) || []
-  );
+  const name = props.name;
+  const setName = props.setName;
+
+  const description = props.description;
+  const setDescription = props.setDescription;
+  const tags = props.tags;
+
+  const setTags = props.setTags;
 
   return (
     <Dialog

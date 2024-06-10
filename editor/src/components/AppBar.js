@@ -2,8 +2,7 @@ import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
@@ -214,13 +213,19 @@ export default function TopAppBar(props) {
     }
   }, [openLoadProjectPopup]);
 
-  const handleSaveLocal = props.handleSaveLocal;
   const handleSaveServer = props.handleSaveServer;
 
-  const handleLoadLocal = props.handleLoadLocal;
   const handleLoadServer = props.handleLoadServer;
 
   const handleNewProject = props.handleNewProject;
+
+  const name = props.name;
+  const setName = props.setName;
+  const description = props.description;
+  const setDescription = props.setDescription;
+  const tags = props.tags;
+  const setTags = props.setTags;
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -241,6 +246,12 @@ export default function TopAppBar(props) {
           </IconButton>
           <ExportProjectPopup
             open={openExportProjectPopup}
+            name={name}
+            setName={setName}
+            description={description}
+            setDescription={setDescription}
+            tags={tags}
+            setTags={setTags}
             setDisplayAlert={setDisplayAlert}
             setDisplayMessage={setAlertMessage}
             setSeverity={setSeverity}
