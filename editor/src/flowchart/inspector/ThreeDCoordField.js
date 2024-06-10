@@ -12,7 +12,8 @@ function ThreeDCoordField(props) {
   const label = props.data.label;
   const style = props.style;
 
-  const conditional = props.conditional ? props.conditional : true;
+  const conditional = props.conditional == undefined ? true : props.conditional;
+
   const value = props.value;
   const handleFieldChange = props.onChange;
 

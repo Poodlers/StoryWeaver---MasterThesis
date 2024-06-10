@@ -71,7 +71,6 @@ export default function ExportProjectPopup(props) {
           flexDirection: "column",
           width: "100%",
           zIndex: 1,
-
           m: "0 auto",
         }}
       >
@@ -326,11 +325,26 @@ export default function ExportProjectPopup(props) {
             <ButtonBase
               onClick={() => {
                 onClose();
+                const projectTitle = localStorage.getItem("projectTitle");
+                const nodes = JSON.parse(localStorage.getItem("nodes"));
+                const edges = JSON.parse(localStorage.getItem("edges"));
+                const maps = JSON.parse(localStorage.getItem("maps"));
+                const characters = JSON.parse(
+                  localStorage.getItem("characters")
+                );
+
                 repo
-                  .exportProject(name, description, tags)
+                  .exportProject(
+                    projectTitle,
+                    nodes,
+                    edges,
+                    characters,
+                    maps,
+                    name,
+                    description,
+                    tags
+                  )
                   .then((res) => {
-                    console.log(res);
-                    localStorage.setItem("exported", true);
                     localStorage.setItem("experienceName", name);
                     localStorage.setItem("experienceDescription", description);
                     localStorage.setItem(

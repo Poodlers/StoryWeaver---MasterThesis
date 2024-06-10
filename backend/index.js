@@ -123,7 +123,7 @@ app.get("/projects/:searchString", async (req, res) => {
   const searchString = req.params.searchString;
   const projects = await client
     .db("projects")
-    .collection("story_structures")
+    .collection("exported_stories")
     .find({ experienceName: { $regex: searchString, $options: "i" } })
     .project({ id: 1, title: 1, experienceName: 1, description: 1, tags: 1 })
     .toArray();
@@ -143,7 +143,7 @@ app.get("/projects", async (req, res) => {
 app.get("/exported-projects", async (req, res) => {
   const projects = await client
     .db("projects")
-    .collection("story_structures")
+    .collection("exported_stories")
     .find({ exported: true })
     .project({ id: 1, title: 1, experienceName: 1, description: 1, tags: 1 })
     .toArray();
@@ -160,26 +160,63 @@ app.get("/load/:storyId", async (req, res) => {
   res.send(story);
 });
 
-app.post("/export/:storyId", async (req, res) => {
-  const storyId = req.params.storyId;
-  const experienceName = req.body.name;
+app.post("/export", async (req, res) => {
+  const originalStoryId = req.body.storyId;
+  const storyTitle = req.body.projectTitle;
+  const nodes = req.body.nodes;
+  const edges = req.body.edges;
+  const characters = req.body.characters;
+  const maps = req.body.maps;
+  const experienceName = req.body.experienceName;
   const description = req.body.description;
   const tags = req.body.tags;
-  const story = await client
+  let storyId = originalStoryId;
+
+  //save to story_structures database
+  await client
     .db("projects")
     .collection("story_structures")
     .updateOne(
-      { id: storyId },
+      { id: originalStoryId },
       {
         $set: {
-          exported: true,
+          id: storyId,
+          title: storyTitle,
+          nodes: nodes,
+          edges: edges,
+          characters: characters,
+          maps: maps,
           experienceName: experienceName,
           description: description,
           tags: tags,
+          lastModified: new Date().toISOString(),
         },
-      }
+      },
+      { upsert: true }
     );
-  res.send({ success: true });
+
+  await client
+    .db("projects")
+    .collection("exported_stories")
+    .updateOne(
+      { id: originalStoryId },
+      {
+        $set: {
+          id: storyId,
+          title: storyTitle,
+          nodes: nodes,
+          edges: edges,
+          characters: characters,
+          maps: maps,
+          experienceName: experienceName,
+          description: description,
+          tags: tags,
+          lastModified: new Date().toISOString(),
+        },
+      },
+      { upsert: true }
+    );
+  res.send({ storyId: storyId });
 });
 
 app.delete("/delete/:storyId", async (req, res) => {
@@ -188,6 +225,12 @@ app.delete("/delete/:storyId", async (req, res) => {
     .db("projects")
     .collection("story_structures")
     .deleteOne({ id: storyId });
+
+  await client
+    .db("projects")
+    .collection("exported_stories")
+    .deleteOne({ id: storyId });
+
   res.send({ success: true });
 });
 

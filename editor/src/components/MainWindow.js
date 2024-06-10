@@ -185,7 +185,7 @@ export default function MainWindow(props) {
     localStorage.setItem("exported", false);
     localStorage.setItem("experienceName", "");
     localStorage.setItem("experienceDescription", "");
-    localStorage.removeItem("experienceTags");
+    localStorage.setItem("experienceTags", JSON.stringify([]));
     localStorage.removeItem("storyId");
     localStorage.setItem("projectTitle", "Adicione um título ao projeto");
     narrator.id = 0;
@@ -384,7 +384,10 @@ export default function MainWindow(props) {
 
     const newNode = {
       id: (dialogNodes.length + 1).toString(),
-      position: { x: 0, y: 0 },
+      position: {
+        x: dialogNodes[dialogNodes.length - 1].position.x + 300,
+        y: dialogNodes[dialogNodes.length - 1].position.y,
+      },
       data: generateInspectorProps(nodeProps),
       type: nodeType,
     };

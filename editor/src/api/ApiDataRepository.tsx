@@ -132,7 +132,6 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
 
     public saveProject = async (projectTitle: any, nodes: any, edges: any, characters: any, maps: any): Promise<any> => {
         const instance = this.createInstance();
-        const exported =  localStorage.getItem('exported') == 'true';
         const experienceName = localStorage.getItem('experienceName');
         const experienceDescription = localStorage.getItem('experienceDescription');
         const experienceTags = JSON.parse(localStorage.getItem('experienceTags') || '[]'); 
@@ -140,7 +139,6 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
             const result = await instance.post(`${BASE_URL}/save`, {
                 storyId : localStorage.getItem('storyId'),
                 projectTitle : projectTitle,
-                exported : exported,
                 experienceName : experienceName,
                 description : experienceDescription,
                 tags : experienceTags,
@@ -186,18 +184,27 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
         }
     }
 
-    public exportProject = async (name: string, description: string, tags: any): Promise<any> => {
+    public exportProject = async (projectTitle: any,
+         nodes: any, edges: any, characters: any, maps: any, experienceName: string, 
+         experienceDescription: string, experienceTags: any): Promise<any> => {
+        
         const instance = this.createInstance();
         const storyID = localStorage.getItem('storyId');
         try{
-            const result = await instance.post(`${BASE_URL}/export/${storyID}`,
+            const result = await instance.post(`${BASE_URL}/export`,
                 {
-                    name: name,
-                    description: description,
-                    tags: tags
+                    storyId : storyID,
+                    projectTitle : projectTitle,
+                    experienceName : experienceName,
+                    description : experienceDescription,
+                    tags : experienceTags,
+                    nodes: nodes,
+                    edges: edges,
+                    characters : characters,
+                    maps:  maps
                 }
             ).then(transform);
-            return result.data;
+            return result;
         }
         catch(error){
             console.log(error); 

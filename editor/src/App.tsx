@@ -31,6 +31,18 @@ class App extends Component {
       console.log('Characters are not set');
       localStorage.setItem('characters', JSON.stringify([narrator]));
     }
+    if(!localStorage.getItem('edges')) localStorage.setItem("edges", JSON.stringify([]));
+    if(!localStorage.getItem('nodes')) localStorage.setItem("nodes", JSON.stringify(defaultNodes));
+
+    if(!localStorage.getItem('maps'))  localStorage.setItem("maps", JSON.stringify([]));
+    
+    if (!localStorage.getItem('projectTitle')) localStorage.setItem("projectTitle", "Adicione um título ao projeto");
+    if (!localStorage.getItem('experienceName')) localStorage.setItem("experienceName", "");
+    if (!localStorage.getItem('experienceDescription')) localStorage.setItem("experienceDescription", "");
+    if (!localStorage.getItem('experienceTags')) localStorage.setItem("experienceTags", JSON.stringify([]));
+
+   
+ 
   }
 
   render(){
