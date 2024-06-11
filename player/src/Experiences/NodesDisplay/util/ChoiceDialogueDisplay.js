@@ -209,6 +209,9 @@ export default function ChoiceDialogueDisplay(props) {
                 cursor: "pointer",
               }}
               onClick={() => {
+                if (audioSrc) {
+                  audioSrc.pause();
+                }
                 setNextDialogueNode(index);
               }}
             >
