@@ -24,7 +24,8 @@ export default function DialogueNodeDisplay(props) {
   const dialogTree = dialogueNode.data.dialog;
   const dialogNodes = dialogTree.nodes;
   const dialogEdges = dialogTree.edges;
-
+  console.log(dialogNodes);
+  console.log(dialogEdges);
   const setNextNode = props.setNextNode;
 
   const [componentState, setComponentState] = React.useState(
@@ -34,21 +35,25 @@ export default function DialogueNodeDisplay(props) {
 
   const [currentDialogNode, setCurrentDialogNode] = React.useState(undefined);
 
+  console.log(currentDialogNode);
   const findNextDialogueNode = (dialogNode, choice) => {
-    console.log(dialogNode);
+    console.log(choice);
     const edgesFromCurrentNode = dialogEdges.find((edge) => {
-      if (choice) {
+      if (choice != undefined) {
         return edge.source == dialogNode.id && edge.sourceHandle == choice;
       } else {
         return edge.source == dialogNode.id;
       }
     });
+
+    console.log(edgesFromCurrentNode);
     if (edgesFromCurrentNode.length == 0) {
       return undefined;
     }
     const nextNode = dialogNodes.find(
       (node) => node.id == edgesFromCurrentNode.target
     );
+    console.log("nextNode: ", nextNode);
     return nextNode;
   };
 

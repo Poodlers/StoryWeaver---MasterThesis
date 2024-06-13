@@ -33,7 +33,11 @@ export default function ImageImageTrackingARDisplay(props) {
         smoothTolerance=".01"
         smoothThreshold="5"
       >
-        <a-box src="#imageToLoad" scale="200 1 200" position="0 10 0"></a-box>
+        <a-box
+          src="#imageToLoad"
+          scale={`${scale.x} ${scale.y} ${scale.z}`}
+          position={`${position.x} ${position.y} ${position.z}`}
+        ></a-box>
       </a-nft>
       <a-entity camera></a-entity>
     </a-scene>

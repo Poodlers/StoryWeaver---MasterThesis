@@ -105,6 +105,7 @@ export default function ChoiceDialogueDisplay(props) {
     >
       <IconButton
         sx={{
+          display: displayAnswers ? "none" : "",
           position: "fixed",
           bottom: 75,
           right: "15px",
@@ -122,12 +123,6 @@ export default function ChoiceDialogueDisplay(props) {
           },
         }}
         onClick={() => {
-          if (displayAnswers) {
-            if (audioSrc) {
-              audioSrc.pause();
-            }
-            setNextDialogueNode();
-          }
           setDisplayAnswers(true);
         }}
       >
@@ -180,11 +175,6 @@ export default function ChoiceDialogueDisplay(props) {
             skipToEnd={displayAnswers}
             onComplete={() => {
               setDisplayAnswers(true);
-              setTimeout(() => {
-                if (!audioPlaying) {
-                  setNextDialogueNode();
-                }
-              }, 1000);
             }}
           />
         </Typography>

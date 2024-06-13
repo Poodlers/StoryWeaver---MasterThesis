@@ -16,6 +16,7 @@ export default function CharacterDialogueDisplay(props) {
   const repo = ApiDataRepository.getInstance();
   const character = props.character;
   const dialogue = props.dialogue;
+
   const audio = props.audioSrc;
   const setNextDialogueNode = props.setNextDialogueNode;
   const [characterImg, setCharacterImg] = React.useState("");
@@ -173,11 +174,6 @@ export default function CharacterDialogueDisplay(props) {
             skipToEnd={skipToEnd}
             onComplete={() => {
               setSkipToEnd(true);
-              setTimeout(() => {
-                if (!audioPlaying) {
-                  setNextDialogueNode();
-                }
-              }, 1000);
             }}
           />
         </Typography>

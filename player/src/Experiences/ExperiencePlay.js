@@ -70,6 +70,8 @@ export default function ExperiencePlay(props) {
     setCurrentNode(node);
   };
 
+  console.log(currentNode);
+
   return componentState === ComponentState.LOADING ? (
     <Box
       sx={{

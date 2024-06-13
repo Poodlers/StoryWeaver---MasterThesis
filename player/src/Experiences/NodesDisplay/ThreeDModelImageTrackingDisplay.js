@@ -8,7 +8,7 @@ export default function ThreeDModelImageTrackingDisplay(props) {
   const rotation = props.rotation || { x: 0, y: 0, z: 0 };
   const src = props.src;
   const markerSrc = props.markerSrc;
-
+  console.log("markerSrc", markerSrc);
   return (
     <div>
       <div className="arjs-loader">
@@ -41,9 +41,9 @@ export default function ThreeDModelImageTrackingDisplay(props) {
         >
           <a-entity
             gltf-model={src}
-            scale="5 5 5"
-            position="150 300 -100"
-            rotation={rotation.x + " " + rotation.y + " " + rotation.z}
+            scale={`${scale.x} ${scale.y} ${scale.z}`}
+            position={`${position.x} ${position.y} ${position.z}`}
+            rotation={`${rotation.x} ${rotation.y} ${rotation.z}`}
           ></a-entity>
         </a-nft>
 

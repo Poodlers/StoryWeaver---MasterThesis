@@ -96,7 +96,7 @@ export default function VideoImageTrackingARDisplay(props) {
             width="500"
             height="500"
             rotation="-90 0 0"
-            position="250 0 0"
+            position={`${position.x} ${position.y} ${position.z}`}
           ></a-video>
         </a-nft>
 

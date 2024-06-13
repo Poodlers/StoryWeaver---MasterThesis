@@ -39,9 +39,30 @@ export default function VideoNodeDisplay(props) {
     ComponentState.LOADING
   );
 
+  const [markerSrc, setMarkerSrc] = React.useState("");
+
   const [backgroundColor, setBackgroundColor] = React.useState("#A9B388");
 
   const [characterImg, setCharacterImg] = React.useState("");
+
+  useEffect(() => {
+    if (!isAR) return;
+    if (ARTypeInfo.trigger_mode == ARTriggerMode.QRCode) {
+      repo.getFilePath(ARTypeInfo.qr_code).then((url) => {
+        setMarkerSrc(url);
+      });
+    } else {
+      if (ARTypeInfo.image.inputType == "url") {
+        setMarkerSrc(ARTypeInfo.image.filename);
+      } else {
+        repo
+          .getFilePath(ARTypeInfo.image.filename.split(".")[0])
+          .then((url) => {
+            setMarkerSrc(url);
+          });
+      }
+    }
+  }, [ARTypeInfo]);
 
   useEffect(() => {
     if (character.image.filename == "") {
@@ -221,11 +242,7 @@ export default function VideoNodeDisplay(props) {
               ) : (
                 <ImageTrackingBasedARDisplay
                   name={title}
-                  markerSrc={
-                    ARTypeInfo.trigger_mode == ARTriggerMode.QRCode
-                      ? ARTypeInfo.qr_code
-                      : ARTypeInfo.image.filename
-                  }
+                  markerSrc={markerSrc}
                   src={url}
                   position={position}
                   scale={scale}

@@ -27,9 +27,9 @@ export default function TextImageTrackingARDisplay(props) {
       >
         <a-text
           value={text}
-          scale={scale.x + " " + scale.y + " " + scale.z}
-          position={position.x + " " + position.y + " " + position.z}
-          rotation={rotation.x + " " + rotation.y + " " + rotation.z}
+          scale={`${scale.x} ${scale.y} ${scale.z}`}
+          position={`${position.x} ${position.y} ${position.z}`}
+          rotation={`${rotation.x} ${rotation.y} ${rotation.z}`}
         ></a-text>
       </a-nft>
       <a-entity camera></a-entity>

@@ -144,7 +144,7 @@ app.get("/exported-projects", async (req, res) => {
   const projects = await client
     .db("projects")
     .collection("exported_stories")
-    .find({ exported: true })
+    .find({})
     .project({ id: 1, title: 1, experienceName: 1, description: 1, tags: 1 })
     .toArray();
   console.log(projects);
@@ -312,6 +312,9 @@ app.get("/generateMarker/:storyID/:filename", async (req, res) => {
     res.status(200).send(data);
   });
   worker.on("error", (msg) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "content-type");
     res.status(404).send(`An error occurred: ${msg}`);
   });
 });

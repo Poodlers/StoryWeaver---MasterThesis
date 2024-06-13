@@ -39,6 +39,26 @@ export default function TextNodeDisplay(props) {
 
   const [characterImg, setCharacterImg] = React.useState("");
 
+  const [markerSrc, setMarkerSrc] = React.useState("");
+
+  useEffect(() => {
+    if (!isAR) return;
+    if (ARTypeInfo.trigger_mode == ARTriggerMode.QRCode) {
+      repo.getFilePath(ARTypeInfo.qr_code).then((url) => {
+        setMarkerSrc(url);
+      });
+    } else {
+      if (ARTypeInfo.image.inputType == "url") {
+        setMarkerSrc(ARTypeInfo.image.filename);
+      } else {
+        repo
+          .getFilePath(ARTypeInfo.image.filename.split(".")[0])
+          .then((url) => {
+            setMarkerSrc(url);
+          });
+      }
+    }
+  }, [ARTypeInfo]);
   useEffect(() => {
     if (character.image.filename == "") {
       return;
@@ -109,11 +129,7 @@ export default function TextNodeDisplay(props) {
         ) : (
           <ImageTrackingBasedARDisplay
             name={text}
-            markerSrc={
-              ARTypeInfo.trigger_mode == ARTriggerMode.QRCode
-                ? ARTypeInfo.qr_code
-                : ARTypeInfo.image.filename
-            }
+            markerSrc={markerSrc}
             position={position}
             scale={scale}
             entityType={AREntityTypes.Text}

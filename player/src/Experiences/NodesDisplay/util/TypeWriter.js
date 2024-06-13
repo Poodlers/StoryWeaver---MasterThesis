@@ -6,6 +6,11 @@ const Typewriter = ({ text, delay, onComplete, skipToEnd }) => {
   const timeOut = useRef(null);
 
   useEffect(() => {
+    setCurrentIndex(0);
+    setCurrentText("");
+  }, [text]);
+
+  useEffect(() => {
     if (skipToEnd) {
       setCurrentText(text);
       setCurrentIndex(text.length);
