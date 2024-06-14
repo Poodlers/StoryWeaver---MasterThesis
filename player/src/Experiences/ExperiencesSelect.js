@@ -93,8 +93,10 @@ export default function ExperiencesSelect(props) {
               paddingLeft: 15,
             },
           }}
-          onSubmit={(event) => {
-            console.log("searching for ", searchString);
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              searchProjects();
+            }
           }}
           onChange={(event) => {
             setSearchString(event.target.value);

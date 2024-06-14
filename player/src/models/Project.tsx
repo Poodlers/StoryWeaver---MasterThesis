@@ -5,4 +5,6 @@ export interface Project {
     edges: any;
     characters: any;
     maps: any;
+    experienceName: string;
+    storyEndings: string[];
 }

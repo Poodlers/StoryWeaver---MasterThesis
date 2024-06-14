@@ -5,20 +5,10 @@ import { GOOGLE_CLIENT_ID } from "../data/constants";
 import { AppBar, Box, ButtonBase, Typography } from "@mui/material";
 import { primaryColor, tertiaryColor, textColor } from "../themes";
 
-export default function LoginPage() {
+export default function LoginPage(props) {
   const repo = ApiDataRepository.getInstance();
-  const [isLoggedIn, setLoginStatus] = useState(false);
-
-  const getAllUsers = async () => {
-    repo
-      .getAllUsers()
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+  const isLoggedIn = props.isLoggedIn;
+  const setLoginStatus = props.setLoginStatus;
 
   const responseGoogle = async (response) => {
     const bodyObject = {
@@ -42,21 +32,6 @@ export default function LoginPage() {
     }
   };
 
-  const logout = async () => {
-    try {
-      repo.logoutUser().then((res) => {
-        console.log(res);
-        setLoginStatus(false);
-        localStorage.removeItem("loginToken");
-        localStorage.removeItem("userPicture");
-        localStorage.removeItem("userName");
-        localStorage.removeItem("userEmail");
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   useEffect(() => {
     async function getStatus() {
       repo
@@ -76,40 +51,7 @@ export default function LoginPage() {
   return (
     <div>
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-        {isLoggedIn ? (
-          <Box minHeight={"100vh"} display="flex" flexDirection="column">
-            <AppBar
-              position="static"
-              sx={{
-                height: "70px",
-                backgroundColor: primaryColor,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="h5" sx={{ color: textColor }}>
-                Bem-vindo, {localStorage.getItem("userName")}
-              </Typography>
-
-              <ButtonBase
-                onClick={logout}
-                sx={{
-                  color: textColor,
-                  padding: "10px",
-                  margin: "10px",
-                  borderRadius: "5px",
-                  backgroundColor: tertiaryColor,
-                }}
-              >
-                <Typography variant="h5" sx={{ color: textColor }}>
-                  Logout
-                </Typography>
-              </ButtonBase>
-            </AppBar>
-          </Box>
-        ) : (
+        {isLoggedIn ? null : (
           <Box
             minHeight={"100vh"}
             display="flex"

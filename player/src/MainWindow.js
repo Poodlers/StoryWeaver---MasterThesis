@@ -6,7 +6,7 @@ import Profile from "./Profile/Profile";
 
 export default function MainWindow(props) {
   const [activeWindow, setActiveWindow] = React.useState("Experiências");
-
+  const [activeExperience, setExperience] = React.useState(undefined);
   return (
     <Box
       sx={{
@@ -14,7 +14,17 @@ export default function MainWindow(props) {
         backgroundColor: secondaryColor,
       }}
     >
-      {activeWindow === "Experiências" ? <ExperiencesWindow /> : <Profile />}
+      {activeWindow === "Experiências" ? (
+        <ExperiencesWindow
+          setExperience={setExperience}
+          activeExperience={activeExperience}
+        />
+      ) : (
+        <Profile
+          setActiveWindow={setActiveWindow}
+          setExperience={setExperience}
+        />
+      )}
 
       <Box
         sx={{

@@ -351,7 +351,7 @@ export default function MainWindow(props) {
     if (!(nodeType in DialogNodeType)) return;
 
     const newNode = {
-      id: (dialogNodes.length + 1).toString(),
+      id: uuid(),
       position: {
         x: dialogNodes[dialogNodes.length - 1].position.x + 300,
         y: dialogNodes[dialogNodes.length - 1].position.y,

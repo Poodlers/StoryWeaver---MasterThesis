@@ -5,6 +5,7 @@ import { BASE_URL } from "../data/constants";
 import { ProjectsBaseInfo } from "../models/ProjectsBaseInfo";
 import { Project } from "../models/Project";
 import { ThreeDModelTypes } from "../models/ThreeDModelTypes";
+import { NodeType } from "../models/NodeTypes";
 
 
 export class ApiResponse<T> {
@@ -190,7 +191,11 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
         
         const instance = this.createInstance();
         const storyID = localStorage.getItem('storyId');
-        try{
+
+        const endings = nodes.filter((node: any) => node.type === NodeType.endNode).map((node: any) => node.data.id);
+        const endingsWithoutDuplicates = endings.filter((item: any, index: any) => endings.indexOf(item) === index);
+    
+        try{        
             const result = await instance.post(`${BASE_URL}/export`,
                 {
                     storyId : storyID,
@@ -201,7 +206,8 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
                     nodes: nodes,
                     edges: edges,
                     characters : characters,
-                    maps:  maps
+                    maps:  maps,
+                    endings: endingsWithoutDuplicates
                 }
             ).then(transform);
             return result;

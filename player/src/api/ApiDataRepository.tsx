@@ -5,6 +5,7 @@ import { BASE_URL } from "../data/constants";
 import { ProjectsBaseInfo } from "../models/ProjectsBaseInfo";
 import { Project } from "../models/Project";
 import { ThreeDModelTypes } from "../models/ThreeDModelTypes";
+import { User } from "../models/UserInfo";
 
 
 export class ApiResponse<T> {
@@ -35,6 +36,38 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
     private static instance: ApiDataRepository;
     private constructor() {
         super();
+    }
+    async getUserInfo(): Promise<User> {
+        const instance = this.createInstance();
+
+        try{
+            const result = await instance.get(`${BASE_URL}/user-info/${localStorage.getItem('userEmail')}`).then(transform);
+            return result.data;
+        }
+        catch(error){
+            console.log(error); 
+            throw error;
+        }
+    }
+    async markEndingObtained(projectId: string, endingName: string, experienceName: string, allEndings: string[]): Promise<any> {
+        const instance = this.createInstance();
+
+        try{
+            const result = await instance.post(`${BASE_URL}/finish-story`,{
+                storyId: projectId,
+                userEmail : localStorage.getItem('userEmail'),
+                ending : endingName,
+                experienceName : experienceName,
+                allEndings : allEndings
+
+            }).then(transform);
+            
+            return result.data;
+        }
+        catch(error){
+            console.log(error); 
+            throw error;
+        }
     }
     public static getInstance(): ApiDataRepository {
         if (!ApiDataRepository.instance) {

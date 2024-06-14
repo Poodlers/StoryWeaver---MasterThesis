@@ -7,7 +7,8 @@ import ExperiencesSelect from "./ExperiencesSelect";
 import ExperiencePlay from "./ExperiencePlay";
 
 export default function ExperiencesWindow(props) {
-  const [experienceId, setExperienceId] = React.useState(undefined);
+  const experienceId = props.activeExperience;
+  const setExperienceId = props.setExperience;
 
   return (
     <Box>

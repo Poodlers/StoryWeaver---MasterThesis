@@ -118,7 +118,22 @@ export default function ExperiencePlay(props) {
       ) : currentNode.type == NodeType.endNode ? (
         <EndNodeDisplay
           node={currentNode}
-          setNextNode={setExperience}
+          setNextNode={() => {
+            repo
+              .markEndingObtained(
+                projectId,
+                currentNode.data.id,
+                projectInfo.experienceName,
+                projectInfo.storyEndings
+              )
+              .then((res) => {
+                console.log(res);
+                setExperience(undefined);
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+          }}
           experienceName={projectInfo.title}
         ></EndNodeDisplay>
       ) : currentNode.type == NodeType.videoNode ? (

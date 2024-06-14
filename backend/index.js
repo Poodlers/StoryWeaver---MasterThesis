@@ -119,6 +119,16 @@ app.post("/save", async (req, res) => {
   res.send({ storyId: storyId });
 });
 
+app.get("/user-info/:email", async (req, res) => {
+  const email = req.params.email;
+  const user = await client
+    .db("users")
+    .collection("login")
+    .findOne({ email: email });
+
+  res.send(user);
+});
+
 app.get("/projects/:searchString", async (req, res) => {
   const searchString = req.params.searchString;
   const projects = await client
@@ -164,6 +174,7 @@ app.post("/export", async (req, res) => {
   const originalStoryId = req.body.storyId;
   const storyTitle = req.body.projectTitle;
   const nodes = req.body.nodes;
+
   const edges = req.body.edges;
   const characters = req.body.characters;
   const maps = req.body.maps;
@@ -171,6 +182,7 @@ app.post("/export", async (req, res) => {
   const description = req.body.description;
   const tags = req.body.tags;
   let storyId = originalStoryId;
+  const storyEndings = req.body.endings;
 
   //save to story_structures database
   await client
@@ -189,6 +201,7 @@ app.post("/export", async (req, res) => {
           experienceName: experienceName,
           description: description,
           tags: tags,
+          storyEndings: storyEndings,
           lastModified: new Date().toISOString(),
         },
       },
@@ -211,6 +224,7 @@ app.post("/export", async (req, res) => {
           experienceName: experienceName,
           description: description,
           tags: tags,
+          storyEndings: storyEndings,
           lastModified: new Date().toISOString(),
         },
       },
@@ -230,6 +244,16 @@ app.delete("/delete/:storyId", async (req, res) => {
     .db("projects")
     .collection("exported_stories")
     .deleteOne({ id: storyId });
+
+  await client
+    .db("users")
+    .collection("login")
+    .updateMany(
+      {},
+      {
+        $pull: { endings: { storyId: storyId } },
+      }
+    );
 
   res.send({ success: true });
 });
@@ -387,6 +411,77 @@ function getContentType(filename) {
   }
 }
 
+app.post("/finish-story", async (req, res) => {
+  const storyId = req.body.storyId;
+  const experienceName = req.body.experienceName;
+  const userEmail = req.body.userEmail;
+  const endingToAdd = req.body.ending;
+  const allEndings = req.body.allEndings;
+  const collection = client.db("users").collection("login");
+
+  const document = await collection.findOne({ email: userEmail });
+
+  let storyExists = false;
+  let endingExists = false;
+
+  if (document) {
+    document.endings.forEach((ending) => {
+      if (ending.storyId === storyId) {
+        storyExists = true;
+        if (ending.endingsSeen.includes(endingToAdd)) {
+          endingExists = true;
+        }
+      }
+    });
+  }
+
+  if (!storyExists) {
+    // If storyId does not exist, add the new object to the endings array
+    await collection.updateOne(
+      { email: userEmail },
+      {
+        $push: {
+          endings: {
+            storyId: storyId,
+            endingsSeen: [endingToAdd],
+            allEndings: allEndings,
+            experienceName: experienceName,
+            lastPlayed: new Date().toISOString(),
+          },
+        },
+      }
+    );
+    console.log("New story added with the ending");
+  } else if (!endingExists) {
+    // If storyId exists but endingToAdd does not exist in endingsSeen, add the ending
+    await collection.updateOne(
+      { email: userEmail, "endings.storyId": storyId },
+      {
+        $addToSet: { "endings.$.endingsSeen": endingToAdd },
+        $set: {
+          "endings.$.lastPlayed": new Date().toISOString(),
+          "endings.$.allEndings": allEndings,
+          "endings.$.experienceName": experienceName,
+        },
+      }
+    );
+  } else {
+    await collection.updateOne(
+      { email: userEmail, "endings.storyId": storyId },
+      {
+        $set: {
+          "endings.$.lastPlayed": new Date().toISOString(),
+          "endings.$.allEndings": allEndings,
+          "endings.$.experienceName": experienceName,
+        },
+      }
+    );
+    console.log("Ending already exists in the story");
+  }
+
+  res.send({ success: true });
+});
+
 app.post("/login/user", async (req, res) => {
   const OAuthClient = new OAuth2Client(process.env.CLIENT_ID);
   const { authId } = req.body;
@@ -413,6 +508,10 @@ app.post("/login/user", async (req, res) => {
             email: email,
             name: name,
             picture: picture,
+          },
+
+          $setOnInsert: {
+            endings: [],
           },
         },
         { upsert: true }
