@@ -31,6 +31,7 @@ const ThreeDModelProps = {
       type: [InputFieldType.file_select, InputFieldType.color_picker],
       label: "Fundo:",
       icon: "landscape",
+      conditional: "ar",
       initialValue: {
         inputType: "url",
         filename: "",
@@ -173,6 +174,7 @@ const VideoProps = {
       type: [InputFieldType.file_select, InputFieldType.color_picker],
       label: "Fundo:",
       icon: "landscape",
+      conditional: "ar",
       initialValue: {
         inputType: "url",
         filename: "",
@@ -255,6 +257,7 @@ const ImageProps = {
       type: [InputFieldType.file_select, InputFieldType.color_picker],
       label: "Fundo:",
       icon: "landscape",
+      conditional: "ar",
       initialValue: {
         inputType: "url",
         filename: "",
@@ -390,6 +393,7 @@ const TextProps = {
     {
       type: [InputFieldType.file_select, InputFieldType.color_picker],
       label: "Fundo:",
+      conditional: "ar",
       icon: "landscape",
       initialValue: {
         inputType: "url",

@@ -188,52 +188,6 @@ export default function PopupAnchor(props) {
             component="div"
             sx={{ py: 1, px: 2, color: textColor, m: 0, textAlign: "start" }}
           >
-            Link:
-          </Typography>
-          <TextField
-            id={"link-" + anchorId}
-            inputProps={{
-              style: {
-                borderRadius: 0,
-                color: "black",
-                height: 40,
-                padding: 0,
-                margin: 0,
-                borderColor: "transparent",
-                borderWidth: 0,
-                backgroundColor: "#ffffff",
-                borderRadius: 10,
-                textAlign: "start",
-              },
-            }}
-            sx={{
-              flexGrow: 1,
-              py: 0,
-              px: 1,
-              color: textColor,
-              mx: "10px",
-              borderRadius: 0,
-              ".MuiInputBase-root": {
-                borderRadius: 2,
-                backgroundColor: "#ffffff",
-              },
-            }}
-          />
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ py: 1, px: 2, color: textColor, m: 0, textAlign: "start" }}
-          >
             Lat:
           </Typography>
           <TextField

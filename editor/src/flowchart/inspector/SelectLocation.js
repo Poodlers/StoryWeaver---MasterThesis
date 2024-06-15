@@ -25,6 +25,7 @@ function SelectLocationField(props) {
   const conditional = props.conditional == undefined ? true : props.conditional;
   const style = props.style;
   const value = props.value;
+  const options = props.data.options;
 
   const maps = JSON.parse(localStorage.getItem("maps")) || [];
   const handleFieldChange = props.onChange;
@@ -73,12 +74,13 @@ function SelectLocationField(props) {
   }, [value.qr_code, value.image, value.trigger_mode]);
 
   const qrCodeRef = useRef(null);
-  const [qrIsVisible, setQrIsVisible] = useState(false);
+
   const handleQrCodeGenerator = () => {
     if (!value.qr_code) {
       return;
     }
-    setQrIsVisible(true);
+    downloadQRCode();
+    generateMarkerFilesQRCode();
   };
   const downloadQRCode = () => {
     htmlToImage
@@ -211,15 +213,13 @@ function SelectLocationField(props) {
             });
           }}
         >
-          <MenuItem sx={{ color: "black" }} value={"GPS Coords"}>
-            GPS Coords
-          </MenuItem>
-          <MenuItem sx={{ color: "black" }} value={"QR-Code"}>
-            QR-Code
-          </MenuItem>
-          <MenuItem sx={{ color: "black" }} value={"Image Tracking"}>
-            Image Tracking
-          </MenuItem>
+          {options.map((option, index) => {
+            return (
+              <MenuItem sx={{ color: "black" }} key={index} value={option}>
+                {option}
+              </MenuItem>
+            );
+          })}
         </Select>
       </Box>
 
@@ -246,6 +246,21 @@ function SelectLocationField(props) {
               mt: 2,
             }}
           >
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ px: 2, color: textColor, m: 0 }}
+            >
+              GPS Coords
+            </Typography>
+            <Typography
+              variant="h7"
+              component="div"
+              sx={{ px: 2, color: textColor, m: 0, fontSize: 16, py: 1 }}
+            >
+              O conteúdo AR será exibido quando o utilizador estiver a uma
+              distância de {value.tolerance} metro(s) do local selecionado!
+            </Typography>
             <Box
               sx={{
                 display: "flex",
@@ -451,9 +466,20 @@ function SelectLocationField(props) {
           <Typography
             variant="h7"
             component="div"
-            sx={{ py: 1, px: 2, color: textColor, m: 0 }}
+            sx={{
+              py: 1,
+              px: 2,
+              color: "black",
+              m: 0,
+              fontSize: 18,
+              fontWeight: "bold",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
-            Nenhum mapa disponível - Adicione um mapa!
+            <Icon>warning</Icon>Nenhum mapa disponível - Adicione um mapa na aba
+            'Mapa'!
           </Typography>
         )
       ) : value.trigger_mode === "QR-Code" ? (
@@ -476,7 +502,7 @@ function SelectLocationField(props) {
           <Typography
             variant="h7"
             component="div"
-            sx={{ px: 2, color: textColor, m: 0, fontSize: 14 }}
+            sx={{ px: 2, color: textColor, m: 0, fontSize: 16 }}
           >
             Imprima o código QR abaixo e coloque no local onde quer que o
             conteúdo apareça!
@@ -526,7 +552,6 @@ function SelectLocationField(props) {
               variant="outlined"
               value={value.qr_code}
               onChange={(event) => {
-                setQrIsVisible(false);
                 handleFieldChange(props.data.name, {
                   trigger_mode: value.trigger_mode,
                   map: value.map,
@@ -547,8 +572,6 @@ function SelectLocationField(props) {
               }}
               onClick={() => {
                 handleQrCodeGenerator();
-                downloadQRCode();
-                generateMarkerFilesQRCode();
               }}
             >
               <Icon fontSize="large" sx={{ fontSize: "100px", color: "black" }}>
@@ -556,14 +579,13 @@ function SelectLocationField(props) {
               </Icon>
             </Box>
           </Box>
-          {qrIsVisible && (
-            <QRCode
-              ref={qrCodeRef}
-              style={{ marginTop: "10px" }}
-              value={value.qr_code}
-              size={100}
-            />
-          )}
+
+          <QRCode
+            ref={qrCodeRef}
+            style={{ marginTop: "10px" }}
+            value={value.qr_code}
+            size={100}
+          />
 
           <Typography
             variant="h7"
@@ -595,6 +617,21 @@ function SelectLocationField(props) {
         </Box>
       ) : (
         <>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ px: 2, color: textColor, m: 0, py: 2 }}
+          >
+            Image Tracking:
+          </Typography>
+          <Typography
+            variant="h7"
+            component="div"
+            sx={{ px: 2, color: textColor, m: 0, fontSize: 16 }}
+          >
+            Quando a imagem selecionada for detetada pela câmara, o conteúdo AR
+            será exibido!
+          </Typography>
           <FileSelectField
             generateMarkerFiles={true}
             data={{ label: "Imagem:", name: "image" }}

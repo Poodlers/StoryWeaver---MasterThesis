@@ -31,17 +31,6 @@ export default function ImageNode(props) {
     localStorage.setItem("nodes", JSON.stringify(newNodes));
   };
 
-  const deleteNode = () => {
-    const newNodes = reactflow.getNodes().filter((node) => node.id !== nodeId);
-    const newEdges = reactflow
-      .getEdges()
-      .filter((edge) => edge.source !== nodeId && edge.target !== nodeId);
-    reactflow.setNodes(newNodes);
-    reactflow.setEdges(newEdges);
-    localStorage.setItem("nodes", JSON.stringify(newNodes));
-    localStorage.setItem("edges", JSON.stringify(newEdges));
-  };
-
   const isAR = props.data?.ar ?? false;
 
   const backgroundFileInfo = props.data?.background ?? "";
@@ -178,9 +167,7 @@ export default function ImageNode(props) {
         <IconButton
           id="delete-button"
           sx={{ color: tertiaryColor }}
-          onClick={() => {
-            deleteNode();
-          }}
+          onClick={() => {}}
         >
           <Icon id="deleteButton" sx={{ fontSize: "40px !important" }}>
             delete

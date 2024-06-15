@@ -185,6 +185,7 @@ function Inspector(props) {
                   <FileSelectField
                     key={index}
                     id={index}
+                    conditional={!values[field.conditional]}
                     onChange={handleFieldChange}
                     value={values[field.name]}
                     data={field}
@@ -230,6 +231,7 @@ function Inspector(props) {
                   <ColorPicker
                     key={index}
                     id={index}
+                    conditional={!values[field.conditional]}
                     onChange={handleFieldChange}
                     value={values[field.name]}
                     data={field}

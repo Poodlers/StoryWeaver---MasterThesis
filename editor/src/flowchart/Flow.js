@@ -385,7 +385,7 @@ function Flow(props) {
             event.target.id == "deleteButton" ||
             event.target.id == "scene-name"
           ) {
-            setSelectedNode(undefined);
+            handleDelete(node.id);
             return;
           }
           setSelectedNode(node);

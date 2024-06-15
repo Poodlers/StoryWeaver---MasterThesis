@@ -189,9 +189,6 @@ function DialogueTree(props) {
 
   useEffect(() => {
     if (reactFlowInstance) {
-      console.log("setting nodes and edges for node", nodeId);
-      console.log(edges);
-      console.log(nodes);
       reactFlowInstance.fitView();
     }
   }, [reactFlowInstance, nodeId]);
@@ -207,6 +204,7 @@ function DialogueTree(props) {
       }}
     >
       <ReactFlow
+        key={nodeId}
         onInit={onInit}
         onEdgeUpdateStart={onEdgeUpdateStart}
         onEdgeUpdateEnd={onEdgeUpdateEnd}

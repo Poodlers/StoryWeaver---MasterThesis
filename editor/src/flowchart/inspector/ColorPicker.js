@@ -10,13 +10,14 @@ function ColorPicker(props) {
   const label = props.data.label;
   const style = props.style;
   const value = props.value;
+  const conditional = props.conditional == undefined ? true : props.conditional;
   const handleFieldChange = props.onChange;
   const [open, setOpen] = React.useState(false);
 
   return (
     <Box
       sx={{
-        display: "flex",
+        display: conditional ? "flex" : "none",
         width: "100%",
 
         flexDirection: "row",

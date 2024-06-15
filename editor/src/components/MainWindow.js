@@ -84,9 +84,14 @@ export default function MainWindow(props) {
         (node) =>
           node.type == NodeType.characterNode && node.data.name === dialogueName
       );
+
       setDialogueNodeId(dialogueNode.id);
       setDialogNodes([...dialogueNode.data.dialog.nodes]);
       setDialogEdges([...dialogueNode.data.dialog.edges]);
+    } else {
+      setDialogueNodeId(null);
+      setDialogNodes([]);
+      setDialogEdges([]);
     }
   }, [displayedWindow]);
 
@@ -357,8 +362,8 @@ export default function MainWindow(props) {
           data: {
             ...node.data,
             dialog: {
-              nodes: newNodes ? newNodes : node.data.dialog.nodes,
-              edges: newEdges ? newEdges : node.data.dialog.edges,
+              nodes: newNodes != undefined ? newNodes : node.data.dialog.nodes,
+              edges: newEdges != undefined ? newEdges : node.data.dialog.edges,
             },
           },
         };
@@ -535,7 +540,7 @@ export default function MainWindow(props) {
             setNodes={setDialogNodes}
             nodeId={dialogueNodeId}
             applyChanges={changeOneNode}
-            key={"dialogue"}
+            key={dialogueNodeId}
           ></DialogueTree>
         ) : null}
       </Box>

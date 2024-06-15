@@ -25,6 +25,7 @@ function FileSelectField(props) {
   const repo = ApiDataRepository.getInstance();
   const icon = props.data.icon;
   const label = props.data.label;
+  const conditional = props.conditional == undefined ? true : props.conditional;
   const generateMarkerFiles = props.generateMarkerFiles;
   const style = props.style;
   const value = props.value;
@@ -46,7 +47,7 @@ function FileSelectField(props) {
   return (
     <Box
       sx={{
-        display: "flex",
+        display: conditional ? "flex" : "none",
         width: "100%",
         flexDirection: "column",
         alignItems: "center",

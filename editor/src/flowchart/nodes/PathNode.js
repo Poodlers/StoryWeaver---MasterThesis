@@ -46,17 +46,6 @@ export default function PathNode(props) {
     localStorage.setItem("nodes", JSON.stringify(newNodes));
   };
 
-  const deleteNode = () => {
-    const newNodes = reactflow.getNodes().filter((node) => node.id !== nodeId);
-    const newEdges = reactflow
-      .getEdges()
-      .filter((edge) => edge.source !== nodeId && edge.target !== nodeId);
-    reactflow.setNodes(newNodes);
-    reactflow.setEdges(newEdges);
-    localStorage.setItem("nodes", JSON.stringify(newNodes));
-    localStorage.setItem("edges", JSON.stringify(newEdges));
-  };
-
   const character = props.data?.character ?? narrator;
   const [characterFilepath, setCharacterFilepath] = React.useState("");
   useEffect(() => {
@@ -161,12 +150,7 @@ export default function PathNode(props) {
           }}
         />
 
-        <IconButton
-          sx={{ color: tertiaryColor }}
-          onClick={() => {
-            deleteNode();
-          }}
-        >
+        <IconButton sx={{ color: tertiaryColor }} onClick={() => {}}>
           <Icon id="deleteButton" sx={{ fontSize: "40px !important" }}>
             delete
           </Icon>
