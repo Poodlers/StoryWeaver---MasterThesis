@@ -36,6 +36,7 @@ import PathNode from "./nodes/PathNode";
 import BeginNode from "../dialogue_tree/BeginNode";
 import EndNode from "../dialogue_tree/EndNode";
 import { findRemovedIndex } from "../data/utils";
+import { ApiDataRepository } from "../api/ApiDataRepository";
 
 const nodeColor = (node) => {
   switch (node.type) {
@@ -49,6 +50,7 @@ const nodeColor = (node) => {
 };
 
 function Flow(props) {
+  const repo = ApiDataRepository.getInstance();
   const [selectedNode, setSelectedNode] = useState(undefined);
   const [inspectorData, setInspectorData] = useState({});
 
@@ -185,6 +187,50 @@ function Flow(props) {
             );
           }
         }
+        //delete the assets used by the node
+        const file = newNodes[i].data ? newNodes[i].data.file : null;
+        const background = newNodes[i].data
+          ? newNodes[i].data.background
+          : null;
+        const ar_type = newNodes[i].data ? newNodes[i].data.ar_type : null;
+        if (file && file.inputType === "file" && file.filename !== "") {
+          repo
+            .deleteFile(file.filename)
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+        if (
+          background &&
+          background.inputType === "file" &&
+          background.filename !== ""
+        ) {
+          repo
+            .deleteFile(background.filename)
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+        if (
+          ar_type &&
+          ar_type.image.inputType === "file" &&
+          ar_type.image.filename !== ""
+        ) {
+          repo
+            .deleteFile(ar_type.image.filename)
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
         indexToDelete = i;
         break;
       }
@@ -217,8 +263,8 @@ function Flow(props) {
           }
 
           changeDisplayedWindow("Diálogo " + data["name"]);
-          setDialogNodes(data["dialog"].nodes);
-          setDialogEdges(data["dialog"].edges);
+          setDialogNodes(JSON.parse(JSON.stringify(data["dialog"].nodes)));
+          setDialogEdges(JSON.parse(JSON.stringify(data["dialog"].edges)));
           setDialogueNodeId(newNodes[i].id);
         }
         if (newNodes[i].type === NodeType.quizNode) {

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactFlow, {
   Controls,
   Background,
@@ -43,9 +43,8 @@ function DialogueTree(props) {
   const [selectedNode, setSelectedNode] = useState(undefined);
   const [inspectorData, setInspectorData] = useState({});
   const [inspectorProps, setInspectorProps] = useState(undefined);
-  const nodeId = props.nodeId;
-  const characters = props.characters;
-  const { nodes, setNodes, edges, setEdges } = props;
+
+  const { nodes, setNodes, edges, setEdges, characters, nodeId } = props;
 
   const applyChanges = props.applyChanges;
   const nodeTypes = useMemo(
@@ -58,79 +57,68 @@ function DialogueTree(props) {
     []
   );
 
-  const onConnect = useCallback(
-    (params) =>
-      setEdges((els) => {
-        if (
-          els.find(
-            (edge) =>
-              edge.sourceHandle == params.sourceHandle &&
-              edge.source == params.source
-          ) != undefined
-        ) {
-          return els;
-        }
-        applyChanges(nodeId, { nodes: nodes, edges: addEdge(params, els) });
-        return addEdge(params, els);
-      }),
-    []
-  );
+  const onConnect = (params) =>
+    setEdges((els) => {
+      if (
+        els.find(
+          (edge) =>
+            edge.sourceHandle == params.sourceHandle &&
+            edge.source == params.source
+        ) != undefined
+      ) {
+        return els;
+      }
+
+      applyChanges(nodeId, undefined, addEdge(params, els));
+      return addEdge(params, els);
+    });
 
   // gets called after end of edge gets dragged to another source or target
 
-  const onEdgeUpdate = useCallback(
-    (oldEdge, newConnection) =>
-      setEdges((els) => {
-        if (
-          els.find((edge) => edge.sourceHandle == newConnection.sourceHandle) !=
-          undefined
-        ) {
-          return els;
-        }
-        edgeUpdateSuccessful.current = true;
-        applyChanges(nodeId, {
-          nodes: nodes,
-          edges: updateEdge(oldEdge, newConnection, els),
-        });
-        return updateEdge(oldEdge, newConnection, els);
-      }),
-    []
-  );
+  const onEdgeUpdate = (oldEdge, newConnection) =>
+    setEdges((els) => {
+      if (
+        els.find((edge) => edge.sourceHandle == newConnection.sourceHandle) !=
+        undefined
+      ) {
+        return els;
+      }
+      edgeUpdateSuccessful.current = true;
 
-  const onEdgeUpdateStart = useCallback(() => {
+      applyChanges(nodeId, undefined, updateEdge(oldEdge, newConnection, els));
+      return updateEdge(oldEdge, newConnection, els);
+    });
+
+  const onEdgeUpdateStart = () => {
     edgeUpdateSuccessful.current = false;
-  }, []);
+  };
 
-  const onEdgeUpdateEnd = useCallback((_, edge) => {
+  const onEdgeUpdateEnd = (_, edge) => {
     if (!edgeUpdateSuccessful.current) {
       setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+
+      applyChanges(
+        nodeId,
+        undefined,
+        edges.filter((e) => e.id !== edge.id)
+      );
     }
 
     edgeUpdateSuccessful.current = true;
-  }, []);
+  };
 
-  const onNodesChange = useCallback(
-    (changes) =>
-      setNodes((nds) => {
-        applyChanges(nodeId, {
-          nodes: applyNodeChanges(changes, nds),
-          edges: edges,
-        });
-        return applyNodeChanges(changes, nds);
-      }),
-    []
-  );
-  const onEdgesChange = useCallback(
-    (changes) =>
-      setEdges((eds) => {
-        applyChanges(nodeId, {
-          nodes: nodes,
-          edges: applyEdgeChanges(changes, eds),
-        });
-        return applyEdgeChanges(changes, eds);
-      }),
-    []
-  );
+  const onNodesChange = (changes) =>
+    setNodes((nds) => {
+      applyChanges(nodeId, applyNodeChanges(changes, nds), undefined);
+
+      return applyNodeChanges(changes, nds);
+    });
+
+  const onEdgesChange = (changes) =>
+    setEdges((eds) => {
+      applyChanges(nodeId, undefined, applyEdgeChanges(changes, eds));
+      return applyEdgeChanges(changes, eds);
+    });
 
   const handleDelete = (idToDelete) => {
     let newNodes = [...nodes];
@@ -148,9 +136,10 @@ function DialogueTree(props) {
     newEdges = newEdges.filter(
       (edge) => edge.source != idToDelete && edge.target != idToDelete
     );
+
+    applyChanges(nodeId, newNodes, newEdges);
     setNodes(newNodes);
     setEdges(newEdges);
-    applyChanges(nodeId, { nodes: newNodes, edges: newEdges });
     setInspectorProps(undefined);
     setInspectorData({});
     setSelectedNode(undefined);
@@ -176,23 +165,36 @@ function DialogueTree(props) {
                   edge.sourceHandle == removedIndex
                 )
             );
-            console.log(newEdges);
 
             setEdges(newEdges);
           }
         }
         newNodes[i].data = data;
-        applyChanges(
-          nodeId,
-          { nodes: newNodes, edges: edges },
-          { oldEndName: oldData.id, changedId: id }
-        );
+        applyChanges(nodeId, newNodes, undefined, {
+          oldEndName: oldData.id,
+          changedId: id,
+        });
         setNodes(newNodes);
 
         break;
       }
     }
   };
+
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+
+  const onInit = (rf) => {
+    setReactFlowInstance(rf);
+  };
+
+  useEffect(() => {
+    if (reactFlowInstance) {
+      console.log("setting nodes and edges for node", nodeId);
+      console.log(edges);
+      console.log(nodes);
+      reactFlowInstance.fitView();
+    }
+  }, [reactFlowInstance, nodeId]);
 
   return (
     <div
@@ -205,6 +207,7 @@ function DialogueTree(props) {
       }}
     >
       <ReactFlow
+        onInit={onInit}
         onEdgeUpdateStart={onEdgeUpdateStart}
         onEdgeUpdateEnd={onEdgeUpdateEnd}
         onPaneClick={(event) => {
@@ -217,7 +220,7 @@ function DialogueTree(props) {
               if (nodes[i].id == selectedNode.id) {
                 newNodes[i].data = selectedNode.data;
                 setNodes(newNodes);
-                applyChanges(nodeId, { nodes: newNodes, edges: edges });
+                applyChanges(nodeId, newNodes, undefined);
                 break;
               }
             }
@@ -244,7 +247,7 @@ function DialogueTree(props) {
               if (nodes[i].id == selectedNode.id) {
                 newNodes[i].data = selectedNode.data;
                 setNodes(newNodes);
-                applyChanges(nodeId, { nodes: newNodes, edges: edges });
+                applyChanges(nodeId, newNodes, undefined);
                 break;
               }
             }

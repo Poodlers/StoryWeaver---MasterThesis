@@ -348,8 +348,8 @@ app.delete("/files/:storyID/:filename", (req, res) => {
   const filename = req.params.filename;
   const storyID = req.params.storyID;
   const filePath = path.join(__dirname, "files", storyID, filename);
+  const fileNameWithoutExtension = filename.split(".")[0];
   if (filename.includes(".zip")) {
-    const fileNameWithoutExtension = filename.split(".")[0];
     const outputPath = path.join(
       __dirname,
       "files",
@@ -358,6 +358,45 @@ app.delete("/files/:storyID/:filename", (req, res) => {
     );
     fs.rmdirSync(outputPath, { recursive: true });
   }
+  const filePathFSET = path.join(
+    __dirname,
+    "files",
+    storyID,
+    fileNameWithoutExtension + ".fset"
+  );
+  fs.unlink(filePathFSET, (err) => {
+    if (err) {
+      console.error("Error deleting file:", err);
+    } else {
+      console.log("File deleted successfully.");
+    }
+  });
+  const filePathISET = path.join(
+    __dirname,
+    "files",
+    storyID,
+    fileNameWithoutExtension + ".iset"
+  );
+  fs.unlink(filePathISET, (err) => {
+    if (err) {
+      console.error("Error deleting file:", err);
+    } else {
+      console.log("File deleted successfully.");
+    }
+  });
+  const filePathFSET3 = path.join(
+    __dirname,
+    "files",
+    storyID,
+    fileNameWithoutExtension + ".fset3"
+  );
+  fs.unlink(filePathFSET3, (err) => {
+    if (err) {
+      console.error("Error deleting file:", err);
+    } else {
+      console.log("File deleted successfully.");
+    }
+  });
 
   // Delete the file
   fs.unlink(filePath, (err) => {

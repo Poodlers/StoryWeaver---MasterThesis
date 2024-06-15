@@ -221,12 +221,16 @@ function FileSelectField(props) {
                     console.error(error);
                   });
                 }
-                handleFieldChange(props.data.name, {
-                  ...value,
-                  blob: undefined,
-                  filename: "",
-                  inputType: "file",
-                });
+                handleFieldChange(
+                  props.data.name,
+                  {
+                    ...value,
+                    blob: undefined,
+                    filename: "",
+                    inputType: "file",
+                  },
+                  "Not Started"
+                );
                 return;
               }
               setInputText("A carregar...");
@@ -282,7 +286,7 @@ function FileSelectField(props) {
                         });
                       }
                     });
-                  } else {
+                  } else if (!generateMarkerFiles) {
                     handleFieldChange(props.data.name, {
                       ...value,
                       blob: urlObj,
@@ -292,6 +296,16 @@ function FileSelectField(props) {
                   }
 
                   if (generateMarkerFiles) {
+                    handleFieldChange(
+                      props.data.name,
+                      {
+                        ...value,
+                        blob: urlObj,
+                        filename: fileName,
+                        inputType: "file",
+                      },
+                      "Started"
+                    );
                     repo
                       .requestGenerateMarkerFiles(fileName)
                       .then((res) => {
@@ -364,6 +378,7 @@ function FileSelectField(props) {
                 filename: event.target.value,
               });
               if (generateMarkerFiles) {
+                handleFieldChange(props.data.name, null, "Started");
                 fetch(event.target.value)
                   .then((res) => res.blob())
                   .then((blob) => {

@@ -77,6 +77,20 @@ export default function MainWindow(props) {
   );
 
   React.useEffect(() => {
+    if (displayedWindow.startsWith("Diálogo")) {
+      const dialogueName = displayedWindow.substring(8);
+
+      const dialogueNode = nodes.find(
+        (node) =>
+          node.type == NodeType.characterNode && node.data.name === dialogueName
+      );
+      setDialogueNodeId(dialogueNode.id);
+      setDialogNodes([...dialogueNode.data.dialog.nodes]);
+      setDialogEdges([...dialogueNode.data.dialog.edges]);
+    }
+  }, [displayedWindow]);
+
+  React.useEffect(() => {
     if (!mountMap) {
       setMountMap(true);
     }
@@ -108,7 +122,6 @@ export default function MainWindow(props) {
             };
           }
         }
-        console.log(dialogNodesWithCharacter);
       }
 
       if (newNodes[i].data && newNodes[i].data.character) {
@@ -286,14 +299,14 @@ export default function MainWindow(props) {
     localStorage.setItem("maps", JSON.stringify(newMaps));
   };
 
-  const changeOneNode = (nodeId, newData, oldEndData) => {
+  const changeOneNode = (nodeId, newNodes, newEdges, oldEndData) => {
     const oldNode = nodes.find((node) => node.id === nodeId);
 
-    if (oldNode.type === NodeType.characterNode) {
+    if (oldNode.type === NodeType.characterNode && newNodes) {
       const oldDialogNodesEndsNames = oldNode.data.dialog.nodes
         .filter((node) => node.type === DialogNodeType.endDialogNode)
         .map((node) => node.data.id);
-      const newDialogNodesEndsNames = newData.nodes
+      const newDialogNodesEndsNames = newNodes
         .filter((node) => node.type === DialogNodeType.endDialogNode)
         .map((node) => node.data.id);
       if (oldDialogNodesEndsNames.length > newDialogNodesEndsNames.length) {
@@ -315,7 +328,7 @@ export default function MainWindow(props) {
         oldDialogNodesEndsNames.length == newDialogNodesEndsNames.length &&
         oldEndData
       ) {
-        const newDialogEndName = newData.nodes.find(
+        const newDialogEndName = newNodes.find(
           (node) => node.id == oldEndData.changedId
         ).data.id;
 
@@ -332,20 +345,30 @@ export default function MainWindow(props) {
           return edge;
         });
         setEdges(newEdges);
-        console.log(newEdges);
+
         localStorage.setItem("edges", JSON.stringify(newEdges));
       }
     }
 
-    const newNodes = nodes.map((node) => {
+    const newNodess = nodes.map((node) => {
       if (node.id === nodeId) {
-        return { ...node, data: { ...node.data, dialog: newData } };
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            dialog: {
+              nodes: newNodes ? newNodes : node.data.dialog.nodes,
+              edges: newEdges ? newEdges : node.data.dialog.edges,
+            },
+          },
+        };
       }
       return node;
     });
-    setNodes(newNodes);
 
-    localStorage.setItem("nodes", JSON.stringify(newNodes));
+    setNodes(newNodess);
+
+    localStorage.setItem("nodes", JSON.stringify(newNodess));
   };
   const addDialogueNode = (nodeType, nodeProps) => {
     if (!(nodeType in DialogNodeType)) return;
@@ -360,10 +383,7 @@ export default function MainWindow(props) {
       type: nodeType,
     };
 
-    changeOneNode(dialogueNodeId, {
-      nodes: [...dialogNodes, newNode],
-      edges: dialogEdges,
-    });
+    changeOneNode(dialogueNodeId, [...dialogNodes, newNode], dialogEdges);
     setDialogNodes([...dialogNodes, newNode]);
   };
 

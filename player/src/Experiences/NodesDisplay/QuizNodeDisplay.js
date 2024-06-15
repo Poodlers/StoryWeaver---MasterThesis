@@ -74,7 +74,7 @@ export default function QuizNodeDisplay(props) {
     <Box
       sx={{
         width: "100%",
-        height: "100%",
+        height: "91vh",
         overflowY: "auto !important",
         display: "flex",
         flexDirection: "column",

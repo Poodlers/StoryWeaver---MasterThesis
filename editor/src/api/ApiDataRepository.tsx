@@ -185,6 +185,19 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
         }
     }
 
+    public checkIfFileExists = async (fileName: string): Promise<any> => {
+        const instance = this.createInstance();
+        const storyID = localStorage.getItem('storyId');
+        try{
+            const result = await instance.get(`${BASE_URL}/files/${storyID}/${fileName}`).then(transform);
+            return result;
+        }
+        catch(error){
+            console.log(error); 
+            throw error;
+        }
+    }
+
     public exportProject = async (projectTitle: any,
          nodes: any, edges: any, characters: any, maps: any, experienceName: string, 
          experienceDescription: string, experienceTags: any): Promise<any> => {

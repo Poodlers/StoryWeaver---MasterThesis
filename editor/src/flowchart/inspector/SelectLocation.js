@@ -32,6 +32,46 @@ function SelectLocationField(props) {
     maps.find((map) => map.name == value.map)
   );
 
+  React.useEffect(() => {
+    if (value.trigger_mode == "QR-Code") {
+      repo
+        .checkIfFileExists(value.qr_code + ".iset")
+        .then((response) => {
+          handleFieldChange(props.data.name, {
+            trigger_mode: value.trigger_mode,
+            map: value.map,
+            place: value.place,
+            qr_code: value.qr_code,
+            tolerance: value.tolerance,
+            image: value.image,
+            marker_generation: {
+              ...value.marker_generation,
+              qr_code: "Complete",
+            },
+          });
+        })
+        .catch((error) => {});
+    } else if (value.trigger_mode == "Image Tracking") {
+      repo
+        .checkIfFileExists(value.image.filename.split(".")[0] + ".iset")
+        .then((response) => {
+          handleFieldChange(props.data.name, {
+            trigger_mode: value.trigger_mode,
+            map: value.map,
+            place: value.place,
+            qr_code: value.qr_code,
+            tolerance: value.tolerance,
+            image: value.image,
+            marker_generation: {
+              ...value.marker_generation,
+              image: "Complete",
+            },
+          });
+        })
+        .catch((error) => {});
+    }
+  }, [value.qr_code, value.image, value.trigger_mode]);
+
   const qrCodeRef = useRef(null);
   const [qrIsVisible, setQrIsVisible] = useState(false);
   const handleQrCodeGenerator = () => {
@@ -64,6 +104,18 @@ function SelectLocationField(props) {
         repo
           .uploadFile(file)
           .then((response) => {
+            handleFieldChange(props.data.name, {
+              trigger_mode: value.trigger_mode,
+              map: value.map,
+              place: value.place,
+              qr_code: value.qr_code,
+              tolerance: value.tolerance,
+              image: value.image,
+              marker_generation: {
+                ...value.marker_generation,
+                qr_code: "Started",
+              },
+            });
             repo
               .requestGenerateMarkerFiles(file.name)
               .then((response) => {
@@ -82,7 +134,11 @@ function SelectLocationField(props) {
       });
   };
 
-  const handleImageTrackFieldChange = (name, newImageValue) => {
+  const handleImageTrackFieldChange = (
+    name,
+    newImageValue,
+    newMarkerGeneration
+  ) => {
     handleFieldChange(props.data.name, {
       trigger_mode: value.trigger_mode,
       map: value.map,
@@ -90,6 +146,10 @@ function SelectLocationField(props) {
       qr_code: value.qr_code,
       tolerance: value.tolerance,
       image: newImageValue,
+      marker_generation: {
+        ...value.marker_generation,
+        image: newMarkerGeneration,
+      },
     });
   };
 
@@ -147,6 +207,7 @@ function SelectLocationField(props) {
               qr_code: value.qr_code,
               tolerance: value.tolerance,
               image: value.image,
+              marker_generation: value.marker_generation,
             });
           }}
         >
@@ -168,7 +229,7 @@ function SelectLocationField(props) {
           component="div"
           sx={{ py: 1, px: 2, color: textColor, m: 0 }}
         >
-          {label} - Localização:
+          {label}
         </Typography>
       </Box>
 
@@ -226,6 +287,7 @@ function SelectLocationField(props) {
                     tolerance: value.tolerance,
                     qr_code: value.qr_code,
                     image: value.image,
+                    marker_generation: value.marker_generation,
                   });
                   setSelectedMap(
                     maps.find((map) => map.name == event.target.value)
@@ -290,6 +352,7 @@ function SelectLocationField(props) {
                     qr_code: value.qr_code,
                     tolerance: value.tolerance,
                     image: value.image,
+                    marker_generation: value.marker_generation,
                   });
                 }}
               >
@@ -342,7 +405,7 @@ function SelectLocationField(props) {
                   textAlign: "start",
                 }}
               >
-                Tolerância de distância:
+                Tolerância de distância (metros):
               </Typography>
 
               <TextField
@@ -378,6 +441,7 @@ function SelectLocationField(props) {
                     qr_code: value.qr_code,
                     image: value.image,
                     tolerance: event.target.value,
+                    marker_generation: value.marker_generation,
                   });
                 }}
               />
@@ -414,8 +478,8 @@ function SelectLocationField(props) {
             component="div"
             sx={{ px: 2, color: textColor, m: 0, fontSize: 14 }}
           >
-            Imprima o código QR abaixo e coloque no local onde quer que a
-            animação esteja!
+            Imprima o código QR abaixo e coloque no local onde quer que o
+            conteúdo apareça!
           </Typography>
 
           <Box
@@ -463,7 +527,6 @@ function SelectLocationField(props) {
               value={value.qr_code}
               onChange={(event) => {
                 setQrIsVisible(false);
-
                 handleFieldChange(props.data.name, {
                   trigger_mode: value.trigger_mode,
                   map: value.map,
@@ -471,6 +534,10 @@ function SelectLocationField(props) {
                   qr_code: event.target.value,
                   tolerance: value.tolerance,
                   image: value.image,
+                  marker_generation: {
+                    ...value.marker_generation,
+                    qr_code: "Not Started",
+                  },
                 });
               }}
             />
@@ -497,15 +564,72 @@ function SelectLocationField(props) {
               size={100}
             />
           )}
+
+          <Typography
+            variant="h7"
+            component="div"
+            sx={{
+              px: 2,
+              color: "black",
+              m: 0,
+              mt: 2,
+              width: "100%",
+              display: "flex",
+              alignContent: "center",
+              justifyContent: "center",
+            }}
+          >
+            {value.marker_generation == "Not Started" ? (
+              <Icon sx={{ px: 2 }}>info</Icon>
+            ) : value.marker_generation == "Started" ? (
+              <Icon sx={{ px: 2 }}>check_circle</Icon>
+            ) : (
+              <Icon sx={{ px: 2 }}>warning</Icon>
+            )}
+            {value.marker_generation.qr_code == "Not Started"
+              ? "Para iniciar a geração dos marcadores, clique no ícone de impressão!"
+              : value.marker_generation.qr_code == "Started"
+              ? "Nenhum marcador gerado pelo servidor ainda. O processo pode demorar alguns minutos."
+              : "Marcadores prontos! O conteúdo AR será exibido quando o QR Code for detetado pela câmara!"}
+          </Typography>
         </Box>
       ) : (
-        <FileSelectField
-          generateMarkerFiles={true}
-          data={{ label: "Imagem:", name: "image" }}
-          style={{ mt: 2 }}
-          value={value.image}
-          onChange={handleImageTrackFieldChange}
-        />
+        <>
+          <FileSelectField
+            generateMarkerFiles={true}
+            data={{ label: "Imagem:", name: "image" }}
+            style={{ mt: 2 }}
+            value={value.image}
+            onChange={handleImageTrackFieldChange}
+          />
+          <Typography
+            variant="h7"
+            component="div"
+            sx={{
+              px: 2,
+              color: "black",
+              m: 0,
+              mt: 2,
+              width: "100%",
+              display: "flex",
+              alignContent: "center",
+              justifyContent: "center",
+            }}
+          >
+            {value.marker_generation == "Not Started" ? (
+              <Icon sx={{ px: 2 }}>info</Icon>
+            ) : value.marker_generation == "Started" ? (
+              <Icon sx={{ px: 2 }}>check_circle</Icon>
+            ) : (
+              <Icon sx={{ px: 2 }}>warning</Icon>
+            )}
+            {value.marker_generation.image == "Not Started"
+              ? "Para iniciar a geração dos marcadores, insira uma imagem!"
+              : value.marker_generation.image == "Started"
+              ? "Nenhum marcador gerado pelo servidor ainda. O processo pode demorar alguns minutos."
+              : "Marcadores prontos! O conteúdo AR será exibido quando a Imagem for detetada pela câmara!"}
+          </Typography>
+        </>
       )}
     </Box>
   );

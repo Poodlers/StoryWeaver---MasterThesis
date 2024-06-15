@@ -62,11 +62,7 @@ export default function DialogChoiceNode(props) {
         position={Position.Left}
         style={leftNodeHandleStyle}
       />
-      <Box
-        sx={{
-          backgroundColor: textColor,
-        }}
-      >
+      <Box>
         <Box
           sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
         >
