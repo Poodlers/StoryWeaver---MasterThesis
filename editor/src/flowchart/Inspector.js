@@ -22,6 +22,9 @@ import TextFieldMultiline from "./inspector/TextFieldMultiline";
 import ThreeDCoordField from "./inspector/ThreeDCoordField";
 import ColorPicker from "./inspector/ColorPicker";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import ARPreviewField from "./inspector/ARPreview";
+import { NodeType } from "../models/NodeTypes";
+import { AREntityTypes } from "../models/AREntityTypes";
 
 function Inspector(props) {
   const values = props.value;
@@ -237,6 +240,35 @@ function Inspector(props) {
                     data={field}
                     style={{ mt: 2 }}
                   ></ColorPicker>
+                );
+              case InputFieldType.ar_preview:
+                return (
+                  <ARPreviewField
+                    key={index}
+                    id={index}
+                    conditional={values[field.conditional]}
+                    onChange={handleFieldChange}
+                    title={values.name}
+                    fileInfo={values.file}
+                    ARTypeInfo={values.ar_type}
+                    position={values.position}
+                    scale={values.scale}
+                    rotation={values.rotation}
+                    AREntityType={
+                      props.data.type == NodeType.threeDModelNode
+                        ? AREntityTypes.ThreeDModel
+                        : props.data.type == NodeType.imageNode
+                        ? AREntityTypes.Image
+                        : props.data.type == NodeType.videoNode
+                        ? AREntityTypes.Video
+                        : AREntityTypes.Text
+                    }
+                    character={values.character}
+                    autoplay={values.autoplay}
+                    color={values.color}
+                    data={field}
+                    style={{ mt: 2 }}
+                  ></ARPreviewField>
                 );
             }
           });

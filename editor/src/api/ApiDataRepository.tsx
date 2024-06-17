@@ -198,6 +198,13 @@ export class ApiDataRepository extends HttpClient implements IDataRepository{
         }
     }
 
+    public getMapPlaceCoords = async (mapName: string, placeName: string): Promise<any> => {
+       const maps = JSON.parse(localStorage.getItem('maps') || '[]');
+       const anchor = maps.find((map: any) => map.name === mapName)?.anchors.find((anchor : any) => anchor.name === placeName);
+       return anchor ? anchor.coords :
+        new Error("No anchor found");
+    }
+
     public exportProject = async (projectTitle: any,
          nodes: any, edges: any, characters: any, maps: any, experienceName: string, 
          experienceDescription: string, experienceTags: any): Promise<any> => {

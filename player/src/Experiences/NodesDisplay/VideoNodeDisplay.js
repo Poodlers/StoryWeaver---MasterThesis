@@ -231,7 +231,7 @@ export default function VideoNodeDisplay(props) {
               ARTypeInfo.trigger_mode === ARTriggerMode.GPSCoords ? (
                 <LocationBasedARDisplay
                   name={title}
-                  src={fileInfo.filename}
+                  src={url}
                   map={ARTypeInfo.map}
                   place={ARTypeInfo.place}
                   tolerance={ARTypeInfo.tolerance}

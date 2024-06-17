@@ -21,7 +21,8 @@ import Typewriter from "./util/TypeWriter";
 export default function TextNodeDisplay(props) {
   const repo = ApiDataRepository.getInstance();
   const textNode = props.node;
-  const text = textNode.data.text;
+  const text = textNode.data.name;
+  const textColor = textNode.data.color;
 
   const character = textNode.data.character;
   const possibleNextNodes = props.possibleNextNodes;
@@ -125,6 +126,7 @@ export default function TextNodeDisplay(props) {
             position={position}
             scale={scale}
             entityType={AREntityTypes.Text}
+            color={textColor}
           />
         ) : (
           <ImageTrackingBasedARDisplay
@@ -133,6 +135,7 @@ export default function TextNodeDisplay(props) {
             position={position}
             scale={scale}
             entityType={AREntityTypes.Text}
+            color={textColor}
           />
         )
       ) : (
@@ -163,7 +166,7 @@ export default function TextNodeDisplay(props) {
                 px: 3,
                 py: 1,
                 fontSize: 20,
-                color: "black",
+                color: textColor.color || "black",
                 fontWeight: 200,
                 whiteSpace: "pre-wrap",
               }}

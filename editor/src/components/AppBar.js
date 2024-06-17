@@ -270,8 +270,21 @@ export default function TopAppBar(props) {
           <LoadProjectPopup
             open={openLoadProjectPopup}
             setProjects={setProjects}
+            setDisplayAlert={setDisplayAlert}
+            setDisplayMessage={setAlertMessage}
+            setSeverity={setSeverity}
             onClose={(projectId) => {
-              if (projectId != undefined) handleLoadServer(projectId);
+              if (projectId != undefined) {
+                if (handleLoadServer(projectId)) {
+                  setSeverity("success");
+                  setAlertMessage("Projeto carregado com sucesso!");
+                  setDisplayAlert(true);
+                } else {
+                  setSeverity("error");
+                  setAlertMessage("Erro ao carregar projeto");
+                  setDisplayAlert(true);
+                }
+              }
               setOpenLoadProjectPopup(false);
             }}
             projects={projects}
@@ -298,7 +311,6 @@ export default function TopAppBar(props) {
           >
             <MenuItem
               onClick={() => {
-                setDisplayAlert(true);
                 if (handleNewProject()) {
                   setSeverity("success");
                   setAlertMessage("Projeto criado com sucesso!");
@@ -306,6 +318,7 @@ export default function TopAppBar(props) {
                   setSeverity("error");
                   setAlertMessage("Erro ao criar projeto");
                 }
+                setDisplayAlert(true);
                 handleClose();
               }}
             >

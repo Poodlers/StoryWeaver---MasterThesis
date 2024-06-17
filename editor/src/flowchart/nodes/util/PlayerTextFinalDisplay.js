@@ -63,7 +63,7 @@ export default function PlayerTextFinalDisplay(props) {
             px: 3,
             py: 1,
             fontSize: 20,
-            color: "black",
+
             fontWeight: 200,
             whiteSpace: "pre-wrap",
           }}

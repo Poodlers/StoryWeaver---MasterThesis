@@ -115,7 +115,7 @@ function FileSelectField(props) {
             textAlign: "center",
             cursor: "pointer",
             backgroundColor:
-              inputMethod == "file" ? primaryColor : secondaryColor,
+              inputMethod == "file" ? secondaryColor : primaryColor,
           }}
         >
           Ficheiro local
@@ -136,7 +136,7 @@ function FileSelectField(props) {
             textAlign: "center",
             cursor: "pointer",
             backgroundColor:
-              inputMethod == "url" ? primaryColor : secondaryColor,
+              inputMethod == "url" ? secondaryColor : primaryColor,
           }}
         >
           URL
@@ -311,6 +311,16 @@ function FileSelectField(props) {
                       .requestGenerateMarkerFiles(fileName)
                       .then((res) => {
                         console.log(res);
+                        handleFieldChange(
+                          props.data.name,
+                          {
+                            ...value,
+                            blob: urlObj,
+                            filename: fileName,
+                            inputType: "file",
+                          },
+                          "Complete"
+                        );
                       })
                       .catch((error) => {
                         console.error(error);
@@ -395,6 +405,16 @@ function FileSelectField(props) {
                           .requestGenerateMarkerFiles(fileName)
                           .then((res) => {
                             console.log(res);
+                            handleFieldChange(
+                              props.data.name,
+                              {
+                                ...value,
+                                blob: null,
+                                filename: fileName,
+                                inputType: "url",
+                              },
+                              "Complete"
+                            );
                           })
                           .catch((error) => {
                             console.error(error);

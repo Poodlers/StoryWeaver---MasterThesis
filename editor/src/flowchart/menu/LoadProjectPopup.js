@@ -9,6 +9,9 @@ export default function LoadProjectPopup(props) {
   const open = props.open;
   const onClose = props.onClose;
   const projects = props.projects;
+  const setDisplayAlert = props.setDisplayAlert;
+  const setAlertMessage = props.setDisplayMessage;
+  const setSeverity = props.setSeverity;
 
   const setProjects = props.setProjects;
   return (
@@ -123,11 +126,23 @@ export default function LoadProjectPopup(props) {
                   {project.id != localStorage.getItem("storyId") ? (
                     <IconButton
                       onClick={() =>
-                        repo.deleteProject(project.id).then(() => {
-                          setProjects(
-                            projects.filter((p) => p.id !== project.id)
-                          );
-                        })
+                        repo
+                          .deleteProject(project.id)
+                          .then(() => {
+                            setProjects(
+                              projects.filter((p) => p.id !== project.id)
+                            );
+                            setSeverity("success");
+                            setAlertMessage("Projeto eliminado com sucesso!");
+                            setDisplayAlert(true);
+                          })
+                          .catch((error) => {
+                            setSeverity("error");
+                            setAlertMessage(
+                              "Ocorreu um erro ao eliminar o projeto!"
+                            );
+                            setDisplayAlert(true);
+                          })
                       }
                     >
                       <Icon>delete</Icon>

@@ -149,9 +149,10 @@ export default function MainWindow(props) {
     setNodes(newNodes);
   }, [characters]);
 
-  const handleLoadServer = (projectId) => {
+  const handleLoadServer = async (projectId) => {
     if (projectId == undefined) return;
-    repo.getProject(projectId).then((data) => {
+    try {
+      const data = await repo.getProject(projectId);
       setNodes(data.nodes);
       setEdges(data.edges);
       setMaps(data.maps);
@@ -172,7 +173,11 @@ export default function MainWindow(props) {
       localStorage.setItem("experienceName", data.experienceName);
       localStorage.setItem("experienceDescription", data.description);
       localStorage.setItem("experienceTags", JSON.stringify(data.tags));
-    });
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   };
 
   const handleNewProject = async () => {

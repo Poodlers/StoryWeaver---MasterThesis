@@ -10,6 +10,7 @@ export enum InputFieldType {
     open_window,
     multiple_choice,
     color_picker,
+    ar_preview,
     hidden
 
 }

@@ -240,6 +240,11 @@ app.delete("/delete/:storyId", async (req, res) => {
     .collection("story_structures")
     .deleteOne({ id: storyId });
 
+  //delete the folder containing the files for this project
+  const folderPath = path.join(__dirname, "files", storyId);
+  if (fs.existsSync(folderPath)) {
+    fs.rmdirSync(folderPath, { recursive: true });
+  }
   await client
     .db("projects")
     .collection("exported_stories")

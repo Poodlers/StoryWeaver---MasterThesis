@@ -56,3 +56,26 @@ code {
   color: #FEFAE0 !important;
   font-size: 25px !important;
 }
+
+.arjs-loader {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ 
+}
+
+.arjs-loader div {
+  text-align: center;
+  font-size: 50px !important;
+  font-family: 'Segoe UI', 'Roboto', 'Oxygen',
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
+  color: white;
+}

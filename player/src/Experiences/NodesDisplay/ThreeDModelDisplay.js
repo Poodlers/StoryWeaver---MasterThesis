@@ -35,6 +35,7 @@ export default function ThreeDModelDisplay(props) {
   const rotation = threeDNode.data.rotation;
   const name = threeDNode.data.name;
   const isAR = threeDNode.data.ar;
+  const autoPlay = threeDNode.data.autoplay;
   const modelType = file.modelType;
   const ARTypeInfo = threeDNode.data.ar_type;
 
@@ -238,6 +239,7 @@ export default function ThreeDModelDisplay(props) {
                   scale={scale}
                   entityType={AREntityTypes.ThreeDModel}
                   threeDModelType={modelType}
+                  autoplay={autoPlay}
                 />
               ) : (
                 <ImageTrackingBasedARDisplay
@@ -248,6 +250,7 @@ export default function ThreeDModelDisplay(props) {
                   scale={scale}
                   entityType={AREntityTypes.ThreeDModel}
                   threeDModelType={modelType}
+                  autoplay={autoPlay}
                 />
               )
             ) : (
@@ -267,13 +270,9 @@ export default function ThreeDModelDisplay(props) {
                   {modelType == ThreeDModelTypes.gltf ? (
                     <a-entity
                       gltf-model={fileURL}
-                      scale={scale.x + " " + scale.y + " " + scale.z}
-                      position={
-                        position.x + " " + position.y + " " + position.z
-                      }
-                      rotation={
-                        rotation.x + " " + rotation.y + " " + rotation.z
-                      }
+                      rotation={`${rotation.x} ${rotation.y} ${rotation.z}`}
+                      scale={`${scale.x} ${scale.y} ${scale.z}`}
+                      position={`${position.x} ${position.y} ${position.z}`}
                     ></a-entity>
                   ) : (
                     <a-entity
@@ -285,10 +284,9 @@ export default function ThreeDModelDisplay(props) {
                         fileURL.replace(".obj", ".mtl") +
                         ";"
                       }
-                      scale={scale.x + " " + scale.y + " " + scale.z}
-                      position={
-                        position.x + " " + position.y + " " + position.z
-                      }
+                      rotation={`${rotation.x} ${rotation.y} ${rotation.z}`}
+                      scale={`${scale.x} ${scale.y} ${scale.z}`}
+                      position={`${position.x} ${position.y} ${position.z}`}
                     ></a-entity>
                   )}
                 </a-scene>

@@ -7,6 +7,7 @@ import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
 
 const ThreeDModelProps = {
   nodeType: "Cena 3D",
+  type: NodeType.threeDModelNode,
   fields: [
     {
       type: [InputFieldType.hidden],
@@ -58,7 +59,7 @@ const ThreeDModelProps = {
     {
       type: [InputFieldType.threeDCoord],
       label: "Posição:",
-      initialValue: { x: 0, y: 0, z: 0 },
+      initialValue: { x: 150, y: 300, z: -100 },
       name: "position",
     },
     {
@@ -86,6 +87,12 @@ const ThreeDModelProps = {
       name: "ar",
     },
     {
+      type: [InputFieldType.ar_preview],
+      label: "Pré-visualização AR",
+      name: "ar_preview",
+      conditional: "ar",
+    },
+    {
       type: [InputFieldType.select_location],
       conditional: "ar",
       label: "Modo de acionamento:",
@@ -106,6 +113,7 @@ const ThreeDModelProps = {
 
 const QuizProps = {
   nodeType: "Cena Quiz",
+  type: NodeType.quizNode,
   fields: [
     {
       type: [InputFieldType.hidden],
@@ -150,6 +158,7 @@ const QuizProps = {
 
 const VideoProps = {
   nodeType: "Cena Vídeo",
+  type: NodeType.videoNode,
   fields: [
     {
       type: [InputFieldType.hidden],
@@ -199,10 +208,16 @@ const VideoProps = {
       name: "ar",
     },
     {
+      type: [InputFieldType.ar_preview],
+      label: "Pré-visualização AR",
+      name: "ar_preview",
+      conditional: "ar",
+    },
+    {
       type: [InputFieldType.threeDCoord],
       label: "Posição:",
       conditional: "ar",
-      initialValue: { x: 0, y: 0, z: 0 },
+      initialValue: { x: 50, y: 150, z: -100 },
       name: "position",
     },
     {
@@ -211,6 +226,13 @@ const VideoProps = {
       conditional: "ar",
       initialValue: { x: 1, y: 1, z: 1 },
       name: "scale",
+    },
+    {
+      type: [InputFieldType.threeDCoord],
+      label: "Rotação:",
+      initialValue: { x: -90, y: 0, z: 0 },
+      name: "rotation",
+      conditional: "ar",
     },
     {
       type: [InputFieldType.select_location],
@@ -233,6 +255,7 @@ const VideoProps = {
 
 const ImageProps = {
   nodeType: "Cena Imagem",
+  type: NodeType.imageNode,
   fields: [
     {
       type: [InputFieldType.hidden],
@@ -283,6 +306,12 @@ const ImageProps = {
       name: "ar",
     },
     {
+      type: [InputFieldType.ar_preview],
+      label: "Pré-visualização AR",
+      name: "ar_preview",
+      conditional: "ar",
+    },
+    {
       type: [InputFieldType.threeDCoord],
       label: "Posição:",
       conditional: "ar",
@@ -295,6 +324,13 @@ const ImageProps = {
       conditional: "ar",
       initialValue: { x: 1, y: 1, z: 1 },
       name: "scale",
+    },
+    {
+      type: [InputFieldType.threeDCoord],
+      label: "Rotação:",
+      initialValue: { x: 0, y: 0, z: 0 },
+      name: "rotation",
+      conditional: "ar",
     },
     {
       type: [InputFieldType.select_location],
@@ -317,6 +353,7 @@ const ImageProps = {
 
 const AudioProps = {
   nodeType: "Cena Áudio",
+  type: NodeType.audioNode,
   fields: [
     {
       type: [InputFieldType.hidden],
@@ -370,6 +407,7 @@ const AudioProps = {
 
 const TextProps = {
   nodeType: "Cena Texto",
+  type: NodeType.textNode,
   fields: [
     {
       type: [InputFieldType.hidden],
@@ -388,7 +426,13 @@ const TextProps = {
       label: "Texto:",
       initialValue: "Texto exemplo",
       icon: "description",
-      name: "text",
+      name: "name",
+    },
+    {
+      type: [InputFieldType.color_picker],
+      label: "Cor do texto:",
+      initialValue: { color: "#000000", inputType: "color" },
+      name: "color",
     },
     {
       type: [InputFieldType.file_select, InputFieldType.color_picker],
@@ -411,20 +455,10 @@ const TextProps = {
       name: "ar",
     },
     {
-      type: [InputFieldType.select_location],
+      type: [InputFieldType.ar_preview],
+      label: "Pré-visualização AR",
+      name: "ar_preview",
       conditional: "ar",
-      label: "Modo de acionamento:",
-      options: ["GPS Coords", "QR-Code", "Image Tracking"],
-      initialValue: {
-        trigger_mode: "GPS Coords",
-        map: "Map 1",
-        place: "place",
-        tolerance: 5,
-        qr_code: "qr_code",
-        image: { inputType: "url", filename: "", blob: null },
-        marker_generation: { qr_code: "Not Started", image: "Not Started" },
-      },
-      name: "ar_type",
     },
     {
       type: [InputFieldType.threeDCoord],
@@ -440,11 +474,35 @@ const TextProps = {
       initialValue: { x: 1, y: 1, z: 1 },
       name: "scale",
     },
+    {
+      type: [InputFieldType.threeDCoord],
+      label: "Rotação:",
+      initialValue: { x: 0, y: 0, z: 0 },
+      name: "rotation",
+      conditional: "ar",
+    },
+    {
+      type: [InputFieldType.select_location],
+      conditional: "ar",
+      label: "Modo de acionamento:",
+      options: ["GPS Coords", "QR-Code", "Image Tracking"],
+      initialValue: {
+        trigger_mode: "GPS Coords",
+        map: "Map 1",
+        place: "place",
+        tolerance: 5,
+        qr_code: "qr_code",
+        image: { inputType: "url", filename: "", blob: null },
+        marker_generation: { qr_code: "Not Started", image: "Not Started" },
+      },
+      name: "ar_type",
+    },
   ],
 };
 
 const PathProps = {
   nodeType: "Caminho",
+  type: NodeType.pathNode,
   fields: [
     {
       type: [InputFieldType.hidden],
@@ -498,6 +556,7 @@ const PathProps = {
 
 const DialogProps = {
   nodeType: "Diálogo",
+  type: DialogNodeType.dialogNode,
   fields: [
     {
       type: [InputFieldType.multiple_choice],
@@ -523,6 +582,7 @@ const DialogProps = {
 
 const DialogChoiceProps = {
   nodeType: "Pergunta",
+  type: DialogNodeType.dialogChoiceNode,
   fields: [
     {
       type: [InputFieldType.multiple_choice],
@@ -554,6 +614,7 @@ const DialogChoiceProps = {
 
 const EndDialogProps = {
   nodeType: "Fim",
+  type: DialogNodeType.endDialogNode,
   fields: [
     {
       type: [InputFieldType.textField],
@@ -585,6 +646,7 @@ const defaultDialogEdges = [];
 
 const CharacterProps = {
   nodeType: "Cena Diálogo",
+  type: NodeType.characterNode,
   fields: [
     {
       type: [InputFieldType.hidden],

@@ -17,9 +17,10 @@ import { narrator } from "../../data/narrator";
 
 export default function TextNode(props) {
   const repo = ApiDataRepository.getInstance();
-  const text = props.data?.text ?? "";
+  const text = props.data?.name ?? "";
   const isAR = props.data?.ar ?? false;
   const character = props.data?.character ?? narrator;
+  const color = props.data?.color.color ?? "#000000";
   const backgroundFileInfo = props.data?.background ?? "";
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
@@ -185,6 +186,9 @@ export default function TextNode(props) {
           {"landscape"}
         </Icon>
         <PlayerTextFinalDisplay
+          style={{
+            color: color + " !important",
+          }}
           text={text}
           messageType={"Mensagem"}
           titleIcon={
