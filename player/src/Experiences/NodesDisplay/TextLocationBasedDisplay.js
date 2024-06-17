@@ -20,12 +20,7 @@ export default function TextLocationBasedDisplay(props) {
         <a-camera
           gps-camera
           rotation-reader
-          gps-new-camera={
-            "gpsMinDistance: 0.5; simulateLatitude:" +
-            coords.lat +
-            "; simulateLongitude: " +
-            coords.lng
-          }
+          gps-new-camera={"gpsMinDistance: 0.5; "}
         ></a-camera>
 
         <a-text

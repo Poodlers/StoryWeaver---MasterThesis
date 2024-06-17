@@ -34,10 +34,7 @@ export default function ThreeDLocationBasedDisplay(props) {
           gps-camera
           rotation-reader
           gps-new-camera={
-            "gpsMinDistance: 0.5; simulateLatitude:" +
-            coords.lat +
-            "; simulateLongitude: " +
-            coords.lng
+            "gpsMinDistance: 0.5;"
           }
         ></a-camera>
         {threeDModelType === ThreeDModelTypes.gltf ? (
