@@ -56,7 +56,6 @@ export default function MapWindow(props) {
       );
 
       selectedMap.scale = realDistance / imgDistance; // metros / pixel
-
       const newMaps = mapsState.filter((map) => map.id !== selectedMap.id);
       newMaps.push(selectedMap);
       setMaps(newMaps);

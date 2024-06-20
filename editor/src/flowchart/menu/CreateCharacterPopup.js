@@ -246,7 +246,7 @@ export default function CreateCharacterPopup(props) {
           >
             <FileSelectField
               data={{
-                label: "Sprite do Personagem",
+                label: "Imagem do Personagem",
                 acceptedType: FileTypesInput.Image,
               }}
               style={{ mt: 2 }}

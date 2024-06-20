@@ -78,7 +78,7 @@ export default function Profile(props) {
           </IconButton>
 
           <Typography variant="h6" sx={{ pt: 2, textAlign: "center" }}>
-            Bem-vindo, {localStorage.getItem("userName")}
+            Bem-vind@, {localStorage.getItem("userName")}
           </Typography>
           <Box
             sx={{

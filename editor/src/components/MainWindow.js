@@ -65,12 +65,10 @@ export default function MainWindow(props) {
   );
 
   const [name, setName] = React.useState(
-    localStorage.getItem("experienceName") ||
-      "Adicione o nome da sua experiência"
+    localStorage.getItem("experienceName") || ""
   );
   const [description, setDescription] = React.useState(
-    localStorage.getItem("experienceDescription") ||
-      "Adicione uma descrição breve!"
+    localStorage.getItem("experienceDescription") || ""
   );
   const [tags, setTags] = React.useState(
     JSON.parse(localStorage.getItem("experienceTags")) || []
@@ -188,21 +186,15 @@ export default function MainWindow(props) {
     setWindows(["História", "Mapa"]);
     changeDisplayedWindow("História");
     setProjectTitle("Adicione um título ao projeto");
-    setName("Adicione o nome da sua experiência");
-    setDescription("Adicione uma descrição breve!");
+    setName("");
+    setDescription("");
     setTags([]);
     localStorage.setItem("edges", JSON.stringify([]));
     localStorage.setItem("nodes", JSON.stringify(defaultNodes));
     localStorage.setItem("maps", JSON.stringify([]));
     localStorage.setItem("exported", false);
-    localStorage.setItem(
-      "experienceName",
-      "Adicione o nome da sua experiência"
-    );
-    localStorage.setItem(
-      "experienceDescription",
-      "Adicione uma descrição breve!"
-    );
+    localStorage.setItem("experienceName", "");
+    localStorage.setItem("experienceDescription", "");
     localStorage.setItem("experienceTags", JSON.stringify([]));
     localStorage.removeItem("storyId");
     localStorage.setItem("projectTitle", "Adicione um título ao projeto");

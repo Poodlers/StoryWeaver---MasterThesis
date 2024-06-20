@@ -156,6 +156,7 @@ export default function ExportProjectPopup(props) {
                 Nome:
               </Typography>
               <TextField
+                placeholder="Nome do projeto..."
                 aria-autocomplete="off"
                 autoComplete="off"
                 fullWidth
@@ -216,6 +217,7 @@ export default function ExportProjectPopup(props) {
                 Descrição:
               </Typography>
               <TextField
+                placeholder="Descrição do projeto..."
                 aria-autocomplete="off"
                 autoComplete="off"
                 fullWidth
