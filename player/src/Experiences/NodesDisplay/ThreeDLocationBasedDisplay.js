@@ -11,8 +11,6 @@ export default function ThreeDLocationBasedDisplay(props) {
   const threeDModelType = props.threeDModelType;
   const autoplay = props.autoplay;
 
-  console.log("ThreeDLocationBasedDisplay: ", props);
-
   const { document, window } = useFrame();
 
   useEffect(() => {
@@ -22,28 +20,21 @@ export default function ThreeDLocationBasedDisplay(props) {
   }, []);
   return (
     <>
-      <div className="arjs-loader">
-        <div>Loading, please wait...</div>
-      </div>
       <a-scene
         vr-mode-ui="enabled: false"
         arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
         renderer="antialias: true; alpha: true"
       >
         <a-camera
-          gps-camera
-          rotation-reader
-          gps-new-camera={
-            "gpsMinDistance: 0.5;"
-          }
+          gps-new-camera="gpsMinDistance: 0.3"
+          fov="80"
+          position="0 0 0"
         ></a-camera>
         {threeDModelType === ThreeDModelTypes.gltf ? (
           <a-entity
             id="model"
             gltf-model={src}
-            gps-new-entity-place={
-              "latitude: " + coords.lat + ";" + "longitude: " + coords.lng
-            }
+            gps-new-entity-place={`latitude: ${coords.lat}; longitude: ${coords.lng}`}
             rotation={`${rotation.x} ${rotation.y} ${rotation.z}`}
             scale={`${scale.x} ${scale.y} ${scale.z}`}
             position={`${position.x} ${position.y} ${position.z}`}
@@ -54,9 +45,7 @@ export default function ThreeDLocationBasedDisplay(props) {
             obj-model={
               "obj: " + src + "; " + "mtl: " + src.replace(".obj", ".mtl") + ";"
             }
-            gps-new-entity-place={
-              "latitude: " + coords.lat + ";" + "longitude: " + coords.lng
-            }
+            gps-new-entity-place={`latitude: ${coords.lat}; longitude: ${coords.lng}`}
             rotation={`${rotation.x} ${rotation.y} ${rotation.z}`}
             scale={`${scale.x} ${scale.y} ${scale.z}`}
             position={`${position.x} ${position.y} ${position.z}`}
@@ -65,9 +54,7 @@ export default function ThreeDLocationBasedDisplay(props) {
           <a-entity
             id="model"
             fbx-model={"src: " + src}
-            gps-new-entity-place={
-              "latitude: " + coords.lat + ";" + "longitude: " + coords.lng
-            }
+            gps-new-entity-place={`latitude: ${coords.lat}; longitude: ${coords.lng}`}
             rotation={`${rotation.x} ${rotation.y} ${rotation.z}`}
             scale={`${scale.x} ${scale.y} ${scale.z}`}
             position={`${position.x} ${position.y} ${position.z}`}

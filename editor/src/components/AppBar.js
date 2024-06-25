@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Alert,
+  Button,
   ButtonBase,
   Icon,
   Menu,
@@ -21,6 +22,7 @@ import {
   textColor,
 } from "../themes";
 import AddLocationsPopup from "../flowchart/menu/AddLocationsPopup";
+import Logo from "../assets/64x64-logo.png";
 import CharactersPopup from "../flowchart/menu/CharactersPopup";
 import { possibleNodes } from "../models/possibleNodes";
 import { possibleDialogueNodes } from "../models/possibleDialogueNodes";
@@ -29,7 +31,12 @@ import { ApiDataRepository } from "../api/ApiDataRepository";
 import ExportProjectPopup from "../flowchart/menu/ExportProjectPopup";
 import { NodeType } from "../models/NodeTypes";
 import { DialogNodeType } from "../models/DialogNodeTypes";
-import { AccountCircle } from "@mui/icons-material";
+import {
+  AccountCircle,
+  ArrowDownwardOutlined,
+  ArrowDropDownOutlined,
+  ArrowDropUpOutlined,
+} from "@mui/icons-material";
 
 export default function TopAppBar(props) {
   const repo = ApiDataRepository.getInstance();
@@ -230,7 +237,7 @@ export default function TopAppBar(props) {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
+          <ButtonBase
             id="basic-button"
             size="large"
             edge="start"
@@ -242,8 +249,17 @@ export default function TopAppBar(props) {
             onClick={handleClick}
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
-          </IconButton>
+            <img
+              src={Logo}
+              alt="Logo"
+              style={{ width: "50px", height: "50px" }}
+            />
+            {open ? (
+              <ArrowDropUpOutlined></ArrowDropUpOutlined>
+            ) : (
+              <ArrowDropDownOutlined></ArrowDropDownOutlined>
+            )}
+          </ButtonBase>
           <ExportProjectPopup
             open={openExportProjectPopup}
             name={name}

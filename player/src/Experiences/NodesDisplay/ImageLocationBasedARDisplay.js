@@ -29,18 +29,15 @@ export default function ImageLocationBasedDisplay(props) {
   }, [src]);
   return (
     <>
-      <div className="arjs-loader">
-        <div>Loading, please wait...</div>
-      </div>
       <a-scene
         vr-mode-ui="enabled: false"
         arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
         renderer="antialias: true; alpha: true"
       >
         <a-camera
-          gps-camera
-          rotation-reader
-          gps-new-camera={"gpsMinDistance: 0.5; "}
+          gps-new-camera="gpsMinDistance: 0.3"
+          fov="80"
+          position="0 0 0"
         ></a-camera>
         <a-assets>
           <img
@@ -55,9 +52,7 @@ export default function ImageLocationBasedDisplay(props) {
           scale={`${scale.x * width} ${scale.y} ${scale.z * height}`}
           rotation={`${rotation.x} ${rotation.y} ${rotation.z}`}
           position={`${position.x} ${position.y} ${position.z}`}
-          gps-new-entity-place={
-            "latitude: " + coords.lat + ";" + "longitude: " + coords.lng
-          }
+          gps-new-entity-place={`latitude: ${coords.lat}; longitude: ${coords.lng}`}
         ></a-box>
       </a-scene>
     </>

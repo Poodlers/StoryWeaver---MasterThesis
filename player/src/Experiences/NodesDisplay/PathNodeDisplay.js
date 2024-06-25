@@ -94,6 +94,7 @@ export default function PathNodeDisplay(props) {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
               };
+
               const distance = distanceInKmBetweenEarthCoordinates(
                 currentCoords.lat,
                 currentCoords.lng,

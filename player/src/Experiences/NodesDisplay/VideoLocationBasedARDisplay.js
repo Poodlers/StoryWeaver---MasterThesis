@@ -25,18 +25,15 @@ export default function VideoLocationBasedDisplay(props) {
   }, []);
   return (
     <>
-      <div className="arjs-loader">
-        <div>Loading, please wait...</div>
-      </div>
       <a-scene
         vr-mode-ui="enabled: false"
         arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
         renderer="antialias: true; alpha: true"
       >
         <a-camera
-          gps-camera
-          rotation-reader
-          gps-new-camera={"gpsMinDistance: 0.5; "}
+          gps-new-camera="gpsMinDistance: 0.3"
+          fov="80"
+          position="0 0 0"
         ></a-camera>
         <a-assets>
           <video
@@ -53,15 +50,13 @@ export default function VideoLocationBasedDisplay(props) {
           ></video>
         </a-assets>
         <a-video
-          look-at="[gps-camera]"
-          gps-new-entity-place={
-            "latitude: " + coords.lat + ";" + "longitude: " + coords.lng
-          }
+          look-at="[gps-new-camera]"
+          gps-new-entity-place={`latitude: ${coords.lat}; longitude: ${coords.lng}`}
           src="#vid"
           width={width * scale.x}
           height={height * scale.z}
           rotation={`${rotation.x} ${rotation.y} ${rotation.z}`}
-          position="0 1 0"
+          position={`${position.x} ${position.y} ${position.z}`}
         ></a-video>
       </a-scene>
     </>

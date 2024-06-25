@@ -9,30 +9,26 @@ export default function TextLocationBasedDisplay(props) {
   const textColor = props.textColor.color || "#000000";
   return (
     <>
-      <div className="arjs-loader">
-        <div>Loading, please wait...</div>
-      </div>
       <a-scene
         vr-mode-ui="enabled: false"
         arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
         renderer="antialias: true; alpha: true"
       >
         <a-camera
-          gps-camera
-          rotation-reader
-          gps-new-camera={"gpsMinDistance: 0.5; "}
+          gps-new-camera="gpsMinDistance: 0.3"
+          fov="80"
+          position="0 0 0"
         ></a-camera>
 
         <a-text
           value={text}
-          look-at="[gps-camera]"
+          look-at="[gps-new-camera]"
           side="double"
           color={textColor}
+          position={`${position.x} ${position.y} ${position.z}`}
           rotation={`${rotation.x} ${rotation.y} ${rotation.z}`}
           scale={`${scale.x} ${scale.y} ${scale.z}`}
-          gps-new-entity-place={
-            "latitude: " + coords.lat + ";" + "longitude: " + coords.lng
-          }
+          gps-new-entity-place={`latitude: ${coords.lat}; longitude: ${coords.lng}`}
         ></a-text>
       </a-scene>
     </>
