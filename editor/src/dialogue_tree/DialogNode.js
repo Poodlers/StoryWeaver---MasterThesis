@@ -55,117 +55,127 @@ export default function DialogNode(props) {
       <Handle
         type="target"
         position={Position.Left}
-        style={{
-          marginTop: 40 + "px",
-          ...leftNodeHandleStyle,
-        }}
+        style={
+          isSelectedForCopy
+            ? { marginTop: 40 + "px", ...leftNodeHandleStyle, left: "5px" }
+            : {
+                marginTop: 40 + "px",
+                ...leftNodeHandleStyle,
+              }
+        }
       />
       <Handle
         type="source"
         position={Position.Right}
-        style={{
-          marginTop: 40 + "px",
-          ...rightNodeHandleStyle,
-          right: "-7px",
-        }}
-      />
-      <Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
-        >
-          {character ? (
-            <img
-              style={{
-                width: "auto",
-                height: 70,
-                textAlign: "end",
-                justifyContent: "end",
-              }}
-              onError={(e) => {}}
-              src={filepath}
-              alt="character"
-            />
-          ) : null}
-          <IconButton
-            id="audioButton"
-            sx={{ display: audioSrc ? "block" : "none" }}
-            onClick={() => {
-              if (audioSrc) {
-                if (audioSrc.paused) {
-                  audioSrc.play();
-                } else {
-                  audioSrc.pause();
-                }
+        style={
+          isSelectedForCopy
+            ? { marginTop: 40 + "px", ...rightNodeHandleStyle, right: "5px" }
+            : {
+                marginTop: 40 + "px",
+                ...rightNodeHandleStyle,
+                right: "-7px",
               }
-            }}
+        }
+      />
+      <div className={isSelectedForCopy ? "border" : ""}>
+        <Box>
+          <Box
+            sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
           >
-            <Icon
+            {character ? (
+              <img
+                style={{
+                  width: "auto",
+                  height: 70,
+                  textAlign: "end",
+                  justifyContent: "end",
+                }}
+                onError={(e) => {}}
+                src={filepath}
+                alt="character"
+              />
+            ) : null}
+            <IconButton
               id="audioButton"
-              sx={{
-                fontSize: "35px !important",
+              sx={{ display: audioSrc ? "block" : "none" }}
+              onClick={() => {
+                if (audioSrc) {
+                  if (audioSrc.paused) {
+                    audioSrc.play();
+                  } else {
+                    audioSrc.pause();
+                  }
+                }
               }}
             >
-              volume_up
-            </Icon>
-          </IconButton>
-        </Box>
-        <Box
-          sx={{
-            backgroundColor: primaryColor,
-            borderColor: tertiaryColor,
-            justifyContent: "start",
-            borderWidth: 2,
-            borderStyle: "solid",
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              px: 2,
-              fontSize: 25,
-              color: textColor,
-              fontWeight: 400,
-              textAlign: "center",
-            }}
-          >
-            Texto
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            backgroundColor: secondaryColor,
-            borderColor: tertiaryColor,
-            borderWidth: 2,
-            borderStyle: "solid",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+              <Icon
+                id="audioButton"
+                sx={{
+                  fontSize: "35px !important",
+                }}
+              >
+                volume_up
+              </Icon>
+            </IconButton>
+          </Box>
           <Box
             sx={{
-              width: "100%",
-              height: "100%",
-              px: 3,
-              py: 1,
+              backgroundColor: primaryColor,
+              borderColor: tertiaryColor,
+              justifyContent: "start",
+              borderWidth: 2,
+              borderStyle: "solid",
             }}
           >
             <Typography
               variant="h6"
               sx={{
-                px: 3,
-                fontSize: 22,
+                px: 2,
+                fontSize: 25,
                 color: textColor,
                 fontWeight: 400,
-                whiteSpace: "pre-wrap",
+                textAlign: "center",
               }}
             >
-              {text}
+              Texto
             </Typography>
           </Box>
+          <Box
+            sx={{
+              backgroundColor: secondaryColor,
+              borderColor: tertiaryColor,
+              borderWidth: 2,
+              borderStyle: "solid",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                px: 3,
+                py: 1,
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  px: 3,
+                  fontSize: 22,
+                  color: textColor,
+                  fontWeight: 400,
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {text}
+              </Typography>
+            </Box>
+          </Box>
         </Box>
-      </Box>
+      </div>
     </>
   );
 }

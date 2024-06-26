@@ -75,6 +75,14 @@ function Flow(props) {
     characters,
   } = props;
 
+  const nodesRef = useRef(nodes);
+  const edgesRef = useRef(edges);
+
+  useEffect(() => {
+    nodesRef.current = nodes;
+    edgesRef.current = edges;
+  }, [nodes, edges]);
+
   const nodeTypes = useMemo(
     () => ({
       quizNode: QuizNode,
@@ -145,6 +153,7 @@ function Flow(props) {
       }
       if (event.ctrlKey && (event.key === "x" || event.key === "X")) {
         console.log("ctrl + X key pressed");
+        if (selectedNodeRef.current == undefined) return;
         handleDelete(selectedNodeRef.current.id);
       }
     }
@@ -231,8 +240,8 @@ function Flow(props) {
   );
 
   const handleDelete = (idToDelete) => {
-    let newNodes = [...nodes];
-    let newEdges = [...edges];
+    let newNodes = [...nodesRef.current];
+    let newEdges = [...edgesRef.current];
     let indexToDelete = -1;
     for (let i = 0; i < newNodes.length; i++) {
       if (newNodes[i].id == idToDelete) {

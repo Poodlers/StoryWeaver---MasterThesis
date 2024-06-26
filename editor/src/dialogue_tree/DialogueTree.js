@@ -24,6 +24,7 @@ import {
   EndDialogProps,
 } from "../flowchart/nodes/nodeProps";
 import { findRemovedIndex } from "../data/utils";
+import { v4 as uuid } from "uuid";
 
 const nodeColor = (node) => {
   switch (node.type) {
@@ -41,6 +42,7 @@ const nodeColor = (node) => {
 function DialogueTree(props) {
   const edgeUpdateSuccessful = useRef(true);
   const [selectedNode, setSelectedNode] = useState(undefined);
+  const selectedNodeRef = useRef(selectedNode);
   const [inspectorData, setInspectorData] = useState({});
   const [inspectorProps, setInspectorProps] = useState(undefined);
 
@@ -56,6 +58,79 @@ function DialogueTree(props) {
     }),
     []
   );
+
+  const nodesRef = useRef(nodes);
+  const edgesRef = useRef(edges);
+
+  useEffect(() => {
+    nodesRef.current = nodes;
+    edgesRef.current = edges;
+  }, [nodes, edges]);
+
+  useEffect(() => {
+    selectedNodeRef.current = selectedNode;
+  }, [selectedNode]);
+
+  useEffect(() => {
+    function onCopyPaste(event) {
+      // Check for Ctrl+C (copy) or Ctrl+V (paste)
+      if (event.ctrlKey && (event.key === "c" || event.key === "C")) {
+        console.log("ctrl + C key pressed");
+        if (selectedNodeRef.current === undefined) return;
+        if (selectedNodeRef.current.data.isSelectedForCopy) return;
+        selectedNodeRef.current.data.isSelectedForCopy = true;
+
+        setNodes((nds) => {
+          return nds.map((node) => {
+            if (node.id === selectedNodeRef.current.id) {
+              node.data.isSelectedForCopy = true;
+              return node;
+            }
+            return node;
+          });
+        });
+      }
+      if (event.ctrlKey && (event.key === "v" || event.key === "V")) {
+        if (
+          selectedNodeRef.current === undefined ||
+          selectedNodeRef.current.type === DialogNodeType.beginDialogNode
+        )
+          return;
+        selectedNodeRef.current.data.isSelectedForCopy = false;
+        const newNode = {
+          id: uuid(),
+          position: {
+            x: selectedNodeRef.current.position.x + 100,
+            y: selectedNodeRef.current.position.y + 100,
+          },
+          data: JSON.parse(JSON.stringify(selectedNodeRef.current.data)),
+          type: selectedNodeRef.current.type,
+        };
+        setNodes((nds) => {
+          setSelectedNode(selectedNodeRef.current);
+          const newNodes = nds.map((node) => {
+            if (node.id === selectedNodeRef.current.id) {
+              node.data.isSelectedForCopy = false;
+              return node;
+            }
+            return node;
+          });
+          localStorage.setItem("nodes", JSON.stringify([...newNodes, newNode]));
+          return [...newNodes, newNode];
+        });
+      }
+      if (event.ctrlKey && (event.key === "x" || event.key === "X")) {
+        console.log("ctrl + X key pressed");
+        if (selectedNodeRef.current == undefined) return;
+        handleDelete(selectedNodeRef.current.id);
+      }
+    }
+    document.addEventListener("keydown", onCopyPaste);
+
+    return () => {
+      document.removeEventListener("keydown", onCopyPaste);
+    };
+  }, []);
 
   const onConnect = (params) =>
     setEdges((els) => {
@@ -121,8 +196,8 @@ function DialogueTree(props) {
     });
 
   const handleDelete = (idToDelete) => {
-    let newNodes = [...nodes];
-    let newEdges = [...edges];
+    let newNodes = [...nodesRef.current];
+    let newEdges = [...edgesRef.current];
     let indexToDelete = -1;
     for (let i = 0; i < newNodes.length; i++) {
       if (newNodes[i].id == idToDelete) {
@@ -244,6 +319,7 @@ function DialogueTree(props) {
             for (let i = 0; i < nodes.length; i++) {
               if (nodes[i].id == selectedNode.id) {
                 newNodes[i].data = selectedNode.data;
+                selectedNode.data.isSelectedForCopy = false;
                 setNodes(newNodes);
                 applyChanges(nodeId, newNodes, undefined);
                 break;
@@ -253,6 +329,23 @@ function DialogueTree(props) {
 
           if (event.target.id == "audioButton") {
             return;
+          }
+
+          if (node.type !== DialogNodeType.beginDialogNode) {
+            node.data.isSelectedForCopy = false;
+            if (node.type == DialogNodeType.endDialogNode) {
+              reactFlowInstance.setCenter(
+                node.position.x + 50,
+                node.position.y + 50
+              );
+              reactFlowInstance.zoomTo(1.3, { duration: 500 });
+            } else {
+              reactFlowInstance.setCenter(
+                node.position.x + 100,
+                node.position.y + 175
+              );
+              reactFlowInstance.zoomTo(1.1, { duration: 500 });
+            }
           }
           setSelectedNode(node);
           let inspecProps = undefined;
