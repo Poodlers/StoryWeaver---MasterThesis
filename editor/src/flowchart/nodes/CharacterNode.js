@@ -21,6 +21,7 @@ export default function CharacterNode(props) {
     props.data.dialog.nodes.filter((nodes) => nodes.type == "endDialogNode") ??
     [];
   const backgroundFileInfo = props.data?.background ?? "";
+  const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
@@ -67,7 +68,11 @@ export default function CharacterNode(props) {
       <Handle
         type="target"
         position={Position.Left}
-        style={leftNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...leftNodeHandleStyle, left: "5px" }
+            : leftNodeHandleStyle
+        }
       />
 
       <Box
@@ -126,99 +131,104 @@ export default function CharacterNode(props) {
           </Icon>
         </IconButton>
       </Box>
-      <Box
-        sx={{
-          background:
-            backgroundURL == ""
-              ? backgroundColor
-              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
-          backgroundSize: "cover",
-          borderColor: "black",
-          borderWidth: 2,
-          borderRadius: 4,
-          borderStyle: "solid",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "375px",
-          minHeight: "677px",
-        }}
-      >
-        <Icon
-          sx={{
-            color: textColor,
-            fontSize: "50px !important",
-            position: "absolute",
-            bottom: 5,
-            right: 20,
-          }}
-        >
-          {"landscape"}
-        </Icon>
-        <PlayerTextFinalDisplay
-          text={title}
-          messageType={"Diálogo"}
-          style={{ mb: 2 }}
-          titleIcon={
-            <DescriptionSharp
-              sx={{ color: textColor, fontSize: "40px !important" }}
-            ></DescriptionSharp>
-          }
-        />
-
+      <div className={isSelectedForCopy ? "border" : ""}>
         <Box
           sx={{
-            width: "100%",
-            height: "100%",
-            minHeight: 100,
+            background:
+              backgroundURL == ""
+                ? backgroundColor
+                : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            backgroundSize: "cover",
+            borderColor: "black",
+            borderWidth: 2,
+            borderRadius: 4,
+            borderStyle: "solid",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
             alignItems: "center",
+            justifyContent: "center",
+            width: "375px",
+            minHeight: "677px",
           }}
         >
+          <Icon
+            sx={{
+              color: textColor,
+              fontSize: "50px !important",
+              position: "absolute",
+              bottom: 5,
+              right: 20,
+            }}
+          >
+            {"landscape"}
+          </Icon>
+          <PlayerTextFinalDisplay
+            text={title}
+            messageType={"Diálogo"}
+            style={{ mb: 2 }}
+            titleIcon={
+              <DescriptionSharp
+                sx={{ color: textColor, fontSize: "40px !important" }}
+              ></DescriptionSharp>
+            }
+          />
+
           <Box
             sx={{
               width: "100%",
               height: "100%",
-              backgroundColor: primaryColor,
+              minHeight: 100,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{ px: 3, fontSize: 18, color: textColor, fontWeight: 500 }}
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                backgroundColor: primaryColor,
+              }}
             >
-              Fins possíveis
-            </Typography>
-          </Box>
-          {endNodes.map((node, index) => {
-            return (
-              <div
-                key={index}
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  height: "100%",
-                }}
+              <Typography
+                variant="h6"
+                sx={{ px: 3, fontSize: 18, color: textColor, fontWeight: 500 }}
               >
-                <PlayerTextFinalDisplay style={{ mb: 2 }} text={node.data.id} />
-                <Handle
-                  type="source"
-                  position={Position.Right}
+                Fins possíveis
+              </Typography>
+            </Box>
+            {endNodes.map((node, index) => {
+              return (
+                <div
+                  key={index}
                   style={{
-                    position: "absolute",
-                    ...rightNodeHandleStyle,
-                    right: -5,
-                    top: 25,
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
                   }}
-                  id={node.data.id}
-                />
-              </div>
-            );
-          })}
+                >
+                  <PlayerTextFinalDisplay
+                    style={{ mb: 2 }}
+                    text={node.data.id}
+                  />
+                  <Handle
+                    type="source"
+                    position={Position.Right}
+                    style={{
+                      position: "absolute",
+                      ...rightNodeHandleStyle,
+                      right: -5,
+                      top: 25,
+                    }}
+                    id={node.data.id}
+                  />
+                </div>
+              );
+            })}
+          </Box>
         </Box>
-      </Box>
+      </div>
     </>
   );
 }

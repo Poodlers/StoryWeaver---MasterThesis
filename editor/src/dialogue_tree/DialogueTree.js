@@ -228,8 +228,8 @@ function DialogueTree(props) {
           selectedNode
             ? selectedNode.type === DialogNodeType.beginDialogNode
               ? ""
-              : "Backspace"
-            : "Backspace"
+              : ["Backspace", "Delete"]
+            : ["Backspace", "Delete"]
         }
         onNodesDelete={(nodeToDelete) => {
           handleDelete(nodeToDelete[0].id);

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactFlow, {
   Controls,
   Background,
@@ -8,6 +8,7 @@ import ReactFlow, {
   MiniMap,
   BackgroundVariant,
   updateEdge,
+  useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { useCallback } from "react";
@@ -37,6 +38,7 @@ import BeginNode from "../dialogue_tree/BeginNode";
 import EndNode from "../dialogue_tree/EndNode";
 import { findRemovedIndex } from "../data/utils";
 import { ApiDataRepository } from "../api/ApiDataRepository";
+import { v4 as uuid } from "uuid";
 
 const nodeColor = (node) => {
   switch (node.type) {
@@ -52,6 +54,7 @@ const nodeColor = (node) => {
 function Flow(props) {
   const repo = ApiDataRepository.getInstance();
   const [selectedNode, setSelectedNode] = useState(undefined);
+  const selectedNodeRef = useRef(selectedNode);
   const [inspectorData, setInspectorData] = useState({});
 
   const [inspectorProps, setInspectorProps] = useState(undefined);
@@ -87,6 +90,70 @@ function Flow(props) {
     }),
     []
   );
+
+  useEffect(() => {
+    selectedNodeRef.current = selectedNode;
+  }, [selectedNode]);
+
+  useEffect(() => {
+    function onCopyPaste(event) {
+      // Check for Ctrl+C (copy) or Ctrl+V (paste)
+      if (event.ctrlKey && (event.key === "c" || event.key === "C")) {
+        console.log("ctrl + C key pressed");
+        if (selectedNodeRef.current === undefined) return;
+        if (selectedNodeRef.current.data.isSelectedForCopy) return;
+        selectedNodeRef.current.data.isSelectedForCopy = true;
+
+        setNodes((nds) => {
+          return nds.map((node) => {
+            if (node.id === selectedNodeRef.current.id) {
+              node.data.isSelectedForCopy = true;
+              return node;
+            }
+            return node;
+          });
+        });
+      }
+      if (event.ctrlKey && (event.key === "v" || event.key === "V")) {
+        if (
+          selectedNodeRef.current === undefined ||
+          selectedNodeRef.current.type === NodeType.beginNode
+        )
+          return;
+        selectedNodeRef.current.data.isSelectedForCopy = false;
+        const newNode = {
+          id: uuid(),
+          position: {
+            x: selectedNodeRef.current.position.x + 100,
+            y: selectedNodeRef.current.position.y + 100,
+          },
+          data: JSON.parse(JSON.stringify(selectedNodeRef.current.data)),
+          type: selectedNodeRef.current.type,
+        };
+        setNodes((nds) => {
+          setSelectedNode(selectedNodeRef.current);
+          const newNodes = nds.map((node) => {
+            if (node.id === selectedNodeRef.current.id) {
+              node.data.isSelectedForCopy = false;
+              return node;
+            }
+            return node;
+          });
+          localStorage.setItem("nodes", JSON.stringify([...newNodes, newNode]));
+          return [...newNodes, newNode];
+        });
+      }
+      if (event.ctrlKey && (event.key === "x" || event.key === "X")) {
+        console.log("ctrl + X key pressed");
+        handleDelete(selectedNodeRef.current.id);
+      }
+    }
+    document.addEventListener("keydown", onCopyPaste);
+
+    return () => {
+      document.removeEventListener("keydown", onCopyPaste);
+    };
+  }, []);
 
   const onConnect = useCallback(
     (params) =>
@@ -189,11 +256,57 @@ function Flow(props) {
         }
         //delete the assets used by the node
         const file = newNodes[i].data ? newNodes[i].data.file : null;
+        const checkIfFileInAnotherNode = (filename) => {
+          for (let i = 0; i < newNodes.length; i++) {
+            if (newNodes[i].id === idToDelete) continue;
+            if (
+              newNodes[i].data &&
+              newNodes[i].data.file &&
+              newNodes[i].data.file.filename === filename
+            ) {
+              return true;
+            }
+          }
+          return false;
+        };
+
         const background = newNodes[i].data
           ? newNodes[i].data.background
           : null;
+
+        const checkIfBackgroundInAnotherNode = (background) => {
+          for (let i = 0; i < newNodes.length; i++) {
+            if (newNodes[i].id === idToDelete) continue;
+            if (
+              newNodes[i].data &&
+              newNodes[i].data.background === background
+            ) {
+              return true;
+            }
+          }
+          return false;
+        };
         const ar_type = newNodes[i].data ? newNodes[i].data.ar_type : null;
-        if (file && file.inputType === "file" && file.filename !== "") {
+        const checkIfArTypeInAnotherNode = (ar_type) => {
+          for (let i = 0; i < newNodes.length; i++) {
+            if (newNodes[i].id === idToDelete) continue;
+            if (
+              newNodes[i].data &&
+              newNodes[i].data.ar_type &&
+              newNodes[i].data.ar_type.image === ar_type.image
+            ) {
+              return true;
+            }
+          }
+          return false;
+        };
+
+        if (
+          file &&
+          file.inputType === "file" &&
+          file.filename !== "" &&
+          !checkIfFileInAnotherNode(file.filename)
+        ) {
           repo
             .deleteFile(file.filename)
             .then((response) => {
@@ -206,7 +319,8 @@ function Flow(props) {
         if (
           background &&
           background.inputType === "file" &&
-          background.filename !== ""
+          background.filename !== "" &&
+          !checkIfBackgroundInAnotherNode(background)
         ) {
           repo
             .deleteFile(background.filename)
@@ -220,7 +334,8 @@ function Flow(props) {
         if (
           ar_type &&
           ar_type.image.inputType === "file" &&
-          ar_type.image.filename !== ""
+          ar_type.image.filename !== "" &&
+          !checkIfArTypeInAnotherNode(ar_type)
         ) {
           repo
             .deleteFile(ar_type.image.filename)
@@ -293,6 +408,18 @@ function Flow(props) {
       }
     }
   };
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const reactFlowRef = useRef(null);
+  const onInit = (rf) => {
+    setReactFlowInstance(rf);
+    reactFlowRef.current = rf;
+  };
+
+  useEffect(() => {
+    if (reactFlowInstance) {
+      reactFlowInstance.fitView();
+    }
+  }, [reactFlowInstance]);
 
   return (
     <div
@@ -305,6 +432,7 @@ function Flow(props) {
       }}
     >
       <ReactFlow
+        onInit={onInit}
         minZoom={0.3}
         onEdgeUpdateStart={onEdgeUpdateStart}
         onEdgeUpdateEnd={onEdgeUpdateEnd}
@@ -319,8 +447,8 @@ function Flow(props) {
           selectedNode
             ? selectedNode.type === NodeType.beginNode
               ? ""
-              : "Backspace"
-            : "Backspace"
+              : ["Backspace", "Delete"]
+            : ["Backspace", "Delete"]
         }
         onNodesDelete={(nodeToDelete) => {
           handleDelete(nodeToDelete[0].id);
@@ -371,7 +499,7 @@ function Flow(props) {
               );
             }
             selectedNode.data = inspectorData;
-
+            selectedNode.data.isSelectedForCopy = false;
             let newNodes = [...nodes];
             for (let i = 0; i < nodes.length; i++) {
               if (nodes[i].id == selectedNode.id) {
@@ -388,7 +516,25 @@ function Flow(props) {
             handleDelete(node.id);
             return;
           }
+
+          if (node.type !== NodeType.beginNode) {
+            node.data.isSelectedForCopy = false;
+            if (node.type == NodeType.endNode) {
+              reactFlowInstance.setCenter(
+                node.position.x + 50,
+                node.position.y + 50
+              );
+              reactFlowInstance.zoomTo(1.3, { duration: 500 });
+            } else {
+              reactFlowInstance.setCenter(
+                node.position.x + 200,
+                node.position.y + 380
+              );
+              reactFlowInstance.zoomTo(0.79, { duration: 500 });
+            }
+          }
           setSelectedNode(node);
+
           let inspecProps = undefined;
           switch (node.type) {
             case NodeType.quizNode:

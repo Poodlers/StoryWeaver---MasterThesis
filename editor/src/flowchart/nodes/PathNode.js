@@ -22,7 +22,7 @@ export default function PathNode(props) {
   const maps = localStorage.getItem("maps")
     ? JSON.parse(localStorage.getItem("maps"))
     : [];
-
+  const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
   const backgroundFileInfo = props.data?.background ?? "";
   const [backgroundURL, setBackgroundURL] = React.useState("");
   const end = props.data?.destination ?? "";
@@ -93,12 +93,20 @@ export default function PathNode(props) {
       <Handle
         type="target"
         position={Position.Left}
-        style={leftNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...leftNodeHandleStyle, left: "5px" }
+            : leftNodeHandleStyle
+        }
       />
       <Handle
         type="source"
         position={Position.Right}
-        style={rightNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...rightNodeHandleStyle, right: "5px" }
+            : rightNodeHandleStyle
+        }
       />
       <Box
         sx={{
@@ -156,84 +164,86 @@ export default function PathNode(props) {
           </Icon>
         </IconButton>
       </Box>
-      <Box
-        sx={{
-          background:
-            backgroundURL == ""
-              ? backgroundColor
-              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
-          backgroundSize: "cover",
-
-          borderColor: "black",
-          borderWidth: 2,
-          borderRadius: 4,
-          borderStyle: "solid",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "375px",
-          minHeight: "677px",
-        }}
-      >
-        <Icon
+      <div className={isSelectedForCopy ? "border" : ""}>
+        <Box
           sx={{
-            color: textColor,
-            fontSize: "50px !important",
-            position: "absolute",
-            bottom: 5,
-            right: 20,
+            background:
+              backgroundURL == ""
+                ? backgroundColor
+                : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            backgroundSize: "cover",
+
+            borderColor: "black",
+            borderWidth: 2,
+            borderRadius: 4,
+            borderStyle: "solid",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "375px",
+            minHeight: "677px",
           }}
         >
-          {"landscape"}
-        </Icon>
+          <Icon
+            sx={{
+              color: textColor,
+              fontSize: "50px !important",
+              position: "absolute",
+              bottom: 5,
+              right: 20,
+            }}
+          >
+            {"landscape"}
+          </Icon>
 
-        {pathName == "" ? null : (
-          <CharacterIconDisplay
-            characterName={character.name}
-            characterFilepath={characterFilepath}
+          {pathName == "" ? null : (
+            <CharacterIconDisplay
+              characterName={character.name}
+              characterFilepath={characterFilepath}
+            />
+          )}
+          <PlayerTextFinalDisplay
+            style={{ width: "90%" }}
+            text={pathName}
+            titleIcon={
+              <DescriptionSharp
+                sx={{ color: textColor, fontSize: "40px !important" }}
+              ></DescriptionSharp>
+            }
+            messageType={"Texto auxiliar"}
           />
-        )}
-        <PlayerTextFinalDisplay
-          style={{ width: "90%" }}
-          text={pathName}
-          titleIcon={
-            <DescriptionSharp
-              sx={{ color: textColor, fontSize: "40px !important" }}
-            ></DescriptionSharp>
-          }
-          messageType={"Texto auxiliar"}
-        />
 
-        <PlayerTextFinalDisplay
-          text={
-            end.trigger_mode === "GPS Coords"
-              ? end.place
-              : end.trigger_mode === "QR Code"
-              ? end.qr_code
-              : end.image.filename
-              ? end.image.filename
-              : " "
-          }
-          messageType={"Destino"}
-          icon={
-            end.trigger_mode === "GPS Coords" ? (
-              <Icon sx={{ fontSize: 20, color: primaryColor, mr: 1 }}>
-                {placeEnd ? placeEnd.icon : "place"}
-              </Icon>
-            ) : end.trigger_mode === "QR Code" ? (
-              <Icon sx={{ fontSize: 20, color: primaryColor, mr: 1 }}>
-                qr_code
-              </Icon>
-            ) : (
-              <Icon sx={{ fontSize: 20, color: primaryColor, mr: 1 }}>
-                image
-              </Icon>
-            )
-          }
-          style={{ mt: 2, width: "90%" }}
-        />
-      </Box>
+          <PlayerTextFinalDisplay
+            text={
+              end.trigger_mode === "GPS Coords"
+                ? end.place
+                : end.trigger_mode === "QR Code"
+                ? end.qr_code
+                : end.image.filename
+                ? end.image.filename
+                : " "
+            }
+            messageType={"Destino"}
+            icon={
+              end.trigger_mode === "GPS Coords" ? (
+                <Icon sx={{ fontSize: 20, color: primaryColor, mr: 1 }}>
+                  {placeEnd ? placeEnd.icon : "place"}
+                </Icon>
+              ) : end.trigger_mode === "QR Code" ? (
+                <Icon sx={{ fontSize: 20, color: primaryColor, mr: 1 }}>
+                  qr_code
+                </Icon>
+              ) : (
+                <Icon sx={{ fontSize: 20, color: primaryColor, mr: 1 }}>
+                  image
+                </Icon>
+              )
+            }
+            style={{ mt: 2, width: "90%" }}
+          />
+        </Box>
+      </div>
     </>
   );
 }

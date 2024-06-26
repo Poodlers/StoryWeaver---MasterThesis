@@ -42,6 +42,7 @@ export default function ImageNode(props) {
   );
 
   const [url, setUrl] = React.useState("");
+  const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
@@ -112,7 +113,11 @@ export default function ImageNode(props) {
       <Handle
         type="target"
         position={Position.Left}
-        style={leftNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...leftNodeHandleStyle, left: "5px" }
+            : leftNodeHandleStyle
+        }
       />
       <Box
         sx={{
@@ -174,110 +179,115 @@ export default function ImageNode(props) {
           </Icon>
         </IconButton>
       </Box>
-      <Box
-        sx={{
-          background: isAR
-            ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
-            : backgroundURL == ""
-            ? backgroundColor
-            : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
-          backgroundSize: "cover",
-          borderColor: "black",
-          borderWidth: 2,
-          borderRadius: 4,
-          borderStyle: "solid",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "375px",
-          minHeight: "677px",
-        }}
-      >
-        <Icon
-          sx={{
-            color: textColor,
-            fontSize: "50px !important",
-            position: "absolute",
-            bottom: 5,
-            right: 20,
-          }}
-        >
-          {isAR ? "view_in_ar" : "landscape"}
-        </Icon>
-        {title == "" ? null : (
-          <CharacterIconDisplay
-            characterName={character.name}
-            characterFilepath={characterFilepath}
-          />
-        )}
-        <PlayerTextFinalDisplay
-          text={title}
-          messageType={"Mensagem"}
-          titleIcon={
-            <Icon sx={{ color: textColor, fontSize: "40px !important" }}>
-              description
-            </Icon>
-          }
-        />
-
+      <div className={isSelectedForCopy ? "border" : ""}>
         <Box
           sx={{
-            width: "100%",
-            height: "100%",
-            minHeight: 100,
+            background: isAR
+              ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
+              : backgroundURL == ""
+              ? backgroundColor
+              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            backgroundSize: "cover",
+            borderColor: "black",
+            borderWidth: 2,
+            borderRadius: 4,
+            borderStyle: "solid",
             display: "flex",
-            justifyContent: "center",
+            flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
+            width: "375px",
+            minHeight: "677px",
           }}
         >
-          {error || fileInfo.filename == "" ? (
-            <Typography
-              variant="h6"
-              sx={{ px: 3, fontSize: 20, color: textColor, fontWeight: 500 }}
-            >
-              {errorMsg}
-            </Typography>
-          ) : null}
-          <div
-            style={{
-              position: "relative",
+          <Icon
+            sx={{
+              color: textColor,
+              fontSize: "50px !important",
+              position: "absolute",
+              bottom: 5,
+              right: 20,
             }}
           >
-            <img
-              onLoad={() => {
-                setError(false);
-              }}
-              onError={(e) => {}}
-              src={url}
-              style={{
-                width: "90%",
-                height: "auto",
-                maxHeight: "400px",
-                margin: "0 auto",
-                padding: 10,
-                display: error ? "none" : "block",
-              }}
+            {isAR ? "view_in_ar" : "landscape"}
+          </Icon>
+          {title == "" ? null : (
+            <CharacterIconDisplay
+              characterName={character.name}
+              characterFilepath={characterFilepath}
             />
-            <Icon
-              sx={{
-                color: textColor,
-                fontSize: "50px !important",
-                position: "absolute",
-                bottom: 0,
-                left: 0,
+          )}
+          <PlayerTextFinalDisplay
+            text={title}
+            messageType={"Mensagem"}
+            titleIcon={
+              <Icon sx={{ color: textColor, fontSize: "40px !important" }}>
+                description
+              </Icon>
+            }
+          />
+
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              minHeight: 100,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {error || fileInfo.filename == "" ? (
+              <Typography
+                variant="h6"
+                sx={{ px: 3, fontSize: 20, color: textColor, fontWeight: 500 }}
+              >
+                {errorMsg}
+              </Typography>
+            ) : null}
+            <div
+              style={{
+                position: "relative",
               }}
             >
-              add_photo_alternate
-            </Icon>
-          </div>
+              <img
+                onLoad={() => {
+                  setError(false);
+                }}
+                onError={(e) => {}}
+                src={url}
+                style={{
+                  width: "90%",
+                  height: "auto",
+                  maxHeight: "400px",
+                  margin: "0 auto",
+                  padding: 10,
+                  display: error ? "none" : "block",
+                }}
+              />
+              <Icon
+                sx={{
+                  color: textColor,
+                  fontSize: "50px !important",
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                }}
+              >
+                add_photo_alternate
+              </Icon>
+            </div>
+          </Box>
         </Box>
-      </Box>
-
+      </div>
       <Handle
         type="source"
         position={Position.Right}
-        style={rightNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...rightNodeHandleStyle, right: "5px" }
+            : rightNodeHandleStyle
+        }
       />
     </>
   );

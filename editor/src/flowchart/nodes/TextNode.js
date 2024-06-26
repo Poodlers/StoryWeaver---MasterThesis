@@ -23,7 +23,7 @@ export default function TextNode(props) {
   const color = props.data?.color.color ?? "#000000";
   const backgroundFileInfo = props.data?.background ?? "";
   const [backgroundURL, setBackgroundURL] = React.useState("");
-
+  const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
   const reactflow = useReactFlow();
 
   const sceneName = props.data?.sceneName ?? "Imagem";
@@ -85,12 +85,20 @@ export default function TextNode(props) {
       <Handle
         type="target"
         position={Position.Left}
-        style={leftNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...leftNodeHandleStyle, left: "5px" }
+            : leftNodeHandleStyle
+        }
       />
       <Handle
         type="source"
         position={Position.Right}
-        style={rightNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...rightNodeHandleStyle, right: "5px" }
+            : rightNodeHandleStyle
+        }
       />
       <Box
         sx={{
@@ -148,56 +156,58 @@ export default function TextNode(props) {
           </Icon>
         </IconButton>
       </Box>
-      <Box
-        sx={{
-          background: isAR
-            ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
-            : backgroundURL == ""
-            ? backgroundColor
-            : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
-          backgroundSize: "cover",
-          borderColor: "black",
-          borderWidth: 2,
-          borderRadius: 4,
-          borderStyle: "solid",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "375px",
-          minHeight: "677px",
-        }}
-      >
-        {text == "" ? null : (
-          <CharacterIconDisplay
-            characterName={character.name}
-            characterFilepath={characterFilepath}
-          />
-        )}
-        <Icon
+      <div className={isSelectedForCopy ? "border" : ""}>
+        <Box
           sx={{
-            color: textColor,
-            fontSize: "50px !important",
-            position: "absolute",
-            bottom: 5,
-            right: 20,
+            background: isAR
+              ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
+              : backgroundURL == ""
+              ? backgroundColor
+              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            backgroundSize: "cover",
+            borderColor: "black",
+            borderWidth: 2,
+            borderRadius: 4,
+            borderStyle: "solid",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "375px",
+            minHeight: "677px",
           }}
         >
-          {"landscape"}
-        </Icon>
-        <PlayerTextFinalDisplay
-          style={{
-            color: color + " !important",
-          }}
-          text={text}
-          messageType={"Mensagem"}
-          titleIcon={
-            <DescriptionSharp
-              sx={{ color: textColor, fontSize: "40px !important" }}
-            ></DescriptionSharp>
-          }
-        />
-      </Box>
+          {text == "" ? null : (
+            <CharacterIconDisplay
+              characterName={character.name}
+              characterFilepath={characterFilepath}
+            />
+          )}
+          <Icon
+            sx={{
+              color: textColor,
+              fontSize: "50px !important",
+              position: "absolute",
+              bottom: 5,
+              right: 20,
+            }}
+          >
+            {"landscape"}
+          </Icon>
+          <PlayerTextFinalDisplay
+            style={{
+              color: color + " !important",
+            }}
+            text={text}
+            messageType={"Mensagem"}
+            titleIcon={
+              <DescriptionSharp
+                sx={{ color: textColor, fontSize: "40px !important" }}
+              ></DescriptionSharp>
+            }
+          />
+        </Box>
+      </div>
     </>
   );
 }

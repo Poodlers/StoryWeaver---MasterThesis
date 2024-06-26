@@ -36,7 +36,7 @@ export default function AudioNode(props) {
   const title = props.data?.name ?? "";
   const fileInfo = props.data?.file ?? "";
   const audioColor = props.data?.color.color ?? "#000000";
-
+  const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
   const backgroundFileInfo = props.data?.background ?? "";
 
   const [error, setError] = React.useState(false);
@@ -125,7 +125,11 @@ export default function AudioNode(props) {
       <Handle
         type="target"
         position={Position.Left}
-        style={leftNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...leftNodeHandleStyle, left: "5px" }
+            : leftNodeHandleStyle
+        }
       />
 
       <Box
@@ -184,127 +188,133 @@ export default function AudioNode(props) {
           </Icon>
         </IconButton>
       </Box>
-      <Box
-        sx={{
-          background:
-            backgroundURL == ""
-              ? backgroundColor
-              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
-          backgroundSize: "cover",
-          borderColor: "black",
-          borderWidth: 2,
-          borderRadius: 4,
-          borderStyle: "solid",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "375px",
-          minHeight: "677px",
-        }}
-      >
-        <Icon
-          sx={{
-            color: textColor,
-            fontSize: "50px !important",
-            position: "absolute",
-            bottom: 5,
-            right: 20,
-          }}
-        >
-          {"landscape"}
-        </Icon>
-        {title == "" ? null : (
-          <CharacterIconDisplay
-            characterName={character.name}
-            characterFilepath={characterFilepath}
-          />
-        )}
-        <PlayerTextFinalDisplay
-          text={title}
-          messageType="Texto"
-          style={{ mb: 2 }}
-          titleIcon={
-            <DescriptionSharp
-              sx={{ color: textColor, fontSize: "40px !important" }}
-            ></DescriptionSharp>
-          }
-        />
-
+      <div className={isSelectedForCopy ? "border" : ""}>
         <Box
           sx={{
-            width: "100%",
-            height: "100%",
-
-            minHeight: 100,
+            background:
+              backgroundURL == ""
+                ? backgroundColor
+                : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            backgroundSize: "cover",
+            borderColor: "black",
+            borderWidth: 2,
+            borderRadius: 4,
+            borderStyle: "solid",
             display: "flex",
-            justifyContent: "center",
+            flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
+            width: "375px",
+            minHeight: "677px",
           }}
         >
-          {error || fileInfo.filename == "" ? (
-            <Typography
-              variant="h6"
-              sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 500 }}
-            >
-              Insira um audio no inspetor!
-            </Typography>
-          ) : null}
-          <div
-            className="audio-player-container"
-            style={{
-              position: "relative",
+          <Icon
+            sx={{
+              color: textColor,
+              fontSize: "50px !important",
+              position: "absolute",
+              bottom: 5,
+              right: 20,
             }}
           >
-            <AudioPlayer
-              src={url}
-              id="inline-timeline"
-              display="timeline"
-              containerWidth={300}
-              inline
-              size="medium"
-              playPauseIconButtonProps={{
-                TouchRippleProps: { style: { color: "transparent" } },
-                sx: {
-                  color: textColor,
-                  ".MuiSvgIcon-root": { fontSize: "3.5rem" },
-                  "&:hover": { color: tertiaryColor },
-                  "&:focused": {
-                    backgroundColor: "transparent",
-                  },
-                  "&:active": {
-                    backgroundColor: "transparent",
-                  },
-                },
-              }}
-              containerSx={{
-                display: error || fileInfo.filename == "" ? "none" : "block",
-                textAlign: "center",
-                backgroundColor: audioColor,
-                p: 1,
-                "& .MuiSlider-root": { color: "#fff" },
-                "& .MuiIconButton-root": { color: "#fff" },
-              }}
+            {"landscape"}
+          </Icon>
+          {title == "" ? null : (
+            <CharacterIconDisplay
+              characterName={character.name}
+              characterFilepath={characterFilepath}
             />
-            <Icon
-              sx={{
-                color: textColor,
-                fontSize: "50px !important",
-                position: "absolute",
-                top: 0,
-                right: 0,
+          )}
+          <PlayerTextFinalDisplay
+            text={title}
+            messageType="Texto"
+            style={{ mb: 2 }}
+            titleIcon={
+              <DescriptionSharp
+                sx={{ color: textColor, fontSize: "40px !important" }}
+              ></DescriptionSharp>
+            }
+          />
+
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+
+              minHeight: 100,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {error || fileInfo.filename == "" ? (
+              <Typography
+                variant="h6"
+                sx={{ px: 3, fontSize: 15, color: textColor, fontWeight: 500 }}
+              >
+                Insira um audio no inspetor!
+              </Typography>
+            ) : null}
+            <div
+              className="audio-player-container"
+              style={{
+                position: "relative",
               }}
             >
-              volume_up
-            </Icon>
-          </div>
+              <AudioPlayer
+                src={url}
+                id="inline-timeline"
+                display="timeline"
+                containerWidth={300}
+                inline
+                size="medium"
+                playPauseIconButtonProps={{
+                  TouchRippleProps: { style: { color: "transparent" } },
+                  sx: {
+                    color: textColor,
+                    ".MuiSvgIcon-root": { fontSize: "3.5rem" },
+                    "&:hover": { color: tertiaryColor },
+                    "&:focused": {
+                      backgroundColor: "transparent",
+                    },
+                    "&:active": {
+                      backgroundColor: "transparent",
+                    },
+                  },
+                }}
+                containerSx={{
+                  display: error || fileInfo.filename == "" ? "none" : "block",
+                  textAlign: "center",
+                  backgroundColor: audioColor,
+                  p: 1,
+                  "& .MuiSlider-root": { color: "#fff" },
+                  "& .MuiIconButton-root": { color: "#fff" },
+                }}
+              />
+              <Icon
+                sx={{
+                  color: textColor,
+                  fontSize: "50px !important",
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                }}
+              >
+                volume_up
+              </Icon>
+            </div>
+          </Box>
         </Box>
-      </Box>
+      </div>
 
       <Handle
         type="source"
         position={Position.Right}
-        style={rightNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...rightNodeHandleStyle, right: "5px" }
+            : rightNodeHandleStyle
+        }
       />
     </>
   );

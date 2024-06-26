@@ -27,7 +27,7 @@ export default function QuizNode(props) {
   const backgroundFileInfo = props.data?.background ?? "";
 
   const [backgroundURL, setBackgroundURL] = React.useState("");
-
+  const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
   const reactflow = useReactFlow();
   const updateNodeInternals = useUpdateNodeInternals();
   const sceneName = props.data?.sceneName ?? "Imagem";
@@ -98,7 +98,11 @@ export default function QuizNode(props) {
       <Handle
         type="target"
         position={Position.Left}
-        style={leftNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...leftNodeHandleStyle, left: "5px" }
+            : leftNodeHandleStyle
+        }
       />
       <Box
         sx={{
@@ -156,103 +160,105 @@ export default function QuizNode(props) {
           </Icon>
         </IconButton>
       </Box>
-      <Box
-        sx={{
-          background:
-            backgroundURL == ""
-              ? backgroundColor
-              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
-          backgroundSize: "cover",
-          borderColor: "black",
-          borderWidth: 2,
-          borderRadius: 4,
-          borderStyle: "solid",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "375px",
-          minHeight: "677px",
-        }}
-      >
-        <Icon
-          sx={{
-            color: textColor,
-            fontSize: "50px !important",
-            position: "absolute",
-            bottom: 5,
-            right: 20,
-          }}
-        >
-          {"landscape"}
-        </Icon>
-        {question == "" ? null : (
-          <CharacterIconDisplay
-            characterName={character.name}
-            characterFilepath={characterFilepath}
-          />
-        )}
-        <PlayerTextFinalDisplay
-          text={question}
-          messageType="Pergunta"
-          style={{ mb: 2 }}
-          titleIcon={
-            <DescriptionSharp
-              sx={{ color: textColor, fontSize: "40px !important" }}
-            ></DescriptionSharp>
-          }
-        />
-
+      <div className={isSelectedForCopy ? "border" : ""}>
         <Box
           sx={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: primaryColor,
-            mb: 2,
+            background:
+              backgroundURL == ""
+                ? backgroundColor
+                : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            backgroundSize: "cover",
+            borderColor: "black",
+            borderWidth: 2,
+            borderRadius: 4,
+            borderStyle: "solid",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "375px",
+            minHeight: "677px",
           }}
         >
-          <Typography
-            variant="h6"
+          <Icon
             sx={{
-              px: 3,
-              fontSize: 22,
               color: textColor,
-              fontWeight: 600,
+              fontSize: "50px !important",
+              position: "absolute",
+              bottom: 5,
+              right: 20,
             }}
           >
-            Respostas
-          </Typography>
-        </Box>
+            {"landscape"}
+          </Icon>
+          {question == "" ? null : (
+            <CharacterIconDisplay
+              characterName={character.name}
+              characterFilepath={characterFilepath}
+            />
+          )}
+          <PlayerTextFinalDisplay
+            text={question}
+            messageType="Pergunta"
+            style={{ mb: 2 }}
+            titleIcon={
+              <DescriptionSharp
+                sx={{ color: textColor, fontSize: "40px !important" }}
+              ></DescriptionSharp>
+            }
+          />
 
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          {answers.map((answer, index) => (
-            <div
-              key={index}
-              style={{
-                position: "relative",
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              backgroundColor: primaryColor,
+              mb: 2,
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                px: 3,
+                fontSize: 22,
+                color: textColor,
+                fontWeight: 600,
               }}
             >
-              <PlayerTextFinalDisplay style={{ mb: 2 }} text={answer} />
+              Respostas
+            </Typography>
+          </Box>
 
-              <Handle
-                type="source"
-                position={Position.Right}
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            {answers.map((answer, index) => (
+              <div
+                key={index}
                 style={{
-                  position: "absolute",
-                  ...rightNodeHandleStyle,
-                  right: -5,
+                  position: "relative",
                 }}
-                id={`${index}`}
-              />
-            </div>
-          ))}
+              >
+                <PlayerTextFinalDisplay style={{ mb: 2 }} text={answer} />
+
+                <Handle
+                  type="source"
+                  position={Position.Right}
+                  style={{
+                    position: "absolute",
+                    ...rightNodeHandleStyle,
+                    right: -5,
+                  }}
+                  id={`${index}`}
+                />
+              </div>
+            ))}
+          </Box>
         </Box>
-      </Box>
+      </div>
     </>
   );
 }

@@ -32,6 +32,8 @@ export default function ThreeDModelNode(props) {
   const repo = ApiDataRepository.getInstance();
   const name = props.data?.name ?? "";
 
+  const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
+
   const fileInfo = props.data?.file ?? "";
   const modelType = fileInfo.modelType;
   const isAR = props.data?.ar ?? false;
@@ -126,7 +128,11 @@ export default function ThreeDModelNode(props) {
       <Handle
         type="target"
         position={Position.Left}
-        style={leftNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...leftNodeHandleStyle, left: "5px" }
+            : leftNodeHandleStyle
+        }
       />
 
       <Box
@@ -185,60 +191,26 @@ export default function ThreeDModelNode(props) {
           </Icon>
         </IconButton>
       </Box>
-      <Box
-        sx={{
-          background: isAR
-            ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
-            : backgroundURL == ""
-            ? backgroundColor
-            : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
-          backgroundSize: "cover",
-          borderColor: "black",
-          borderWidth: 2,
-          borderRadius: 4,
-          borderStyle: "solid",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "375px",
-          minHeight: "677px",
-        }}
-      >
-        <Icon
-          sx={{
-            color: textColor,
-            fontSize: "50px !important",
-            position: "absolute",
-            bottom: 5,
-            right: 20,
-          }}
-        >
-          {isAR ? "view_in_ar" : "landscape"}
-        </Icon>
-        {name == "" ? null : (
-          <CharacterIconDisplay
-            characterName={character.name}
-            characterFilepath={characterFilepath}
-          />
-        )}
 
-        <PlayerTextFinalDisplay
-          style={{ mt: 0 }}
-          text={name}
-          messageType={"Mensagem"}
-          titleIcon={
-            <DescriptionSharp
-              sx={{ color: textColor, fontSize: "40px !important" }}
-            ></DescriptionSharp>
-          }
-        />
-
+      <div className={isSelectedForCopy ? "border" : ""}>
         <Box
           sx={{
-            width: "100%",
-            height: "100%",
-            position: "relative",
+            background: isAR
+              ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
+              : backgroundURL == ""
+              ? backgroundColor
+              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            backgroundSize: "cover",
+            borderColor: "black",
+            borderWidth: 2,
+            borderRadius: 4,
+            borderStyle: "solid",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "375px",
+            minHeight: "677px",
           }}
         >
           <Icon
@@ -246,62 +218,110 @@ export default function ThreeDModelNode(props) {
               color: textColor,
               fontSize: "50px !important",
               position: "absolute",
-              zIndex: "1000",
-              top: 0,
-              right: 0,
+              bottom: 5,
+              right: 20,
             }}
           >
-            view_in_ar
+            {isAR ? "view_in_ar" : "landscape"}
           </Icon>
-          {fileURL == "" ? (
-            <PlayerTextFinalDisplay
-              text={"Nenhum modelo 3D selecionado."}
-              style={{ mt: 2, px: 2 }}
+          {name == "" ? null : (
+            <CharacterIconDisplay
+              characterName={character.name}
+              characterFilepath={characterFilepath}
             />
-          ) : (
-            <Frame
-              style={{
-                width: "365px",
-                minHeight: "460px",
-                borderRadius: 4,
-                borderColor: "black",
-                borderWidth: 2,
-                zIndex: 1000,
-              }}
-              initialContent='<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
-        </head><body><div></div></body></html>'
-            >
-              <a-scene>
-                {modelType == ThreeDModelTypes.gltf ? (
-                  <a-entity
-                    gltf-model={fileURL}
-                    scale={scale.x + " " + scale.y + " " + scale.z}
-                    position={position.x + " " + position.y + " " + position.z}
-                    rotation={rotation.x + " " + rotation.y + " " + rotation.z}
-                  ></a-entity>
-                ) : (
-                  <a-entity
-                    obj-model={
-                      "obj: " +
-                      fileURL +
-                      "; " +
-                      "mtl: " +
-                      fileURL.replace(".obj", ".mtl") +
-                      ";"
-                    }
-                    scale={scale.x + " " + scale.y + " " + scale.z}
-                    position={position.x + " " + position.y + " " + position.z}
-                  ></a-entity>
-                )}
-              </a-scene>
-            </Frame>
           )}
+
+          <PlayerTextFinalDisplay
+            style={{ mt: 0 }}
+            text={name}
+            messageType={"Mensagem"}
+            titleIcon={
+              <DescriptionSharp
+                sx={{ color: textColor, fontSize: "40px !important" }}
+              ></DescriptionSharp>
+            }
+          />
+
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              position: "relative",
+            }}
+          >
+            <Icon
+              sx={{
+                color: textColor,
+                fontSize: "50px !important",
+                position: "absolute",
+                zIndex: "1000",
+                top: 0,
+                right: 0,
+              }}
+            >
+              view_in_ar
+            </Icon>
+            {fileURL == "" ? (
+              <PlayerTextFinalDisplay
+                text={"Nenhum modelo 3D selecionado."}
+                style={{ mt: 2, px: 2 }}
+              />
+            ) : (
+              <Frame
+                style={{
+                  width: "365px",
+                  minHeight: "460px",
+                  borderRadius: 4,
+                  borderColor: "black",
+                  borderWidth: 2,
+                  zIndex: 1000,
+                }}
+                initialContent='<!DOCTYPE html><html><head><script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
+        </head><body><div></div></body></html>'
+              >
+                <a-scene>
+                  {modelType == ThreeDModelTypes.gltf ? (
+                    <a-entity
+                      gltf-model={fileURL}
+                      scale={scale.x + " " + scale.y + " " + scale.z}
+                      position={
+                        position.x + " " + position.y + " " + position.z
+                      }
+                      rotation={
+                        rotation.x + " " + rotation.y + " " + rotation.z
+                      }
+                    ></a-entity>
+                  ) : (
+                    <a-entity
+                      obj-model={
+                        "obj: " +
+                        fileURL +
+                        "; " +
+                        "mtl: " +
+                        fileURL.replace(".obj", ".mtl") +
+                        ";"
+                      }
+                      scale={scale.x + " " + scale.y + " " + scale.z}
+                      position={
+                        position.x + " " + position.y + " " + position.z
+                      }
+                    ></a-entity>
+                  )}
+                </a-scene>
+              </Frame>
+            )}
+          </Box>
         </Box>
-      </Box>
+      </div>
+
       <Handle
         type="source"
         position={Position.Right}
-        style={rightNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...rightNodeHandleStyle, right: "5px" }
+            : rightNodeHandleStyle
+        }
       />
     </>
   );

@@ -18,7 +18,7 @@ export default function DialogNode(props) {
   const text = props.data?.text ?? "";
   const audio = props.data?.audio ?? "";
   const [filepath, setFilepath] = React.useState("");
-
+  const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
   const [audioSrc, setAudioSrc] = React.useState(undefined);
 
   React.useEffect(() => {

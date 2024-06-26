@@ -217,11 +217,13 @@ function FileSelectField(props) {
             onChange={(file) => {
               if (file === null) {
                 setInputText("Selecione um ficheiro");
+                /*
                 if (value.inputType == "file") {
                   repo.deleteFile(value.filename).catch((error) => {
                     console.error(error);
                   });
                 }
+                */
                 handleFieldChange(
                   props.data.name,
                   {
@@ -239,11 +241,13 @@ function FileSelectField(props) {
               const originalFileName = file.name;
               const fileName = fileID + file.name;
               file = new File([file], fileName, { type: file.type });
+              /*
               if (value.inputType == "file" && value.filename != fileName) {
                 repo.deleteFile(value.filename).catch((error) => {
                   console.error(error);
                 });
               }
+              */
               repo
                 .uploadFile(file)
                 .then((res) => {

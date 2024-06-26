@@ -30,7 +30,7 @@ export default function VideoNode(props) {
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
   const reactflow = useReactFlow();
-
+  const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
   const sceneName = props.data?.sceneName ?? "Imagem";
   const nodeId = props.id;
   const setSceneName = (sceneName) => {
@@ -111,7 +111,11 @@ export default function VideoNode(props) {
       <Handle
         type="target"
         position={Position.Left}
-        style={leftNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...leftNodeHandleStyle, left: "5px" }
+            : leftNodeHandleStyle
+        }
       />
 
       <Box
@@ -170,127 +174,132 @@ export default function VideoNode(props) {
           </Icon>
         </IconButton>
       </Box>
-      <Box
-        sx={{
-          background: isAR
-            ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
-            : backgroundURL == ""
-            ? backgroundColor
-            : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
-          backgroundSize: "cover",
-          borderColor: "black",
-          borderWidth: 2,
-          borderRadius: 4,
-          borderStyle: "solid",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "375px",
-          minHeight: "677px",
-        }}
-      >
-        <Icon
-          sx={{
-            color: textColor,
-            fontSize: "50px !important",
-            position: "absolute",
-            zIndex: 99,
-            bottom: 5,
-            right: 20,
-          }}
-        >
-          {isAR ? "view_in_ar" : "landscape"}
-        </Icon>
-        {title == "" ? null : (
-          <CharacterIconDisplay
-            characterName={character.name}
-            characterFilepath={characterFilepath}
-          />
-        )}
-        <PlayerTextFinalDisplay
-          text={title}
-          messageType={"Mensagem"}
-          titleIcon={
-            <DescriptionSharp
-              sx={{ color: textColor, fontSize: "40px !important" }}
-            ></DescriptionSharp>
-          }
-        />
+      <div className={isSelectedForCopy ? "border" : ""}>
         <Box
           sx={{
-            width: "100%",
-            height: "100%",
+            background: isAR
+              ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
+              : backgroundURL == ""
+              ? backgroundColor
+              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
+            backgroundSize: "cover",
+            borderColor: "black",
+            borderWidth: 2,
+            borderRadius: 4,
+            borderStyle: "solid",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
             alignItems: "center",
+            justifyContent: "center",
+            width: "375px",
+            minHeight: "677px",
           }}
         >
-          {fileInfo.filename == "" ? (
-            <Typography
-              variant="h6"
-              sx={{
-                px: 3,
-                fontSize: 18,
-                color: textColor,
-                fontWeight: 500,
-                textAlign: "center",
-                m: "0 auto",
-                mt: 5,
-              }}
-            >
-              Por favor insira um video no Inspetor!
-            </Typography>
-          ) : error ? (
-            <Typography
-              variant="h6"
-              sx={{
-                px: 3,
-                fontSize: 15,
-                color: textColor,
-                fontWeight: 500,
-                textAlign: "center",
-                m: "0 auto",
-              }}
-            >
-              Erro ao carregar o vídeo!
-            </Typography>
-          ) : null}
-          <div style={{ position: "relative" }}>
-            <ReactPlayer
-              style={{
-                display: error ? "none" : "block",
-                width: "375px",
-              }}
-              onReady={() => setError(false)}
-              onError={(e) => {}}
-              url={url}
-              width={"100%"}
-              controls={true}
-              playing={false}
-              muted={false}
+          <Icon
+            sx={{
+              color: textColor,
+              fontSize: "50px !important",
+              position: "absolute",
+              zIndex: 99,
+              bottom: 5,
+              right: 20,
+            }}
+          >
+            {isAR ? "view_in_ar" : "landscape"}
+          </Icon>
+          {title == "" ? null : (
+            <CharacterIconDisplay
+              characterName={character.name}
+              characterFilepath={characterFilepath}
             />
+          )}
+          <PlayerTextFinalDisplay
+            text={title}
+            messageType={"Mensagem"}
+            titleIcon={
+              <DescriptionSharp
+                sx={{ color: textColor, fontSize: "40px !important" }}
+              ></DescriptionSharp>
+            }
+          />
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {fileInfo.filename == "" ? (
+              <Typography
+                variant="h6"
+                sx={{
+                  px: 3,
+                  fontSize: 18,
+                  color: textColor,
+                  fontWeight: 500,
+                  textAlign: "center",
+                  m: "0 auto",
+                  mt: 5,
+                }}
+              >
+                Por favor insira um video no Inspetor!
+              </Typography>
+            ) : error ? (
+              <Typography
+                variant="h6"
+                sx={{
+                  px: 3,
+                  fontSize: 15,
+                  color: textColor,
+                  fontWeight: 500,
+                  textAlign: "center",
+                  m: "0 auto",
+                }}
+              >
+                Erro ao carregar o vídeo!
+              </Typography>
+            ) : null}
+            <div style={{ position: "relative" }}>
+              <ReactPlayer
+                style={{
+                  display: error ? "none" : "block",
+                  width: "375px",
+                }}
+                onReady={() => setError(false)}
+                onError={(e) => {}}
+                url={url}
+                width={"100%"}
+                controls={true}
+                playing={false}
+                muted={false}
+              />
 
-            <Icon
-              sx={{
-                color: textColor,
-                fontSize: "50px !important",
-                position: "absolute",
-                top: 20,
-                right: 0,
-              }}
-            >
-              videocam
-            </Icon>
-          </div>
+              <Icon
+                sx={{
+                  color: textColor,
+                  fontSize: "50px !important",
+                  position: "absolute",
+                  top: 20,
+                  right: 0,
+                }}
+              >
+                videocam
+              </Icon>
+            </div>
+          </Box>
         </Box>
-      </Box>
-
+      </div>
       <Handle
         type="source"
         position={Position.Right}
-        style={rightNodeHandleStyle}
+        style={
+          isSelectedForCopy
+            ? { ...rightNodeHandleStyle, right: "5px" }
+            : rightNodeHandleStyle
+        }
       />
     </div>
   );

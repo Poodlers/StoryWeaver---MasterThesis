@@ -7,8 +7,15 @@ import { ThreeDModelTypes } from "../../models/ThreeDModelTypes";
 
 const ThreeDModelProps = {
   nodeType: "Cena 3D",
+
   type: NodeType.threeDModelNode,
   fields: [
+    {
+      type: [InputFieldType.hidden],
+
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
     {
       type: [InputFieldType.hidden],
       label: "",
@@ -117,6 +124,11 @@ const QuizProps = {
   fields: [
     {
       type: [InputFieldType.hidden],
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
+    {
+      type: [InputFieldType.hidden],
       label: "",
       initialValue: "Cena ",
       name: "sceneName",
@@ -160,6 +172,11 @@ const VideoProps = {
   nodeType: "Cena Vídeo",
   type: NodeType.videoNode,
   fields: [
+    {
+      type: [InputFieldType.hidden],
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
     {
       type: [InputFieldType.hidden],
       label: "",
@@ -257,6 +274,11 @@ const ImageProps = {
   nodeType: "Cena Imagem",
   type: NodeType.imageNode,
   fields: [
+    {
+      type: [InputFieldType.hidden],
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
     {
       type: [InputFieldType.hidden],
       label: "",
@@ -357,6 +379,11 @@ const AudioProps = {
   fields: [
     {
       type: [InputFieldType.hidden],
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
+    {
+      type: [InputFieldType.hidden],
       label: "",
       initialValue: "Cena ",
       name: "sceneName",
@@ -409,6 +436,11 @@ const TextProps = {
   nodeType: "Cena Texto",
   type: NodeType.textNode,
   fields: [
+    {
+      type: [InputFieldType.hidden],
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
     {
       type: [InputFieldType.hidden],
       label: "",
@@ -506,6 +538,11 @@ const PathProps = {
   fields: [
     {
       type: [InputFieldType.hidden],
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
+    {
+      type: [InputFieldType.hidden],
       label: "",
       initialValue: "Cena ",
       name: "sceneName",
@@ -559,6 +596,11 @@ const DialogProps = {
   type: DialogNodeType.dialogNode,
   fields: [
     {
+      type: [InputFieldType.hidden],
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
+    {
       type: [InputFieldType.multiple_choice],
       label: "Personagem:",
       initialValue: narrator,
@@ -584,6 +626,11 @@ const DialogChoiceProps = {
   nodeType: "Pergunta",
   type: DialogNodeType.dialogChoiceNode,
   fields: [
+    {
+      type: [InputFieldType.hidden],
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
     {
       type: [InputFieldType.multiple_choice],
       label: "Personagem:",
@@ -617,6 +664,11 @@ const EndDialogProps = {
   type: DialogNodeType.endDialogNode,
   fields: [
     {
+      type: [InputFieldType.hidden],
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
+    {
       type: [InputFieldType.textField],
       label: "Identificador:",
       initialValue: "Normal",
@@ -648,6 +700,11 @@ const CharacterProps = {
   nodeType: "Cena Diálogo",
   type: NodeType.characterNode,
   fields: [
+    {
+      type: [InputFieldType.hidden],
+      initialValue: false,
+      name: "isSelectedForCopy",
+    },
     {
       type: [InputFieldType.hidden],
       label: "",

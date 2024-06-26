@@ -20,6 +20,7 @@ export default function DialogChoiceNode(props) {
 
   const audio = props.data?.audio ?? "";
   const [filepath, setFilepath] = React.useState("");
+  const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
   const updateNodeInternals = useUpdateNodeInternals();
   const [audioSrc, setAudioSrc] = React.useState(undefined);
 
