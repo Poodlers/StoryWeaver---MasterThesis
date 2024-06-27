@@ -537,11 +537,12 @@ function Flow(props) {
               }
             }
           }
-          if (
-            event.target.id == "deleteButton" ||
-            event.target.id == "scene-name"
-          ) {
+          if (event.target.id == "deleteButton") {
             handleDelete(node.id);
+            return;
+          } else if (event.target.id == "scene-name") {
+            setSelectedNode(undefined);
+            selectedNodeRef.current = undefined;
             return;
           }
 
