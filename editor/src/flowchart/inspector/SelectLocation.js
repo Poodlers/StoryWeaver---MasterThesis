@@ -601,12 +601,12 @@ function SelectLocationField(props) {
               justifyContent: "center",
             }}
           >
-            {value.marker_generation == "Not Started" ? (
+            {value.marker_generation.qr_code == "Not Started" ? (
               <Icon sx={{ px: 2 }}>info</Icon>
-            ) : value.marker_generation == "Started" ? (
-              <Icon sx={{ px: 2 }}>check_circle</Icon>
+            ) : value.marker_generation.qr_code == "Started" ? (
+              <Icon sx={{ px: 2 }}>pending</Icon>
             ) : (
-              <Icon sx={{ px: 2 }}>warning</Icon>
+              <Icon sx={{ px: 2 }}>check_circle</Icon>
             )}
             {value.marker_generation.qr_code == "Not Started"
               ? "Para iniciar a geração dos marcadores, clique no ícone de impressão!"
@@ -653,12 +653,12 @@ function SelectLocationField(props) {
               justifyContent: "center",
             }}
           >
-            {value.marker_generation == "Not Started" ? (
+            {value.marker_generation.image == "Not Started" ? (
               <Icon sx={{ px: 2 }}>info</Icon>
-            ) : value.marker_generation == "Started" ? (
-              <Icon sx={{ px: 2 }}>check_circle</Icon>
+            ) : value.marker_generation.image == "Started" ? (
+              <Icon sx={{ px: 2 }}>pending</Icon>
             ) : (
-              <Icon sx={{ px: 2 }}>warning</Icon>
+              <Icon sx={{ px: 2 }}>check_circle</Icon>
             )}
             {value.marker_generation.image == "Not Started"
               ? "Para iniciar a geração dos marcadores, insira uma imagem!"
