@@ -74,6 +74,13 @@ function DialogueTree(props) {
   useEffect(() => {
     function onCopyPaste(event) {
       // Check for Ctrl+C (copy) or Ctrl+V (paste)
+      if (
+        document.activeElement &&
+        (document.activeElement.matches("input") ||
+          document.activeElement.matches("textarea"))
+      ) {
+        return;
+      }
       if (event.ctrlKey && (event.key === "c" || event.key === "C")) {
         console.log("ctrl + C key pressed");
         if (selectedNodeRef.current === undefined) return;

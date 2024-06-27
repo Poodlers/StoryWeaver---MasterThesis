@@ -106,8 +106,14 @@ function Flow(props) {
   useEffect(() => {
     function onCopyPaste(event) {
       // Check for Ctrl+C (copy) or Ctrl+V (paste)
+      if (
+        document.activeElement &&
+        (document.activeElement.matches("input") ||
+          document.activeElement.matches("textarea"))
+      ) {
+        return;
+      }
       if (event.ctrlKey && (event.key === "c" || event.key === "C")) {
-        console.log("ctrl + C key pressed");
         if (selectedNodeRef.current === undefined) return;
         if (selectedNodeRef.current.data.isSelectedForCopy) return;
         selectedNodeRef.current.data.isSelectedForCopy = true;
@@ -122,6 +128,7 @@ function Flow(props) {
           });
         });
       }
+
       if (event.ctrlKey && (event.key === "v" || event.key === "V")) {
         if (
           selectedNodeRef.current === undefined ||
@@ -157,10 +164,21 @@ function Flow(props) {
         handleDelete(selectedNodeRef.current.id);
       }
     }
+
+    function onPasteDefault(event) {
+      if (event.target === document.body) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }
+
+    document.addEventListener("paste", onPasteDefault);
+
     document.addEventListener("keydown", onCopyPaste);
 
     return () => {
       document.removeEventListener("keydown", onCopyPaste);
+      document.removeEventListener("paste", onPasteDefault);
     };
   }, []);
 
@@ -507,6 +525,7 @@ function Flow(props) {
                 )
               );
             }
+
             selectedNode.data = inspectorData;
             selectedNode.data.isSelectedForCopy = false;
             let newNodes = [...nodes];
