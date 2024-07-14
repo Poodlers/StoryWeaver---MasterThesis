@@ -15,25 +15,25 @@ export const possibleNodes =[
         image : 'end_dialog_node.svg'
     },
     {
-        name: 'Video',
+        name: 'Vídeo',
         type: NodeType.videoNode,
         props: VideoProps,
         image: 'video_node.png',
     },
     {
-        name: 'Audio',
+        name: 'Áudio',
         type: NodeType.audioNode,
         props: AudioProps,
         image: 'audio_node.png',
     },
     {
-        name: 'Image',
+        name: 'Imagem',
         type: NodeType.imageNode,
         props: ImageProps,
         image: 'image_node.png',
     },
     {
-        name: 'Text',
+        name: 'Texto',
         type: NodeType.textNode,
         props: TextProps,
         image: 'text_node.png',
