@@ -13,6 +13,11 @@ The system is composed of:
 📄 **Master's Thesis Document:**  
 [Read the dissertation PDF](./dissertation.pdf)
 
+✨ **Links:**  
+[Try out the StoryWeaver Editor!](https://story-weaver-editor.vercel.app/)
+
+[Try out the StoryWeaver Player!](https://story-weaver-player.vercel.app/)
+
 ## Screenshots / Demo
 
 ![Flowchart editing](screenshots/editor_flowchart.jpg)
@@ -166,6 +171,8 @@ It also gave me practical experience working with:
 # Future Improvements
 
 - Improved backend modularization
+- Add user accounts
+- Add support for multiple languages
 - Tutorial for usage of the editor
 - Real-time collaborative editing
 - Enhanced AR tracking systems
