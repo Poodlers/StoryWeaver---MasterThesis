@@ -7,9 +7,10 @@ import { ApiDataRepository } from "../../api/ApiDataRepository";
 
 function ColorPicker(props) {
   const repo = ApiDataRepository.getInstance();
+
   const label = props.data.label;
   const style = props.style;
-  const value = props.value;
+  const value = props.value ?? { color: "#000000" };
   const conditional = props.conditional == undefined ? true : props.conditional;
   const handleFieldChange = props.onChange;
   const [open, setOpen] = React.useState(false);

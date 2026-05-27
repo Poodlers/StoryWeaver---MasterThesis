@@ -6,7 +6,7 @@ export default function TextImageTrackingARDisplay(props) {
   const rotation = props.rotation || { x: 0, y: 0, z: 0 };
   const markerSrc = props.markerSrc;
   const text = props.text;
-  const textColor = props.textColor.color || "#000000";
+  const textColor = props.textColor?.color || "#000000";
 
   return (
     <a-scene

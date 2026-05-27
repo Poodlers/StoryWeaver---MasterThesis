@@ -24,12 +24,10 @@ export default function DialogueNodeDisplay(props) {
   const dialogTree = dialogueNode.data.dialog;
   const dialogNodes = dialogTree.nodes;
   const dialogEdges = dialogTree.edges;
-  console.log(dialogNodes);
-  console.log(dialogEdges);
   const setNextNode = props.setNextNode;
 
   const [componentState, setComponentState] = React.useState(
-    ComponentState.LOADING
+    ComponentState.LOADING,
   );
   const [backgroundURL, setBackgroundURL] = React.useState("");
 
@@ -51,7 +49,7 @@ export default function DialogueNodeDisplay(props) {
       return undefined;
     }
     const nextNode = dialogNodes.find(
-      (node) => node.id == edgesFromCurrentNode.target
+      (node) => node.id == edgesFromCurrentNode.target,
     );
     console.log("nextNode: ", nextNode);
     return nextNode;
@@ -59,7 +57,7 @@ export default function DialogueNodeDisplay(props) {
 
   useEffect(() => {
     const beginNode = dialogNodes.find(
-      (node) => node.type == DialogNodeType.beginDialogNode
+      (node) => node.type == DialogNodeType.beginDialogNode,
     );
     setCurrentDialogNode(findNextDialogueNode(beginNode));
     setComponentState(ComponentState.LOADED);
@@ -160,9 +158,9 @@ export default function DialogueNodeDisplay(props) {
             (node) =>
               node.id ==
               outGoingEdges.find(
-                (edge) => edge.sourceHandle == currentDialogNode.data.id
-              ).target
-          )
+                (edge) => edge.sourceHandle == currentDialogNode.data.id,
+              ).target,
+          ),
         )
       ) : null}
     </Box>

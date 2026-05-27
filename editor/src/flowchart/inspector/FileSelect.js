@@ -28,10 +28,11 @@ function FileSelectField(props) {
   const conditional = props.conditional == undefined ? true : props.conditional;
   const generateMarkerFiles = props.generateMarkerFiles;
   const style = props.style;
-  const value = props.value;
+  const value = props.value || props.data.initialValue;
+
   const [inputMethod, setInputMethod] = React.useState(value.inputType);
   const [inputText, setInputText] = React.useState(
-    value.filename == "" ? "Selecione um ficheiro" : value.filename
+    value.filename == "" ? "Selecione um ficheiro" : value.filename,
   );
   const handleFieldChange = props.onChange;
 
@@ -39,7 +40,7 @@ function FileSelectField(props) {
     setInputText(
       value.filename == "" || value.inputType == "url"
         ? "Selecione um ficheiro"
-        : value.filename
+        : value.filename,
     );
     setInputMethod(value.inputType);
   }, [value]);
@@ -177,12 +178,12 @@ function FileSelectField(props) {
                   props.data.acceptedType == FileTypesInput.ThreeDModel
                     ? ".zip"
                     : props.data.acceptedType == FileTypesInput.Image
-                    ? ".png, .jpg, .jpeg"
-                    : props.data.acceptedType == FileTypesInput.Video
-                    ? ".mp4, .avi, .mov"
-                    : props.data.acceptedType == FileTypesInput.Audio
-                    ? ".mp3, .wav"
-                    : ".*",
+                      ? ".png, .jpg, .jpeg"
+                      : props.data.acceptedType == FileTypesInput.Video
+                        ? ".mp4, .avi, .mov"
+                        : props.data.acceptedType == FileTypesInput.Audio
+                          ? ".mp3, .wav"
+                          : ".*",
               },
               sx: {
                 flexGrow: 1,
@@ -232,7 +233,7 @@ function FileSelectField(props) {
                     filename: "",
                     inputType: "file",
                   },
-                  "Not Started"
+                  "Not Started",
                 );
                 return;
               }
@@ -309,7 +310,7 @@ function FileSelectField(props) {
                         filename: fileName,
                         inputType: "file",
                       },
-                      "Started"
+                      "Started",
                     );
                     repo
                       .requestGenerateMarkerFiles(fileName)
@@ -323,7 +324,7 @@ function FileSelectField(props) {
                             filename: fileName,
                             inputType: "file",
                           },
-                          "Complete"
+                          "Complete",
                         );
                       })
                       .catch((error) => {
@@ -417,7 +418,7 @@ function FileSelectField(props) {
                                 filename: fileName,
                                 inputType: "url",
                               },
-                              "Complete"
+                              "Complete",
                             );
                           })
                           .catch((error) => {

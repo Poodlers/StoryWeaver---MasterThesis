@@ -35,7 +35,7 @@ export default function AudioNode(props) {
   const repo = ApiDataRepository.getInstance();
   const title = props.data?.name ?? "";
   const fileInfo = props.data?.file ?? "";
-  const audioColor = props.data?.color.color ?? "#000000";
+  const audioColor = props.data?.color?.color ?? "#000000";
   const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
   const backgroundFileInfo = props.data?.background ?? "";
 

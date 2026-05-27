@@ -17,10 +17,11 @@ import { narrator } from "../../data/narrator";
 
 export default function TextNode(props) {
   const repo = ApiDataRepository.getInstance();
+  console.log("props: ", props);
   const text = props.data?.name ?? "";
   const isAR = props.data?.ar ?? false;
   const character = props.data?.character ?? narrator;
-  const color = props.data?.color.color ?? "#000000";
+  const color = props.data?.color?.color ?? "#000000";
   const backgroundFileInfo = props.data?.background ?? "";
   const [backgroundURL, setBackgroundURL] = React.useState("");
   const isSelectedForCopy = props.data?.isSelectedForCopy ?? false;
@@ -50,7 +51,7 @@ export default function TextNode(props) {
           setCharacterFilepath(filepath);
         })
         .catch(() =>
-          setCharacterFilepath("../assets/character_dialogue_node.png")
+          setCharacterFilepath("../assets/character_dialogue_node.png"),
         );
     } else {
       setCharacterFilepath(character.image.filename);
@@ -162,8 +163,8 @@ export default function TextNode(props) {
             background: isAR
               ? `url(${"../assets/night_sky.jpg"}) no-repeat center center fixed`
               : backgroundURL == ""
-              ? backgroundColor
-              : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
+                ? backgroundColor
+                : `${backgroundColor} url(${backgroundURL}) no-repeat center center  fixed`,
             backgroundSize: "cover",
             borderColor: "black",
             borderWidth: 2,

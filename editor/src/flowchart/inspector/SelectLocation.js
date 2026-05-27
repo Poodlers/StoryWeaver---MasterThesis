@@ -24,13 +24,14 @@ function SelectLocationField(props) {
   const label = props.data.label;
   const conditional = props.conditional == undefined ? true : props.conditional;
   const style = props.style;
-  const value = props.value;
+  const value = props.value || props.data.initialValue;
+
   const options = props.data.options;
 
   const maps = JSON.parse(localStorage.getItem("maps")) || [];
   const handleFieldChange = props.onChange;
   const [selectedMap, setSelectedMap] = React.useState(
-    maps.find((map) => map.name == value.map)
+    maps.find((map) => map.name == value.map),
   );
 
   React.useEffect(() => {
@@ -139,7 +140,7 @@ function SelectLocationField(props) {
   const handleImageTrackFieldChange = (
     name,
     newImageValue,
-    newMarkerGeneration
+    newMarkerGeneration,
   ) => {
     handleFieldChange(props.data.name, {
       trigger_mode: value.trigger_mode,
@@ -305,7 +306,7 @@ function SelectLocationField(props) {
                     marker_generation: value.marker_generation,
                   });
                   setSelectedMap(
-                    maps.find((map) => map.name == event.target.value)
+                    maps.find((map) => map.name == event.target.value),
                   );
                 }}
               >
@@ -611,8 +612,8 @@ function SelectLocationField(props) {
             {value.marker_generation.qr_code == "Not Started"
               ? "Para iniciar a geração dos marcadores, clique no ícone de impressão!"
               : value.marker_generation.qr_code == "Started"
-              ? "Nenhum marcador gerado pelo servidor ainda. O processo pode demorar alguns minutos."
-              : "Marcadores prontos! O conteúdo AR será exibido quando o QR Code for detetado pela câmara!"}
+                ? "Nenhum marcador gerado pelo servidor ainda. O processo pode demorar alguns minutos."
+                : "Marcadores prontos! O conteúdo AR será exibido quando o QR Code for detetado pela câmara!"}
           </Typography>
         </Box>
       ) : (
@@ -663,8 +664,8 @@ function SelectLocationField(props) {
             {value.marker_generation.image == "Not Started"
               ? "Para iniciar a geração dos marcadores, insira uma imagem!"
               : value.marker_generation.image == "Started"
-              ? "Nenhum marcador gerado pelo servidor ainda. O processo pode demorar alguns minutos."
-              : "Marcadores prontos! O conteúdo AR será exibido quando a Imagem for detetada pela câmara!"}
+                ? "Nenhum marcador gerado pelo servidor ainda. O processo pode demorar alguns minutos."
+                : "Marcadores prontos! O conteúdo AR será exibido quando a Imagem for detetada pela câmara!"}
           </Typography>
         </>
       )}

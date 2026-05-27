@@ -24,7 +24,7 @@ export default function AudioNodeDisplay(props) {
   const audioNode = props.node;
   const name = audioNode.data.name;
   const fileInfo = audioNode.data.file;
-  const color = audioNode.data.color.color;
+  const color = audioNode.data.color?.color ?? "#000000";
 
   const character = audioNode.data.character;
 
@@ -35,7 +35,7 @@ export default function AudioNodeDisplay(props) {
   const [backgroundURL, setBackgroundURL] = React.useState("");
   const [url, setUrl] = React.useState("");
   const [componentState, setComponentState] = React.useState(
-    ComponentState.LOADING
+    ComponentState.LOADING,
   );
 
   const setNextNode = props.setNextNode;

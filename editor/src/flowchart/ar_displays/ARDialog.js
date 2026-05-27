@@ -13,7 +13,9 @@ export default function ARDialog(props) {
   const onClose = props.onClose;
   const title = props.title;
   const src = props.src;
-  const ARTypeInfo = props.ARTypeInfo;
+  const ARTypeInfo = props.ARTypeInfo ?? {
+    trigger_mode: ARTriggerMode.GPSCoords,
+  };
   const position = props.position;
   const scale = props.scale;
   const rotation = props.rotation;

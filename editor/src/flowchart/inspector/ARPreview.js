@@ -20,6 +20,7 @@ import { AREntityTypes } from "../../models/AREntityTypes";
 
 function ARPreviewField(props) {
   const repo = ApiDataRepository.getInstance();
+
   const label = props.data.label;
   const style = props.style;
   const conditional = props.conditional == undefined ? true : props.conditional;
@@ -27,7 +28,9 @@ function ARPreviewField(props) {
   const handleFieldChange = props.onChange;
   const title = props.title;
   const fileInfo = props.fileInfo;
-  const ARTypeInfo = props.ARTypeInfo;
+  const ARTypeInfo = props.ARTypeInfo ?? {
+    trigger_mode: ARTriggerMode.GPSCoords,
+  };
   const position = props.position;
   const scale = props.scale;
   const rotation = props.rotation;
@@ -69,11 +72,11 @@ function ARPreviewField(props) {
         setMarkerSrc(url);
       });
     } else {
-      if (ARTypeInfo.image.inputType == "url") {
+      if (ARTypeInfo.image?.inputType == "url") {
         setMarkerSrc(ARTypeInfo.image.filename);
       } else {
         repo
-          .getFilePath(ARTypeInfo.image.filename.split(".")[0])
+          .getFilePath(ARTypeInfo.image?.filename.split(".")[0])
           .then((url) => {
             setMarkerSrc(url);
           });
